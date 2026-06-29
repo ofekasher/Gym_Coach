@@ -1,0 +1,413 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  COACH
+  TRAINEE
+  ADMIN
+}
+
+enum SubscriptionPlan {
+  MONTHLY
+  QUARTERLY
+  ANNUAL
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  PENDING
+}
+
+enum MessageStatus {
+  SENT
+  READ
+}
+
+enum WorkoutTemplate {
+  FBW
+  UPPER_LOWER
+  PPL
+  AB
+  CUSTOM
+}
+
+enum WorkoutStatus {
+  COMPLETED
+  SKIPPED
+}
+
+enum PhotoAngle {
+  FRONT
+  SIDE
+  BACK
+}
+
+enum TimelineEventType {
+  WORKOUT_PLAN_CREATED
+  NUTRITION_PLAN_UPDATED
+  CHECKIN_COMPLETED
+  PROGRESS_PHOTOS_UPLOADED
+  NEW_PR
+  COACH_NOTE
+  TRAINEE_JOINED
+}
+
+enum AlertType {
+  LOW_CONSISTENCY
+  NO_CHECKIN
+  NO_WEIGHT_UPDATE
+  NO_LOGIN
+  PLAN_UPDATE_NEEDED
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  image        String?
+  role         Role     @default(TRAINEE)
+  coachId      String?
+  passwordHash String?
+  createdAt    DateTime @default(now())
+
+  coach    User?  @relation("CoachTrainees", fields: [coachId], references: [id])
+  trainees User[] @relation("CoachTrainees")
+
+  accounts        Account[]
+  sessions        Session[]
+  traineeProfile  TraineeProfile?
+  workoutPlans    WorkoutPlan[]   @relation("TraineeWorkoutPlans")
+  coachPlans      WorkoutPlan[]   @relation("CoachWorkoutPlans")
+  workoutLogs     WorkoutLog[]
+  nutritionPlans  NutritionPlan[]
+  checkIns        WeeklyCheckIn[]
+  timelineEvents  TimelineEvent[]
+  coachAlerts     CoachAlert[]    @relation("CoachAlerts")
+  traineeAlerts   CoachAlert[]    @relation("TraineeAlerts")
+  inviteTokens    InviteToken[]
+  customExercises Exercise[]
+  pushSubscriptions PushSubscription[]
+  sentMessages    Message[]        @relation("SentMessages")
+  receivedMessages Message[]       @relation("ReceivedMessages")
+  subscription    TraineeSubscription?
+  coachSettings   CoachSettings?
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id         String        @id @default(cuid())
+  senderId   String
+  receiverId String
+  content    String        @db.Text
+  status     MessageStatus @default(SENT)
+  createdAt  DateTime      @default(now())
+  sender     User          @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User          @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
+model TraineeSubscription {
+  id         String             @id @default(cuid())
+  traineeId  String             @unique
+  plan       SubscriptionPlan   @default(MONTHLY)
+  status     SubscriptionStatus @default(PENDING)
+  amount     Float
+  startDate  DateTime           @default(now())
+  endDate    DateTime?
+  notes      String?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+  trainee    User               @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+  payments   Payment[]
+}
+
+model Payment {
+  id             String              @id @default(cuid())
+  subscriptionId String
+  amount         Float
+  method         String              @default("cash")
+  paidAt         DateTime            @default(now())
+  notes          String?
+  subscription   TraineeSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+}
+
+model CoachSettings {
+  id             String  @id @default(cuid())
+  coachId        String  @unique
+  businessName   String?
+  bio            String?
+  phone          String?
+  currency       String  @default("ILS")
+  monthlyPrice   Float?
+  quarterPrice   Float?
+  annualPrice    Float?
+  notifyWorkout  Boolean @default(true)
+  notifyCheckin  Boolean @default(true)
+  notifyInactive Boolean @default(true)
+  notifyPayment  Boolean @default(true)
+  coach          User    @relation(fields: [coachId], references: [id], onDelete: Cascade)
+}
+
+model InviteToken {
+  id        String   @id @default(cuid())
+  token     String   @unique @default(cuid())
+  email     String
+  coachId   String
+  used      Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  coach User @relation(fields: [coachId], references: [id], onDelete: Cascade)
+}
+
+model TraineeProfile {
+  id                String    @id @default(cuid())
+  userId            String    @unique
+  phone             String?
+  dateOfBirth       DateTime?
+  gender            String?
+  height            Float?
+  startingWeight    Float?
+  currentWeight     Float?
+  goals             String[]
+  injuries          String?
+  medicalConditions String?
+  limitations       String?
+  medications       String?
+  experience        String?
+  notes             String?
+  updatedAt         DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model WorkoutPlan {
+  id        String          @id @default(cuid())
+  traineeId String
+  coachId   String
+  name      String
+  template  WorkoutTemplate @default(CUSTOM)
+  isActive  Boolean         @default(true)
+  createdAt DateTime        @default(now())
+
+  trainee  User             @relation("TraineeWorkoutPlans", fields: [traineeId], references: [id], onDelete: Cascade)
+  coach    User             @relation("CoachWorkoutPlans", fields: [coachId], references: [id])
+  sessions WorkoutSession[]
+}
+
+model WorkoutSession {
+  id       String @id @default(cuid())
+  planId   String
+  name     String
+  dayLabel String
+  order    Int
+
+  plan      WorkoutPlan       @relation(fields: [planId], references: [id], onDelete: Cascade)
+  exercises SessionExercise[]
+  logs      WorkoutLog[]
+}
+
+model Exercise {
+  id             String   @id @default(cuid())
+  name           String
+  muscleGroup    String
+  description    String?  @db.Text
+  howTo          String?  @db.Text
+  tips           String[]
+  commonMistakes String[]
+  equipment      String?
+  difficulty     String?
+  videoUrl       String?
+  imageUrl       String?
+  isCustom       Boolean  @default(false)
+  coachId        String?
+
+  coach            User?             @relation(fields: [coachId], references: [id])
+  sessionExercises SessionExercise[]
+  exerciseLogs     ExerciseLog[]
+}
+
+model SessionExercise {
+  id             String  @id @default(cuid())
+  sessionId      String
+  exerciseId     String
+  sets           Int
+  reps           String
+  weight         Float?
+  restTime       Int?
+  techniqueNotes String?
+  order          Int     @default(0)
+
+  session  WorkoutSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  exercise Exercise       @relation(fields: [exerciseId], references: [id])
+}
+
+model WorkoutLog {
+  id        String        @id @default(cuid())
+  traineeId String
+  sessionId String
+  date      DateTime      @default(now())
+  status    WorkoutStatus @default(COMPLETED)
+  notes     String?
+
+  trainee      User           @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+  session      WorkoutSession @relation(fields: [sessionId], references: [id])
+  exerciseLogs ExerciseLog[]
+}
+
+model ExerciseLog {
+  id           String  @id @default(cuid())
+  workoutLogId String
+  exerciseId   String
+  sets         Int
+  reps         String
+  weight       Float?
+
+  workoutLog WorkoutLog @relation(fields: [workoutLogId], references: [id], onDelete: Cascade)
+  exercise   Exercise   @relation(fields: [exerciseId], references: [id])
+}
+
+model NutritionPlan {
+  id          String   @id @default(cuid())
+  traineeId   String
+  calories    Int
+  protein     Float
+  carbs       Float
+  fat         Float
+  preferences String[]
+  notes       String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  trainee User   @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+  meals   Meal[]
+}
+
+model Meal {
+  id              String  @id @default(cuid())
+  nutritionPlanId String
+  name            String
+  time            String?
+  order           Int     @default(0)
+
+  nutritionPlan NutritionPlan @relation(fields: [nutritionPlanId], references: [id], onDelete: Cascade)
+  foodItems     FoodItem[]
+}
+
+model FoodItem {
+  id       String  @id @default(cuid())
+  mealId   String
+  name     String
+  quantity Float
+  calories Float
+  protein  Float
+  carbs    Float
+  fat      Float
+  unit     String
+  category String?
+
+  meal Meal @relation(fields: [mealId], references: [id], onDelete: Cascade)
+}
+
+model WeeklyCheckIn {
+  id                String   @id @default(cuid())
+  traineeId         String
+  date              DateTime @default(now())
+  weight            Float?
+  waist             Float?
+  chest             Float?
+  hip               Float?
+  arm               Float?
+  bodyFat           Float?
+  followedPlan      Boolean  @default(true)
+  workoutsCompleted Int      @default(0)
+  coachNotes        String?
+  traineeNotes      String?
+
+  trainee User            @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+  photos  ProgressPhoto[]
+}
+
+model ProgressPhoto {
+  id        String     @id @default(cuid())
+  checkInId String
+  url       String
+  angle     PhotoAngle
+
+  checkIn WeeklyCheckIn @relation(fields: [checkInId], references: [id], onDelete: Cascade)
+}
+
+model TimelineEvent {
+  id          String            @id @default(cuid())
+  traineeId   String
+  type        TimelineEventType
+  description String
+  date        DateTime          @default(now())
+  metadata    Json?
+
+  trainee User @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+}
+
+model CoachAlert {
+  id        String    @id @default(cuid())
+  coachId   String
+  traineeId String
+  type      AlertType
+  message   String
+  isRead    Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  coach   User @relation("CoachAlerts", fields: [coachId], references: [id], onDelete: Cascade)
+  trainee User @relation("TraineeAlerts", fields: [traineeId], references: [id], onDelete: Cascade)
+}
