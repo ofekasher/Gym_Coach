@@ -452,7 +452,24 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
         </div>
 
         {doneCount > 0 && (
-          <button onClick={() => setWorkoutDone(true)} style={{
+          <button onClick={() => {
+            try {
+              const key = "demo_workout_log";
+              const existing = JSON.parse(localStorage.getItem(key) ?? "[]");
+              const entry = {
+                id: Date.now().toString(),
+                date: new Date().toISOString(),
+                sessionName: session?.name ?? "",
+                planName: plan?.name ?? "",
+                exercisesCompleted: doneCount,
+                totalExercises: exercises.length,
+                totalSets: Object.values(setLogs).flat().filter((s: any) => s.done).length,
+                status: "COMPLETED",
+              };
+              localStorage.setItem(key, JSON.stringify([entry, ...existing.slice(0, 29)]));
+            } catch {}
+            setWorkoutDone(true);
+          }} style={{
             width: "100%", marginTop: 20, padding: "16px 0", borderRadius: 18, border: "none", cursor: "pointer",
             background: "linear-gradient(135deg,#5B21B6,#7C3AED)", color: "#fff", fontSize: 15, fontWeight: 800,
           }}>

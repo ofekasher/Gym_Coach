@@ -30,7 +30,18 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
   const [selectedDate, setSelectedDate] = useState(todayISO());
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const scheduleKey = `demo_schedule_${coachId}`;
+  const [appointments, setAppointments] = useState<Appointment[]>(() => {
+    try {
+      const stored = typeof window !== "undefined" && localStorage.getItem(`demo_schedule_${coachId}`);
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return [];
+  });
+
+  const saveSchedule = (appts: Appointment[]) => {
+    try { localStorage.setItem(scheduleKey, JSON.stringify(appts)); } catch {}
+  };
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({ time: "09:00", duration: 60, traineeId: "", type: "אימון", notes: "" });
@@ -65,14 +76,20 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
       notes: form.notes,
       color,
     };
-    setAppointments([...appointments, newAppt]);
+    const updated = [...appointments, newAppt];
+    setAppointments(updated);
+    saveSchedule(updated);
     setForm({ time: "09:00", duration: 60, traineeId: "", type: "אימון", notes: "" });
     setShowForm(false);
     toast({ title: "✓ אימון נוסף ללוח זמנים" });
     setSaving(false);
   };
 
-  const removeAppt = (id: string) => setAppointments(appointments.filter(a => a.id !== id));
+  const removeAppt = (id: string) => {
+    const updated = appointments.filter(a => a.id !== id);
+    setAppointments(updated);
+    saveSchedule(updated);
+  };
 
   const formatDateHe = (iso: string) => {
     const [y, m, d] = iso.split("-").map(Number);

@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Dumbbell, Edit2, Save, X, Loader2, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Dumbbell, Edit2, Save, X, Loader2, Trash2, ChevronDown, ChevronUp, FileDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const TEMPLATE_LABELS: Record<string, string> = {
@@ -127,6 +127,50 @@ function ExerciseRow({ se, traineeId, onUpdate, onDelete }: {
   );
 }
 
+function exportWorkoutPDF(plan: any, traineeName: string) {
+  const html = `<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8">
+<style>
+  body { font-family: Arial, sans-serif; padding: 32px; color: #111; direction: rtl; }
+  h1 { font-size: 24px; margin-bottom: 4px; }
+  .sub { color: #888; font-size: 13px; margin-bottom: 24px; }
+  .session { break-inside: avoid; margin-bottom: 24px; border: 1px solid #e5e5e5; border-radius: 12px; padding: 16px; }
+  .session-title { font-size: 16px; font-weight: 800; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: #f5f5f5; padding: 8px 10px; text-align: right; font-weight: 700; }
+  td { padding: 7px 10px; border-bottom: 1px solid #f0f0f0; }
+  .coach-note { background: #fffbea; border-right: 3px solid #F5C518; padding: 6px 10px; margin-top: 6px; font-size: 12px; border-radius: 4px; }
+  .stars { color: #F5C518; }
+  @media print { body { padding: 16px; } }
+</style></head><body>
+<h1>תוכנית אימון — ${traineeName}</h1>
+<div class="sub">${plan.name} · ${new Date().toLocaleDateString("he-IL")}</div>
+${(plan.sessions ?? []).map((s: any) => `
+<div class="session">
+  <div class="session-title">${s.name} <span style="color:#888;font-size:12px;font-weight:400">${s.dayLabel ?? ""}</span></div>
+  <table>
+    <tr><th>תרגיל</th><th>סטים</th><th>חזרות</th><th>משקל</th><th>מנוחה</th></tr>
+    ${(s.exercises ?? []).map((e: any) => `
+    <tr>
+      <td>
+        ${(e.priority ?? 0) > 0 ? `<span class="stars">${"★".repeat(e.priority)}</span> ` : ""}
+        ${e.exercise?.name ?? e.exerciseName ?? ""}
+        ${e.coachNote ? `<div class="coach-note">💬 ${e.coachNote}</div>` : ""}
+      </td>
+      <td>${e.sets ?? ""}</td><td>${e.reps ?? ""}</td>
+      <td>${e.weight ? e.weight + " ק״ג" : "—"}</td>
+      <td>${(e.restTime ?? e.rest) ? (e.restTime ?? e.rest) + " שנ׳" : "—"}</td>
+    </tr>`).join("")}
+  </table>
+</div>`).join("")}
+</body></html>`;
+  const w = window.open("", "_blank");
+  if (!w) return;
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(() => w.print(), 300);
+}
+
 export function WorkoutTab({ trainee }: { trainee: any }) {
   const { toast } = useToast();
   const [plan, setPlan] = useState(() => {
@@ -211,9 +255,14 @@ export function WorkoutTab({ trainee }: { trainee: any }) {
           <h2 style={{ color: "#fff", fontSize: 17, fontWeight: 800, margin: 0 }}>{plan.name}</h2>
           <span style={{ background: "rgba(245,197,24,0.1)", color: "#F5C518", fontSize: 11, fontWeight: 700, borderRadius: 999, padding: "2px 10px" }}>{TEMPLATE_LABELS[plan.template] ?? plan.template}</span>
         </div>
-        <Link href={`/trainees/${trainee.id}/workout/new`}>
-          <button style={S.btnGhost}><Plus style={{ width: 13, height: 13 }} />תוכנית חדשה</button>
-        </Link>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button onClick={() => exportWorkoutPDF(plan, trainee.name ?? "")} style={{ ...S.btnGhost, padding: "8px 14px" }}>
+            <FileDown style={{ width: 13, height: 13 }} />PDF
+          </button>
+          <Link href={`/trainees/${trainee.id}/workout/new`}>
+            <button style={S.btnGhost}><Plus style={{ width: 13, height: 13 }} />תוכנית חדשה</button>
+          </Link>
+        </div>
       </div>
 
       {plan.sessions.map((session: any, idx: number) => {

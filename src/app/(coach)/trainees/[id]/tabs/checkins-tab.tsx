@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
 import { CheckCircle2, Image as ImageIcon, ChevronDown } from "lucide-react";
@@ -8,7 +8,20 @@ import { Badge } from "@/components/ui/badge";
 
 export function CheckinsTab({ trainee }: { trainee: any }) {
   const [expanded, setExpanded] = useState<string | null>(null);
-  const checkIns = trainee.checkIns ?? [];
+  const isDemo = trainee.id.startsWith("demo-");
+  const [localCheckIns, setLocalCheckIns] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!isDemo) return;
+    try {
+      const stored = localStorage.getItem(`demo_checkins_${trainee.id}`);
+      if (stored) setLocalCheckIns(JSON.parse(stored));
+    } catch {}
+  }, [isDemo, trainee.id]);
+
+  const checkIns = isDemo
+    ? [...localCheckIns, ...(trainee.checkIns ?? [])]
+    : trainee.checkIns ?? [];
 
   if (checkIns.length === 0) {
     return (

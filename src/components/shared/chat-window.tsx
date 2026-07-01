@@ -13,17 +13,27 @@ export function ChatWindow({ myId, otherId, otherName }: { myId: string; otherId
   const bottomRef = useRef<HTMLDivElement>(null);
   const pollingRef = useRef<NodeJS.Timeout>();
 
+  const isDemo = myId.startsWith("demo-") || otherId.startsWith("demo-");
+  const chatKey = `demo_chat_${[myId, otherId].sort().join("_")}`;
+
   const load = useCallback(async () => {
+    if (isDemo) {
+      try {
+        const stored = localStorage.getItem(chatKey);
+        setMessages(stored ? JSON.parse(stored) : []);
+      } catch {}
+      return;
+    }
     const res = await fetch(`/api/chat?with=${otherId}`);
     if (res.ok) {
       const { messages: msgs } = await res.json();
       setMessages(msgs);
     }
-  }, [otherId]);
+  }, [otherId, isDemo, chatKey]);
 
   useEffect(() => {
     load();
-    pollingRef.current = setInterval(load, 3000);
+    pollingRef.current = setInterval(load, 2000);
     return () => clearInterval(pollingRef.current);
   }, [load]);
 
@@ -34,6 +44,16 @@ export function ChatWindow({ myId, otherId, otherName }: { myId: string; otherId
     if (!trimmed || sending) return;
     setSending(true);
     setText("");
+    if (isDemo) {
+      const newMsg: Message = { id: Date.now().toString(), senderId: myId, content: trimmed, status: "SENT", createdAt: new Date().toISOString() };
+      setMessages(prev => {
+        const updated = [...prev, newMsg];
+        try { localStorage.setItem(chatKey, JSON.stringify(updated)); } catch {}
+        return updated;
+      });
+      setSending(false);
+      return;
+    }
     await fetch("/api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ receiverId: otherId, content: trimmed }) });
     await load();
     setSending(false);

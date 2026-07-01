@@ -23,12 +23,37 @@ export default function PaymentsPage() {
   const [form, setForm] = useState({ plan: "MONTHLY", amount: "", notes: "", method: "cash" });
   const [saving, setSaving] = useState(false);
 
+  const DEMO_KEY = "demo_payments";
+
+  const loadDemoData = () => {
+    try {
+      const stored = localStorage.getItem(DEMO_KEY);
+      if (stored) return JSON.parse(stored);
+    } catch {}
+    return [
+      { id: "demo-trainee-1", name: "אבי כהן", email: "avi@demo.com", subscription: null },
+      { id: "demo-trainee-2", name: "מיכל לוי", email: "michal@demo.com", subscription: null },
+      { id: "demo-trainee-3", name: "דנה שפירא", email: "dana@demo.com", subscription: null },
+    ];
+  };
+
   const load = async () => {
     setLoading(true);
-    const res = await fetch("/api/payments");
-    const { trainees: t } = await res.json();
-    setTrainees(t);
+    try {
+      const res = await fetch("/api/payments");
+      if (res.ok) {
+        const { trainees: t } = await res.json();
+        setTrainees(t);
+        setLoading(false);
+        return;
+      }
+    } catch {}
+    setTrainees(loadDemoData());
     setLoading(false);
+  };
+
+  const saveDemoData = (updated: any[]) => {
+    try { localStorage.setItem(DEMO_KEY, JSON.stringify(updated)); } catch {}
   };
 
   useEffect(() => { load(); }, []);
@@ -39,8 +64,15 @@ export default function PaymentsPage() {
   const saveSubscription = async () => {
     if (!modal || !form.amount) return;
     setSaving(true);
-    await fetch("/api/payments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create_subscription", traineeId: modal.traineeId, plan: form.plan, amount: parseFloat(form.amount), notes: form.notes }) });
-    await load();
+    try {
+      const res = await fetch("/api/payments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create_subscription", traineeId: modal.traineeId, plan: form.plan, amount: parseFloat(form.amount), notes: form.notes }) });
+      if (res.ok) { await load(); setModal(null); setSaving(false); return; }
+    } catch {}
+    // Demo fallback
+    const newSub = { id: `demo-sub-${Date.now()}`, plan: form.plan, amount: parseFloat(form.amount), status: "ACTIVE", startDate: new Date().toISOString(), notes: form.notes, payments: [{ id: `demo-pay-${Date.now()}`, amount: parseFloat(form.amount), method: "cash", date: new Date().toISOString() }] };
+    const updated = trainees.map(t => t.id === modal.traineeId ? { ...t, subscription: newSub } : t);
+    setTrainees(updated);
+    saveDemoData(updated);
     setModal(null);
     setSaving(false);
   };
@@ -48,8 +80,15 @@ export default function PaymentsPage() {
   const recordPayment = async () => {
     if (!modal?.subId || !form.amount) return;
     setSaving(true);
-    await fetch("/api/payments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "record_payment", subscriptionId: modal.subId, paymentAmount: parseFloat(form.amount), method: form.method, paymentNotes: form.notes }) });
-    await load();
+    try {
+      const res = await fetch("/api/payments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "record_payment", subscriptionId: modal.subId, paymentAmount: parseFloat(form.amount), method: form.method, paymentNotes: form.notes }) });
+      if (res.ok) { await load(); setModal(null); setSaving(false); return; }
+    } catch {}
+    // Demo fallback
+    const newPay = { id: `demo-pay-${Date.now()}`, amount: parseFloat(form.amount), method: form.method, date: new Date().toISOString() };
+    const updated = trainees.map(t => t.subscription?.id === modal.subId ? { ...t, subscription: { ...t.subscription, payments: [...(t.subscription.payments ?? []), newPay] } } : t);
+    setTrainees(updated);
+    saveDemoData(updated);
     setModal(null);
     setSaving(false);
   };
