@@ -1,12 +1,23 @@
 "use client";
 import { useState, useEffect } from "react";
 
-const BG = "#0E0E10";
-const CARD = { background: "#1A1A1F", borderRadius: 20, border: "1px solid rgba(255,255,255,0.05)" };
+const BG = "transparent";
+const CARD = { background: "#161B22", borderRadius: 28, border: "1px solid rgba(255,255,255,0.06)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" };
 
 const MEAL_ICONS: Record<string, string> = {
   "ארוחת בוקר": "☀️", "ארוחת צהריים": "🌤️", "ארוחת ערב": "🌙", "חטיף": "🍎",
 };
+
+// Real stock photos (Unsplash) by meal type
+const MEAL_PHOTOS: Record<string, string> = {
+  "ארוחת בוקר": "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=200&q=65&auto=format&fit=crop",
+  "ארוחת צהריים": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&q=65&auto=format&fit=crop",
+  "ארוחת ערב": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=200&q=65&auto=format&fit=crop",
+  "חטיף": "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&q=65&auto=format&fit=crop",
+};
+function getMealPhoto(name: string): string {
+  return MEAL_PHOTOS[name] ?? MEAL_PHOTOS["ארוחת צהריים"];
+}
 
 function DonutRing({ eaten, goal, color }: { eaten: number; goal: number; color: string }) {
   const pct = Math.min(eaten / Math.max(goal, 1), 1);
@@ -102,8 +113,8 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
             <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>תזונה</div>
             <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>מעקב יומי</div>
           </div>
-          <div style={{ padding: "6px 14px", borderRadius: 99, background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.3)" }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: "#8B5CF6" }}>
+          <div style={{ padding: "6px 14px", borderRadius: 99, background: "rgba(59,130,246,0.15)", border: "1px solid rgba(59,130,246,0.3)" }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: "#3B82F6" }}>
               {new Date().toLocaleDateString("he-IL", { weekday: "long", day: "numeric", month: "long" })}
             </span>
           </div>
@@ -114,7 +125,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
           {(["today", "plan"] as const).map((tab) => (
             <button key={tab} onClick={() => setActiveTab(tab)} style={{
               flex: 1, padding: "8px 0", borderRadius: 10, border: "none", cursor: "pointer", fontWeight: 700, fontSize: 13,
-              background: activeTab === tab ? "#8B5CF6" : "transparent",
+              background: activeTab === tab ? "#3B82F6" : "transparent",
               color: activeTab === tab ? "#fff" : "rgba(255,255,255,0.35)",
               transition: "all 0.2s",
             }}>{tab === "today" ? "היום" : "תוכנית"}</button>
@@ -129,7 +140,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                 <DonutRing eaten={eatenCalories} goal={targetCalories} color="#F59E0B"/>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.5)", marginBottom: 12 }}>מאקרו יומי</div>
-                  <MacroBar label="חלבון" value={eatenProtein} max={targetProtein} color="#8B5CF6"/>
+                  <MacroBar label="חלבון" value={eatenProtein} max={targetProtein} color="#3B82F6"/>
                   <MacroBar label="פחמימות" value={eatenCarbs} max={targetCarbs} color="#3B82F6"/>
                   <MacroBar label="שומן" value={eatenFat} max={targetFat} color="#F97316"/>
                 </div>
@@ -140,7 +151,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 8, marginBottom: 20 }}>
               {[
                 { label: "קלוריות", value: `${eatenCalories}`, sub: `/${targetCalories}`, color: "#F59E0B" },
-                { label: "חלבון", value: `${eatenProtein}g`, sub: `/${targetProtein}g`, color: "#8B5CF6" },
+                { label: "חלבון", value: `${eatenProtein}g`, sub: `/${targetProtein}g`, color: "#3B82F6" },
                 { label: "פחמי׳", value: `${eatenCarbs}g`, sub: `/${targetCarbs}g`, color: "#3B82F6" },
                 { label: "שומן", value: `${eatenFat}g`, sub: `/${targetFat}g`, color: "#F97316" },
               ].map((s) => (
@@ -183,11 +194,15 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: done ? 0 : 10 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <div style={{
-                          width: 38, height: 38, borderRadius: 12, fontSize: 18,
-                          background: done ? "rgba(16,185,129,0.15)" : "rgba(255,255,255,0.05)",
-                          display: "flex", alignItems: "center", justifyContent: "center",
+                          width: 44, height: 44, borderRadius: 14, position: "relative", flexShrink: 0,
+                          backgroundImage: `url(${getMealPhoto(meal.name)})`, backgroundSize: "cover", backgroundPosition: "center",
+                          opacity: done ? 0.5 : 1, border: done ? "1px solid rgba(16,185,129,0.4)" : "1px solid rgba(255,255,255,0.08)",
                         }}>
-                          {MEAL_ICONS[meal.name] ?? "🍽️"}
+                          <span style={{
+                            position: "absolute", bottom: -4, left: -4, fontSize: 14, width: 20, height: 20,
+                            background: "#161B22", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                          }}>{MEAL_ICONS[meal.name] ?? "🍽️"}</span>
                         </div>
                         <div>
                           <div style={{ fontSize: 13, fontWeight: 700, color: done ? "#10B981" : "#fff" }}>{meal.name}</div>
@@ -228,11 +243,11 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
             {/* Add meal */}
             <button style={{
               width: "100%", marginTop: 14, padding: "14px 0", borderRadius: 16,
-              border: "2px dashed rgba(139,92,246,0.3)", background: "transparent",
-              color: "#8B5CF6", fontSize: 13, fontWeight: 700, cursor: "pointer",
+              border: "2px dashed rgba(59,130,246,0.3)", background: "transparent",
+              color: "#3B82F6", fontSize: 13, fontWeight: 700, cursor: "pointer",
               display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
             }}>
-              <svg width="16" height="16" fill="none" stroke="#8B5CF6" strokeWidth="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <svg width="16" height="16" fill="none" stroke="#3B82F6" strokeWidth="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               הוסף ארוחה
             </button>
           </>
@@ -249,7 +264,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                   {[
                     { label: "קלוריות יומי", value: `${activePlan.dailyCalories} Kcal`, color: "#F59E0B" },
-                    { label: "חלבון", value: `${activePlan.proteinGrams}g`, color: "#8B5CF6" },
+                    { label: "חלבון", value: `${activePlan.proteinGrams}g`, color: "#3B82F6" },
                     { label: "פחמימות", value: `${activePlan.carbsGrams}g`, color: "#3B82F6" },
                     { label: "שומן", value: `${activePlan.fatGrams}g`, color: "#F97316" },
                   ].map((s) => (
@@ -260,7 +275,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                   ))}
                 </div>
                 {activePlan.notes && (
-                  <div style={{ marginTop: 14, background: "rgba(139,92,246,0.08)", borderRadius: 12, padding: "12px 14px", fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.6 }}>
+                  <div style={{ marginTop: 14, background: "rgba(59,130,246,0.08)", borderRadius: 12, padding: "12px 14px", fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.6 }}>
                     {activePlan.notes}
                   </div>
                 )}

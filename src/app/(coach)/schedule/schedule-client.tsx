@@ -33,7 +33,7 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
   const scheduleKey = `demo_schedule_${coachId}`;
   const [appointments, setAppointments] = useState<Appointment[]>(() => {
     try {
-      const stored = typeof window !== "undefined" && localStorage.getItem(`demo_schedule_${coachId}`);
+      const stored = typeof window !== "undefined" && localStorage.getItem(scheduleKey);
       if (stored) return JSON.parse(stored);
     } catch {}
     return [];

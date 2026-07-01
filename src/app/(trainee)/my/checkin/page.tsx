@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { BackHeader } from "@/components/shared/back-header";
 
 const schema = z.object({
   weight: z.coerce.number().positive().optional(),
@@ -42,14 +43,20 @@ export default function CheckInPage() {
 
   const handlePhotoUpload = async (angle: string, file: File) => {
     const preview = URL.createObjectURL(file);
+    // Convert to persistent data URL so it survives page reloads in localStorage
+    const dataUrl = await new Promise<string>(resolve => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target?.result as string ?? preview);
+      reader.readAsDataURL(file);
+    });
     setPhotos((prev) => {
       const filtered = prev.filter((p) => p.angle !== angle);
-      return [...filtered, { angle, file, preview }];
+      return [...filtered, { angle, file, preview, dataUrl }];
     });
   };
 
   const saveDemoCheckin = (data: FormData) => {
-    const photoUrls = photos.map(p => ({ id: Date.now().toString() + p.angle, angle: p.angle, url: p.preview }));
+    const photoUrls = photos.map(p => ({ id: Date.now().toString() + p.angle, angle: p.angle, url: (p as any).dataUrl || p.preview }));
     const entry = {
       id: Date.now().toString(),
       date: new Date().toISOString(),
@@ -57,10 +64,12 @@ export default function CheckInPage() {
       photos: photoUrls,
     };
     try {
-      const key = "demo_checkins_demo-trainee-1";
+      const traineeId = localStorage.getItem("demo_trainee_id") ?? "demo-trainee-1";
+      const key = `demo_checkins_${traineeId}`;
       const existing = JSON.parse(localStorage.getItem(key) ?? "[]");
       localStorage.setItem(key, JSON.stringify([entry, ...existing]));
     } catch {}
+    setSaving(false);
     toast({ title: "✓ צ׳ק-אין נשמר בהצלחה!" });
     router.push("/my/dashboard");
   };
@@ -104,9 +113,16 @@ export default function CheckInPage() {
 
   return (
     <div className="space-y-6 animate-fade-in" dir="rtl">
-      <div>
-        <h1 className="text-2xl font-bold">צ׳ק-אין שבועי</h1>
-        <p className="text-muted-foreground text-sm mt-1">עדכן את ההתקדמות שלך</p>
+      <BackHeader title="צ׳ק-אין שבועי" subtitle="עדכן את ההתקדמות שלך" />
+
+      <div style={{
+        borderRadius: 20, padding: "18px 16px", position: "relative", overflow: "hidden",
+        backgroundImage: "linear-gradient(135deg, rgba(19,24,31,0.88), rgba(19,24,31,0.75)), url(/images/gym/coach-situps.jpg)",
+        backgroundSize: "cover", backgroundPosition: "center 25%",
+        border: "1px solid rgba(255,255,255,0.06)",
+      }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>כל שבוע נחשב 💪</div>
+        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", marginTop: 4 }}>עקביות בצ׳ק-אין עוזרת למאמן שלך לדייק את התוכנית בשבילך</div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">

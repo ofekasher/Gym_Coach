@@ -13,10 +13,10 @@ const QUICK = [
   "מה לאכול כדי לבנות שרירים?",
 ];
 
-const BG      = "#0E0E10";
+const BG      = "transparent";
 const CARD    = "#1A1A1F";
-const PURPLE  = "#8B5CF6";
-const PDIM    = "rgba(139,92,246,0.15)";
+const PURPLE  = "#3B82F6";
+const PDIM    = "rgba(59,130,246,0.15)";
 const BORDER  = "rgba(255,255,255,0.06)";
 
 export function AIChatClient({ userContext }: { userContext: any }) {
@@ -54,15 +54,17 @@ export function AIChatClient({ userContext }: { userContext: any }) {
 
       {/* Header */}
       <div style={{
-        background: CARD, borderBottom: `1px solid ${BORDER}`,
+        background: `linear-gradient(135deg, rgba(19,24,31,0.94), rgba(19,24,31,0.88)), url(/images/gym/dumbbell-curl.jpg)`,
+        backgroundSize: "cover", backgroundPosition: "center 30%",
+        borderBottom: `1px solid ${BORDER}`,
         padding: "14px 18px", display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <div style={{
             width: 42, height: 42, borderRadius: 14,
-            background: "linear-gradient(135deg,#6D28D9,#8B5CF6)",
+            background: "linear-gradient(135deg,#1D4ED8,#3B82F6)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            boxShadow: "0 4px 16px rgba(139,92,246,0.4)",
+            boxShadow: "0 4px 16px rgba(59,130,246,0.4)",
           }}>
             <Sparkles style={{ width: 20, height: 20, color: "#fff" }} />
           </div>
@@ -90,7 +92,7 @@ export function AIChatClient({ userContext }: { userContext: any }) {
           <div style={{ paddingTop: 8 }}>
             {/* Welcome */}
             <div style={{
-              background: PDIM, border: `1px solid rgba(139,92,246,0.2)`,
+              background: PDIM, border: `1px solid rgba(59,130,246,0.2)`,
               borderRadius: 18, padding: "16px 18px", marginBottom: 20, textAlign: "center",
             }}>
               <div style={{ fontSize: 28, marginBottom: 8 }}>🤖</div>
@@ -113,7 +115,7 @@ export function AIChatClient({ userContext }: { userContext: any }) {
                   transition: "all 0.15s",
                 }}
                 onMouseEnter={e => {
-                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(139,92,246,0.4)";
+                  (e.currentTarget as HTMLElement).style.borderColor = "rgba(59,130,246,0.4)";
                   (e.currentTarget as HTMLElement).style.color = "#fff";
                 }}
                 onMouseLeave={e => {
@@ -140,7 +142,7 @@ export function AIChatClient({ userContext }: { userContext: any }) {
             <div style={{
               maxWidth: "82%",
               background: msg.role === "user"
-                ? "linear-gradient(135deg,#6D28D9,#8B5CF6)"
+                ? "linear-gradient(135deg,#1D4ED8,#3B82F6)"
                 : CARD,
               color: "#fff",
               borderRadius: msg.role === "user" ? "18px 18px 4px 18px" : "4px 18px 18px 18px",
@@ -149,7 +151,7 @@ export function AIChatClient({ userContext }: { userContext: any }) {
               lineHeight: 1.7,
               border: msg.role === "assistant" ? `1px solid ${BORDER}` : "none",
               whiteSpace: "pre-wrap",
-              boxShadow: msg.role === "user" ? "0 4px 20px rgba(139,92,246,0.3)" : "none",
+              boxShadow: msg.role === "user" ? "0 4px 20px rgba(59,130,246,0.3)" : "none",
             }}>
               {msg.content}
             </div>
@@ -195,10 +197,10 @@ export function AIChatClient({ userContext }: { userContext: any }) {
           disabled={!input.trim() || loading}
           style={{
             width: 46, height: 46, borderRadius: 14, border: "none", cursor: input.trim() && !loading ? "pointer" : "default",
-            background: input.trim() && !loading ? "linear-gradient(135deg,#6D28D9,#8B5CF6)" : "rgba(255,255,255,0.05)",
+            background: input.trim() && !loading ? "linear-gradient(135deg,#1D4ED8,#3B82F6)" : "rgba(255,255,255,0.05)",
             display: "flex", alignItems: "center", justifyContent: "center",
             flexShrink: 0, transition: "all 0.2s",
-            boxShadow: input.trim() && !loading ? "0 4px 16px rgba(139,92,246,0.35)" : "none",
+            boxShadow: input.trim() && !loading ? "0 4px 16px rgba(59,130,246,0.35)" : "none",
           }}
         >
           {loading

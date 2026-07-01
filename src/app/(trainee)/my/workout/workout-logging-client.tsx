@@ -2,9 +2,73 @@
 import { useState, useEffect, useRef } from "react";
 import { getVideoId } from "@/lib/exercise-videos";
 import { ExerciseAnimationButton } from "@/components/shared/exercise-animation-modal";
+import { getAlternatives, type AlternativeExercise } from "@/lib/exercise-alternatives";
+import { getMuscleGymPhoto } from "@/lib/gym-photos";
 
-const BG = "#0E0E10";
-const CARD = { background: "#1A1A1F", borderRadius: 20, border: "1px solid rgba(255,255,255,0.05)" };
+function SwapModal({ exerciseName, muscleGroup, onSwap, onClose }: {
+  exerciseName: string;
+  muscleGroup: string;
+  onSwap: (name: string) => void;
+  onClose: () => void;
+}) {
+  const alts = getAlternatives(exerciseName, muscleGroup);
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 200,
+      background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)",
+      display: "flex", alignItems: "flex-end", justifyContent: "center",
+    }} onClick={onClose}>
+      <div style={{
+        background: "#1A1A1F", borderRadius: "24px 24px 0 0",
+        width: "100%", maxWidth: 480, padding: "20px 16px 40px",
+        border: "1px solid rgba(255,255,255,0.08)",
+      }} onClick={e => e.stopPropagation()}>
+        <div style={{ textAlign: "center", marginBottom: 16 }}>
+          <div style={{ width: 36, height: 4, borderRadius: 99, background: "rgba(255,255,255,0.15)", margin: "0 auto 14px" }} />
+          <div style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>החלפת תרגיל</div>
+          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", marginTop: 4 }}>
+            במקום: <span style={{ color: "#3B82F6" }}>{exerciseName}</span>
+          </div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {alts.map((alt) => (
+            <button key={alt.name} onClick={() => onSwap(alt.name)} style={{
+              background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)",
+              borderRadius: 14, padding: "12px 14px", cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "space-between",
+              transition: "border-color 0.15s",
+            }}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(59,130,246,0.4)"}
+            onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.07)"}
+            >
+              <span style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>{alt.name}</span>
+              <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+                <span style={{
+                  fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 99,
+                  background: alt.equipment === "בית" ? "rgba(16,185,129,0.15)" : "rgba(59,130,246,0.15)",
+                  color: alt.equipment === "בית" ? "#10B981" : "#3B82F6",
+                }}>{alt.equipment}</span>
+                <span style={{
+                  fontSize: 10, fontWeight: 700, padding: "3px 8px", borderRadius: 99,
+                  background: alt.difficulty === "קל" ? "rgba(52,211,153,0.12)" : alt.difficulty === "קשה" ? "rgba(248,113,113,0.12)" : "rgba(245,158,11,0.12)",
+                  color: alt.difficulty === "קל" ? "#34D399" : alt.difficulty === "קשה" ? "#F87171" : "#F59E0B",
+                }}>{alt.difficulty}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+        <button onClick={onClose} style={{
+          width: "100%", marginTop: 14, padding: "12px 0", borderRadius: 14,
+          border: "1px solid rgba(255,255,255,0.1)", background: "transparent",
+          color: "rgba(255,255,255,0.4)", fontSize: 13, fontWeight: 600, cursor: "pointer",
+        }}>ביטול</button>
+      </div>
+    </div>
+  );
+}
+
+const BG = "transparent";
+const CARD = { background: "#161B22", borderRadius: 28, border: "1px solid rgba(255,255,255,0.06)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" };
 
 const EXERCISE_GRADIENTS = [
   "linear-gradient(145deg,#1a0a2e,#3d1a6e)",
@@ -13,6 +77,10 @@ const EXERCISE_GRADIENTS = [
   "linear-gradient(145deg,#2e0a1a,#6e1a3d)",
   "linear-gradient(145deg,#1a1a0a,#3d3a1a)",
 ];
+
+function getMusclePhoto(muscleGroup: string | undefined, idx: number): string {
+  return getMuscleGymPhoto(muscleGroup);
+}
 
 type Effort = "קל" | "בינוני" | "כבד";
 const EFFORT_CONFIG: Record<Effort, { color: string; bg: string; emoji: string }> = {
@@ -38,7 +106,7 @@ function RestTimer({ seconds, onDone }: { seconds: number; onDone: () => void })
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "16px 0" }}>
       <svg width="88" height="88" viewBox="0 0 88 88">
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth={stroke}/>
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#8B5CF6" strokeWidth={stroke}
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#3B82F6" strokeWidth={stroke}
           strokeLinecap="round" strokeDasharray={`${(pct / 100) * circum} ${circum}`}
           transform={`rotate(-90 ${cx} ${cy})`}/>
         <text x={cx} y={cy + 6} textAnchor="middle" fontSize="18" fontWeight="800" fill="#fff">{left}s</text>
@@ -46,7 +114,7 @@ function RestTimer({ seconds, onDone }: { seconds: number; onDone: () => void })
       <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 6 }}>מנוחה</div>
       <button onClick={onDone} style={{
         marginTop: 10, padding: "6px 20px", borderRadius: 99, border: "none", cursor: "pointer",
-        background: "rgba(139,92,246,0.2)", color: "#8B5CF6", fontSize: 12, fontWeight: 700,
+        background: "rgba(59,130,246,0.2)", color: "#3B82F6", fontSize: 12, fontWeight: 700,
       }}>דלג</button>
     </div>
   );
@@ -70,9 +138,9 @@ function SetRow({
         {/* Set number */}
         <div style={{
           width: 26, height: 26, borderRadius: "50%", flexShrink: 0,
-          background: log.done ? "#10B981" : "rgba(139,92,246,0.2)",
+          background: log.done ? "#10B981" : "rgba(59,130,246,0.2)",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 11, fontWeight: 800, color: log.done ? "#fff" : "#8B5CF6",
+          fontSize: 11, fontWeight: 800, color: log.done ? "#fff" : "#3B82F6",
         }}>
           {log.done
             ? <svg width="12" height="12" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
@@ -150,8 +218,8 @@ function VideoPlayer({ videoId, title }: { videoId: string; title: string }) {
     <div style={{ marginBottom: 12 }}>
       {!show ? (
         <button onClick={() => setShow(true)} style={{
-          width: "100%", borderRadius: 12, border: "1px solid rgba(139,92,246,0.25)",
-          background: "rgba(139,92,246,0.07)", padding: "10px 14px",
+          width: "100%", borderRadius: 12, border: "1px solid rgba(59,130,246,0.25)",
+          background: "rgba(59,130,246,0.07)", padding: "10px 14px",
           display: "flex", alignItems: "center", gap: 10, cursor: "pointer",
         }}>
           {/* Thumbnail */}
@@ -177,7 +245,7 @@ function VideoPlayer({ videoId, title }: { videoId: string; title: string }) {
             </div>
           </div>
           <div style={{ textAlign: "right" }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: "#8B5CF6" }}>סרטון הדרכה</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: "#3B82F6" }}>סרטון הדרכה</div>
             <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{title}</div>
           </div>
         </button>
@@ -219,6 +287,8 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
   const [setLogs, setSetLogs] = useState<Record<string, SetLog[]>>({});
   const [restingFor, setRestingFor] = useState<string | null>(null);
   const [workoutDone, setWorkoutDone] = useState(false);
+  const [swapFor, setSwapFor] = useState<{ exId: string; name: string; muscleGroup: string } | null>(null);
+  const [swappedNames, setSwappedNames] = useState<Record<string, string>>({});
 
   const session = sessions[sessionIdx];
   const exercises = session?.exercises ?? [];
@@ -280,7 +350,7 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
     const heavySets = Object.values(setLogs).flat().filter((s) => s.done && s.effort === "כבד").length;
     return (
       <div style={{ background: BG, minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 32 }} dir="rtl">
-        <div style={{ background: "linear-gradient(135deg,#5B21B6,#7C3AED)", borderRadius: 24, padding: 32, textAlign: "center", maxWidth: 300, width: "100%" }}>
+        <div style={{ background: "linear-gradient(135deg,#1E3A8A,#2563EB)", borderRadius: 24, padding: 32, textAlign: "center", maxWidth: 300, width: "100%" }}>
           <div style={{ fontSize: 52, marginBottom: 12 }}>🏆</div>
           <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>כל הכבוד!</div>
           <div style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", marginBottom: 20 }}>סיימת את האימון</div>
@@ -320,7 +390,7 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
             {sessions.map((s: any, i: number) => (
               <button key={s.id} onClick={() => { setSessionIdx(i); setExStatus({}); setSetLogs({}); }} style={{
                 flexShrink: 0, padding: "8px 16px", borderRadius: 99, border: "none", cursor: "pointer", fontWeight: 700, fontSize: 12,
-                background: i === sessionIdx ? "#8B5CF6" : "#1A1A1F",
+                background: i === sessionIdx ? "#3B82F6" : "#1A1A1F",
                 color: i === sessionIdx ? "#fff" : "rgba(255,255,255,0.4)",
               }}>{s.name}</button>
             ))}
@@ -331,10 +401,10 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
         <div style={{ ...CARD, padding: "14px 16px", marginBottom: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{session?.name}</span>
-            <span style={{ fontSize: 12, color: "#8B5CF6", fontWeight: 700 }}>{totalPct}%</span>
+            <span style={{ fontSize: 12, color: "#3B82F6", fontWeight: 700 }}>{totalPct}%</span>
           </div>
           <div style={{ height: 6, borderRadius: 99, background: "rgba(255,255,255,0.07)" }}>
-            <div style={{ height: "100%", borderRadius: 99, width: `${totalPct}%`, background: "linear-gradient(to left,#9B5CF6,#6D28D9)", transition: "width 0.4s ease" }}/>
+            <div style={{ height: "100%", borderRadius: 99, width: `${totalPct}%`, background: "linear-gradient(to left,#60A5FA,#1D4ED8)", transition: "width 0.4s ease" }}/>
           </div>
           <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 6 }}>{doneCount} / {exercises.length} תרגילים</div>
         </div>
@@ -355,33 +425,55 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
             const isSkip = status === "skip";
             const sets = setLogs[ex.id] ?? [];
             const doneSets = sets.filter((s) => s.done).length;
+            const displayName = swappedNames[ex.id] ?? ex.exercise?.name ?? `תרגיל ${idx + 1}`;
 
             return (
               <div key={ex.id} style={{
-                borderRadius: 20, overflow: "hidden",
-                border: isDone ? "1px solid rgba(16,185,129,0.3)" : isActive ? "1px solid rgba(139,92,246,0.4)" : "1px solid rgba(255,255,255,0.05)",
-                background: "#1A1A1F",
+                borderRadius: 26, overflow: "hidden",
+                border: isDone ? "1px solid rgba(16,185,129,0.3)" : isActive ? "1px solid rgba(59,130,246,0.4)" : "1px solid rgba(255,255,255,0.05)",
+                background: "#161B22",
+                boxShadow: "0 8px 24px rgba(0,0,0,0.35)",
               }}>
-                {/* Gradient header */}
-                <div style={{ height: 70, background: EXERCISE_GRADIENTS[idx % EXERCISE_GRADIENTS.length], position: "relative" }}>
-                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right,rgba(0,0,0,0.7),rgba(0,0,0,0.1))" }}/>
+                {/* Photo header */}
+                <div style={{
+                  height: 78, position: "relative",
+                  background: `${EXERCISE_GRADIENTS[idx % EXERCISE_GRADIENTS.length]}, url(${getMusclePhoto(ex.exercise?.muscleGroup, idx)}) center/cover no-repeat`,
+                }}>
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right,rgba(10,14,20,0.85),rgba(10,14,20,0.2))" }}/>
                   <div style={{ position: "relative", zIndex: 1, padding: "12px 14px", height: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>{ex.exercise?.name ?? `תרגיל ${idx + 1}`}</div>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                        <div style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>{displayName}</div>
+                        {swappedNames[ex.id] && (
+                          <span style={{ fontSize: 9, fontWeight: 700, color: "#3B82F6", background: "rgba(59,130,246,0.2)", padding: "2px 6px", borderRadius: 99 }}>הוחלף</span>
+                        )}
+                      </div>
                       <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>
                         {ex.sets ?? 3} סטים × {ex.reps ?? 12} חזרות
                         {isActive && sets.length > 0 && ` · ${doneSets}/${sets.length} הושלמו`}
                       </div>
                     </div>
+                    {/* Swap button */}
+                    {!isDone && !isSkip && (
+                      <button onClick={() => setSwapFor({ exId: ex.id, name: displayName, muscleGroup: ex.exercise?.muscleGroup ?? "" })} style={{
+                        width: 32, height: 32, borderRadius: 10, border: "1px solid rgba(255,255,255,0.15)",
+                        background: "rgba(255,255,255,0.08)", cursor: "pointer", flexShrink: 0, marginLeft: 6,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                      }} title="החלף תרגיל">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.2" strokeLinecap="round">
+                          <path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/>
+                        </svg>
+                      </button>
+                    )}
                     {/* Demo animation button */}
                     <ExerciseAnimationButton
-                      exerciseName={ex.exercise?.name ?? ""}
+                      exerciseName={displayName}
                       muscleGroup={ex.exercise?.muscleGroup ?? ""}
                       videoId={ex.exercise?.videoUrl ?? null}
                     />
                     <div style={{ marginRight: 8,
                       width: 32, height: 32, borderRadius: "50%",
-                      background: isDone ? "#10B981" : isSkip ? "rgba(255,255,255,0.1)" : isActive ? "#8B5CF6" : "rgba(255,255,255,0.12)",
+                      background: isDone ? "#10B981" : isSkip ? "rgba(255,255,255,0.1)" : isActive ? "#3B82F6" : "rgba(255,255,255,0.12)",
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}>
                       {isDone && <svg width="14" height="14" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>}
@@ -413,8 +505,8 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
                     {/* Add set */}
                     <button onClick={() => addSet(ex.id, ex)} style={{
                       width: "100%", padding: "8px 0", borderRadius: 10,
-                      border: "1px dashed rgba(139,92,246,0.3)", background: "transparent",
-                      color: "#8B5CF6", fontSize: 12, fontWeight: 700, cursor: "pointer", marginBottom: 10,
+                      border: "1px dashed rgba(59,130,246,0.3)", background: "transparent",
+                      color: "#3B82F6", fontSize: 12, fontWeight: 700, cursor: "pointer", marginBottom: 10,
                     }}>+ הוסף סט</button>
 
                     <div style={{ display: "flex", gap: 8 }}>
@@ -434,7 +526,7 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
                 {status === "pending" && (
                   <button onClick={() => initSets(ex)} style={{
                     width: "100%", padding: "12px 16px", border: "none", cursor: "pointer",
-                    background: "transparent", textAlign: "right", fontSize: 12, color: "#8B5CF6", fontWeight: 700,
+                    background: "transparent", textAlign: "right", fontSize: 12, color: "#3B82F6", fontWeight: 700,
                   }}>התחל תרגיל →</button>
                 )}
 
@@ -451,10 +543,22 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
           })}
         </div>
 
+      {swapFor && (
+        <SwapModal
+          exerciseName={swapFor.name}
+          muscleGroup={swapFor.muscleGroup}
+          onSwap={(newName) => {
+            setSwappedNames(prev => ({ ...prev, [swapFor.exId]: newName }));
+            setSwapFor(null);
+          }}
+          onClose={() => setSwapFor(null)}
+        />
+      )}
+
         {doneCount > 0 && (
           <button onClick={() => {
             try {
-              const key = "demo_workout_log";
+              const key = `demo_workout_log_${userId}`;
               const existing = JSON.parse(localStorage.getItem(key) ?? "[]");
               const entry = {
                 id: Date.now().toString(),
@@ -471,7 +575,7 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
             setWorkoutDone(true);
           }} style={{
             width: "100%", marginTop: 20, padding: "16px 0", borderRadius: 18, border: "none", cursor: "pointer",
-            background: "linear-gradient(135deg,#5B21B6,#7C3AED)", color: "#fff", fontSize: 15, fontWeight: 800,
+            background: "linear-gradient(135deg,#1E3A8A,#2563EB)", color: "#fff", fontSize: 15, fontWeight: 800,
           }}>
             🏆 סיים אימון ({doneCount}/{exercises.length})
           </button>

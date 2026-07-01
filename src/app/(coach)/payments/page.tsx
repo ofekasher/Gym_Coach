@@ -176,7 +176,7 @@ export default function PaymentsPage() {
                         {sub.payments?.map((p: any) => (
                           <div key={p.id} style={{ background: "#242428", borderRadius: 10, padding: "8px 12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                             <span style={{ color: "#fff", fontSize: 13, fontWeight: 600 }}>₪{p.amount}</span>
-                            <span style={{ color: "#52525B", fontSize: 11 }}>{format(new Date(p.paidAt), "d/M/yyyy", { locale: he })} · {p.method}</span>
+                            <span style={{ color: "#52525B", fontSize: 11 }}>{format(new Date(p.paidAt ?? p.date), "d/M/yyyy", { locale: he })} · {p.method}</span>
                           </div>
                         ))}
                       </div>

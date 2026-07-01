@@ -63,7 +63,7 @@ export function OnboardingClient() {
     <div style={{ minHeight: "100vh", background: "#0E0E10", display: "flex", flexDirection: "column" }} dir="rtl">
       {/* Progress bar */}
       <div style={{ height: 3, background: "rgba(255,255,255,0.06)" }}>
-        <div style={{ height: "100%", width: `${progress}%`, background: "linear-gradient(90deg,#7C3AED,#A78BFA)", transition: "width 0.4s ease", borderRadius: 2 }} />
+        <div style={{ height: "100%", width: `${progress}%`, background: "linear-gradient(90deg,#2563EB,#93C5FD)", transition: "width 0.4s ease", borderRadius: 2 }} />
       </div>
 
       {/* Step counter */}
@@ -117,7 +117,7 @@ export function OnboardingClient() {
                   }));
                 }} style={{
                   background: selected ? "rgba(124,58,237,0.15)" : "#1A1A1F",
-                  border: `1px solid ${selected ? "#7C3AED" : "rgba(255,255,255,0.07)"}`,
+                  border: `1px solid ${selected ? "#2563EB" : "rgba(255,255,255,0.07)"}`,
                   borderRadius: 16,
                   padding: "14px 16px",
                   cursor: "pointer",
@@ -132,7 +132,7 @@ export function OnboardingClient() {
                     <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{g.label}</div>
                     <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{g.desc}</div>
                   </div>
-                  {selected && <Check style={{ width: 18, height: 18, color: "#A78BFA", flexShrink: 0 }} />}
+                  {selected && <Check style={{ width: 18, height: 18, color: "#93C5FD", flexShrink: 0 }} />}
                 </button>
               );
             })}
@@ -147,7 +147,7 @@ export function OnboardingClient() {
               return (
                 <button key={e.id} onClick={() => setForm(f => ({ ...f, experience: e.id }))} style={{
                   background: selected ? "rgba(124,58,237,0.15)" : "#1A1A1F",
-                  border: `1px solid ${selected ? "#7C3AED" : "rgba(255,255,255,0.07)"}`,
+                  border: `1px solid ${selected ? "#2563EB" : "rgba(255,255,255,0.07)"}`,
                   borderRadius: 16,
                   padding: "18px 20px",
                   cursor: "pointer",
@@ -162,7 +162,7 @@ export function OnboardingClient() {
                     <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>{e.label}</div>
                     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginTop: 3 }}>{e.desc}</div>
                   </div>
-                  {selected && <Check style={{ width: 20, height: 20, color: "#A78BFA", marginRight: "auto" }} />}
+                  {selected && <Check style={{ width: 20, height: 20, color: "#93C5FD", marginRight: "auto" }} />}
                 </button>
               );
             })}
@@ -180,7 +180,7 @@ export function OnboardingClient() {
                   <button key={g.id} onClick={() => setForm(f => ({ ...f, gender: g.id as any }))} style={{
                     flex: 1, padding: "12px", borderRadius: 12, cursor: "pointer",
                     background: form.gender === g.id ? "rgba(124,58,237,0.15)" : "#1A1A1F",
-                    border: `1px solid ${form.gender === g.id ? "#7C3AED" : "rgba(255,255,255,0.07)"}`,
+                    border: `1px solid ${form.gender === g.id ? "#2563EB" : "rgba(255,255,255,0.07)"}`,
                     color: form.gender === g.id ? "#fff" : "rgba(255,255,255,0.5)",
                     fontWeight: form.gender === g.id ? 700 : 500,
                     fontSize: 14,
@@ -230,8 +230,8 @@ export function OnboardingClient() {
               {[2, 3, 4, 5, 6].map(d => (
                 <button key={d} onClick={() => setForm(f => ({ ...f, daysPerWeek: d }))} style={{
                   width: 64, height: 64, borderRadius: 18, cursor: "pointer",
-                  background: form.daysPerWeek === d ? "linear-gradient(135deg,#7C3AED,#A78BFA)" : "#1A1A1F",
-                  border: `1px solid ${form.daysPerWeek === d ? "#7C3AED" : "rgba(255,255,255,0.08)"}`,
+                  background: form.daysPerWeek === d ? "linear-gradient(135deg,#2563EB,#93C5FD)" : "#1A1A1F",
+                  border: `1px solid ${form.daysPerWeek === d ? "#2563EB" : "rgba(255,255,255,0.08)"}`,
                   color: "#fff", fontSize: 22, fontWeight: 800,
                   boxShadow: form.daysPerWeek === d ? "0 4px 20px rgba(124,58,237,0.4)" : "none",
                   transition: "all 0.15s",
@@ -277,7 +277,7 @@ export function OnboardingClient() {
             <button onClick={next} style={{
               width: "100%",
               height: 54,
-              background: "linear-gradient(135deg,#7C3AED,#5B21B6)",
+              background: "linear-gradient(135deg,#2563EB,#1E3A8A)",
               border: "none",
               borderRadius: 16,
               color: "#fff",
@@ -297,7 +297,7 @@ export function OnboardingClient() {
             <button onClick={finish} disabled={saving} style={{
               width: "100%",
               height: 54,
-              background: saving ? "rgba(124,58,237,0.4)" : "linear-gradient(135deg,#7C3AED,#5B21B6)",
+              background: saving ? "rgba(124,58,237,0.4)" : "linear-gradient(135deg,#2563EB,#1E3A8A)",
               border: "none",
               borderRadius: 16,
               color: "#fff",

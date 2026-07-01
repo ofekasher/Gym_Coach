@@ -73,7 +73,7 @@ const DEMO_EXERCISE_HISTORY = [
 
 const MUSCLE_COLORS: Record<string, string> = {
   חזה: "#3B82F6",
-  גב: "#8B5CF6",
+  גב: "#3B82F6",
   רגליים: "#10B981",
   כתפיים: "#F59E0B",
   זרועות: "#EC4899",
@@ -89,13 +89,13 @@ function MiniBarChart({ data }: { data: { label: string; value: number }[] }) {
         const isMax = d.value === max;
         return (
           <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-            <div style={{ fontSize: 9, color: isMax ? "#A78BFA" : "rgba(255,255,255,0.3)", fontWeight: isMax ? 700 : 400 }}>
+            <div style={{ fontSize: 9, color: isMax ? "#93C5FD" : "rgba(255,255,255,0.3)", fontWeight: isMax ? 700 : 400 }}>
               {d.value > 0 ? d.value : ""}
             </div>
             <div style={{
               width: "100%", borderRadius: "4px 4px 2px 2px",
               height: `${Math.max(pct * 56, d.value > 0 ? 8 : 3)}px`,
-              background: isMax ? "linear-gradient(to top,#6D28D9,#9B5CF6)" : d.value > 0 ? "rgba(139,92,246,0.35)" : "rgba(255,255,255,0.05)",
+              background: isMax ? "linear-gradient(to top,#1D4ED8,#60A5FA)" : d.value > 0 ? "rgba(59,130,246,0.35)" : "rgba(255,255,255,0.05)",
               transition: "height 0.4s ease",
             }} />
             <div style={{ fontSize: 9, color: "rgba(255,255,255,0.35)" }}>{d.label}</div>
@@ -126,8 +126,8 @@ function WeightLineChart({ logs }: { logs: { date: string; weight: number }[] })
       <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{ overflow: "visible" }}>
         <defs>
           <linearGradient id="lineGrad" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#6D28D9" />
-            <stop offset="100%" stopColor="#8B5CF6" />
+            <stop offset="0%" stopColor="#1D4ED8" />
+            <stop offset="100%" stopColor="#3B82F6" />
           </linearGradient>
         </defs>
         <polyline
@@ -143,7 +143,7 @@ function WeightLineChart({ logs }: { logs: { date: string; weight: number }[] })
           const isPR = l.weight === maxW;
           return (
             <circle key={i} cx={x} cy={y} r={isPR ? 4 : 2.5}
-              fill={isPR ? "#A78BFA" : "#6D28D9"}
+              fill={isPR ? "#93C5FD" : "#1D4ED8"}
               stroke={isPR ? "#fff" : "none"}
               strokeWidth={isPR ? 1.5 : 0}
             />
@@ -231,7 +231,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
               padding: "10px 8px",
               borderRadius: 10,
               border: "none",
-              background: tab === key ? "#7C3AED" : "transparent",
+              background: tab === key ? "#2563EB" : "transparent",
               color: tab === key ? "#fff" : "rgba(255,255,255,0.4)",
               fontWeight: tab === key ? 700 : 500,
               fontSize: 13,
@@ -250,7 +250,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
           <>
             {/* Weight hero */}
             <div style={{
-              background: "linear-gradient(135deg,#5B21B6 0%,#7C3AED 50%,#9B5CF6 100%)",
+              background: "linear-gradient(135deg,#1E3A8A 0%,#2563EB 50%,#60A5FA 100%)",
               borderRadius: 24, padding: "20px 20px", marginBottom: 16, position: "relative", overflow: "hidden",
             }}>
               <div style={{ position: "absolute", top: -20, left: -20, width: 100, height: 100, borderRadius: "50%", background: "rgba(255,255,255,0.05)" }} />
@@ -284,7 +284,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
               {[
                 { label: "ירידה במשקל", value: weightDiff != null ? `${Math.abs(weightDiff).toFixed(1)} ק״ג` : "--", color: "#34D399", icon: "📉" },
-                { label: "אימונים סה״כ", value: String(totalWorkouts), color: "#8B5CF6", icon: "⚡" },
+                { label: "אימונים סה״כ", value: String(totalWorkouts), color: "#3B82F6", icon: "⚡" },
                 { label: "ממוצע קלוריות", value: "1,850", color: "#F59E0B", icon: "🔥" },
                 { label: "עקביות", value: `${consistencyPct}%`, color: "#60A5FA", icon: "🎯" },
               ].map((s) => (
@@ -316,7 +316,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
                 return (
                   <div key={c.id ?? i} style={{ ...CARD, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                      <div style={{ width: 38, height: 38, borderRadius: 12, background: "rgba(139,92,246,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 800, color: "#8B5CF6" }}>⚖️</div>
+                      <div style={{ width: 38, height: 38, borderRadius: 12, background: "rgba(59,130,246,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 800, color: "#3B82F6" }}>⚖️</div>
                       <div>
                         <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{c.weight} ק״ג</div>
                         <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>{c.date ? format(new Date(c.date), "dd/MM/yyyy") : ""}</div>
@@ -346,7 +346,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
               }}
               style={{
                 width: "100%", height: 52, marginBottom: 20, borderRadius: 16,
-                background: "linear-gradient(135deg,#7C3AED,#5B21B6)",
+                background: "linear-gradient(135deg,#2563EB,#1E3A8A)",
                 border: "none", color: "#fff", fontWeight: 700, fontSize: 14,
                 cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
                 boxShadow: "0 4px 20px rgba(124,58,237,0.35)",
@@ -364,7 +364,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
 
             {/* Info banner */}
             <div style={{ ...CARD, padding: "12px 14px", marginBottom: 20, display: "flex", gap: 10, alignItems: "flex-start" }}>
-              <Lock style={{ width: 14, height: 14, color: "#8B5CF6", flexShrink: 0, marginTop: 2 }} />
+              <Lock style={{ width: 14, height: 14, color: "#3B82F6", flexShrink: 0, marginTop: 2 }} />
               <p style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", margin: 0, lineHeight: 1.5 }}>
                 תמונות נשמרות בצורה מוצפנת ופרטית. רק המאמן שלך יכול לראות אותן.
               </p>
@@ -372,7 +372,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
 
             {/* Photo timeline */}
             <div style={{ fontSize: 14, fontWeight: 700, color: "rgba(255,255,255,0.6)", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
-              <Camera style={{ width: 14, height: 14, color: "#8B5CF6" }} />
+              <Camera style={{ width: 14, height: 14, color: "#3B82F6" }} />
               היסטוריית תמונות ({DEMO_PHOTOS.length} חודשים)
             </div>
 
@@ -385,7 +385,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
                       <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>{p.date}</div>
                     </div>
                     {i === DEMO_PHOTOS.length - 1 && (
-                      <span style={{ fontSize: 10, background: "rgba(124,58,237,0.2)", color: "#A78BFA", borderRadius: 20, padding: "3px 9px", fontWeight: 700 }}>עכשיו</span>
+                      <span style={{ fontSize: 10, background: "rgba(124,58,237,0.2)", color: "#93C5FD", borderRadius: 20, padding: "3px 9px", fontWeight: 700 }}>עכשיו</span>
                     )}
                     {i === 0 && (
                       <span style={{ fontSize: 10, background: "rgba(16,185,129,0.15)", color: "#34D399", borderRadius: 20, padding: "3px 9px", fontWeight: 700 }}>לפני</span>
@@ -437,12 +437,12 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
                   <div style={{ borderRadius: 12, background: "linear-gradient(135deg,#2e0a1a,#6e1a3d)", aspectRatio: "3/4", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 6 }}>
                     <Camera style={{ width: 28, height: 28, color: "rgba(248,113,113,0.4)" }} />
                   </div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA" }}>אחרי</div>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: "#93C5FD" }}>אחרי</div>
                   <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>אפריל 2024 • 79 ק״ג</div>
                 </div>
               </div>
               <div style={{ background: "rgba(124,58,237,0.1)", borderRadius: 10, padding: "10px 12px", textAlign: "center" }}>
-                <span style={{ fontSize: 13, fontWeight: 800, color: "#A78BFA" }}>▼ 3 ק״ג</span>
+                <span style={{ fontSize: 13, fontWeight: 800, color: "#93C5FD" }}>▼ 3 ק״ג</span>
                 <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginRight: 8 }}>ב-3 חודשים</span>
               </div>
             </div>
@@ -453,9 +453,9 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
         {tab === "exercises" && (
           <>
             {/* PR Summary */}
-            <div style={{ background: "linear-gradient(135deg,#1E1B4B,#2D1B69)", borderRadius: 20, padding: "18px 20px", marginBottom: 20, border: "1px solid rgba(139,92,246,0.2)" }}>
+            <div style={{ background: "linear-gradient(135deg,#1E1B4B,#2D1B69)", borderRadius: 20, padding: "18px 20px", marginBottom: 20, border: "1px solid rgba(59,130,246,0.2)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-                <Trophy style={{ width: 18, height: 18, color: "#A78BFA" }} />
+                <Trophy style={{ width: 18, height: 18, color: "#93C5FD" }} />
                 <span style={{ color: "#fff", fontWeight: 800, fontSize: 15 }}>שיאים אישיים</span>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
@@ -463,7 +463,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
                   const pr = Math.max(...ex.logs.map(l => l.weight));
                   return (
                     <div key={ex.name} style={{ background: "rgba(255,255,255,0.05)", borderRadius: 12, padding: "10px 10px", textAlign: "center" }}>
-                      <div style={{ fontSize: 18, fontWeight: 900, color: "#A78BFA" }}>
+                      <div style={{ fontSize: 18, fontWeight: 900, color: "#93C5FD" }}>
                         {pr > 0 ? `${pr}` : ex.logs[ex.logs.length - 1].reps}
                         <span style={{ fontSize: 9, fontWeight: 400, color: "rgba(255,255,255,0.4)", marginRight: 2 }}>{pr > 0 ? "ק״ג" : "חז'"}</span>
                       </div>
@@ -482,7 +482,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
                 const latest = ex.logs[ex.logs.length - 1];
                 const prev = ex.logs[ex.logs.length - 2];
                 const diff = latest && prev ? latest.weight - prev.weight : 0;
-                const color = MUSCLE_COLORS[ex.muscleGroup] ?? "#8B5CF6";
+                const color = MUSCLE_COLORS[ex.muscleGroup] ?? "#3B82F6";
 
                 return (
                   <div key={ex.name} style={{ ...CARD, padding: "16px 16px", overflow: "hidden" }}>
@@ -491,7 +491,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                           <span style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>{ex.name}</span>
                           {latest.weight === pr && pr > 0 && (
-                            <span style={{ fontSize: 9, background: "rgba(167,139,250,0.2)", color: "#A78BFA", borderRadius: 6, padding: "2px 7px", fontWeight: 700 }}>🏆 שיא</span>
+                            <span style={{ fontSize: 9, background: "rgba(167,139,250,0.2)", color: "#93C5FD", borderRadius: 6, padding: "2px 7px", fontWeight: 700 }}>🏆 שיא</span>
                           )}
                         </div>
                         <span style={{ fontSize: 10, color, background: `${color}18`, borderRadius: 6, padding: "2px 7px", fontWeight: 600, display: "inline-block", marginTop: 3 }}>{ex.muscleGroup}</span>
@@ -515,7 +515,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
                     <div style={{ marginTop: 10, display: "flex", gap: 6, overflowX: "auto" }}>
                       {ex.logs.slice(-4).map((l, i) => (
                         <div key={i} style={{ flex: 1, minWidth: 56, background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "6px 6px", textAlign: "center" }}>
-                          <div style={{ fontSize: 12, fontWeight: 800, color: (l.weight || l.reps) === pr ? "#A78BFA" : "#fff" }}>
+                          <div style={{ fontSize: 12, fontWeight: 800, color: (l.weight || l.reps) === pr ? "#93C5FD" : "#fff" }}>
                             {l.weight > 0 ? l.weight : l.reps}
                             <span style={{ fontSize: 8, color: "rgba(255,255,255,0.3)", marginRight: 1 }}>{l.weight > 0 ? "ק" : "×"}</span>
                           </div>
@@ -530,8 +530,8 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
 
             {/* 1RM calculator hint */}
             <div style={{ ...CARD, padding: "14px 16px", marginTop: 16, display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(139,92,246,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <TrendingUp style={{ width: 18, height: 18, color: "#8B5CF6" }} />
+              <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(59,130,246,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <TrendingUp style={{ width: 18, height: 18, color: "#3B82F6" }} />
               </div>
               <div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>חישוב 1RM</div>
@@ -542,7 +542,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
             {/* Weekly Volume */}
             <div style={{ marginTop: 24 }}>
               <div style={{ fontSize: 14, fontWeight: 700, color: "rgba(255,255,255,0.6)", marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
-                <Dumbbell style={{ width: 14, height: 14, color: "#8B5CF6" }} />
+                <Dumbbell style={{ width: 14, height: 14, color: "#3B82F6" }} />
                 נפח שבועי (סטים לפי שריר)
               </div>
               <div style={{ ...CARD, padding: "16px" }}>
@@ -555,7 +555,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
                   { muscle: "בטן", sets: 8, target: 12 },
                 ].map(({ muscle, sets, target }) => {
                   const pct = Math.min(sets / target, 1);
-                  const color = MUSCLE_COLORS[muscle] ?? "#8B5CF6";
+                  const color = MUSCLE_COLORS[muscle] ?? "#3B82F6";
                   return (
                     <div key={muscle} style={{ marginBottom: 12 }}>
                       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
@@ -572,7 +572,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
                 })}
                 <div style={{ marginTop: 8, padding: "8px 0 0", borderTop: "1px solid rgba(255,255,255,0.05)", display: "flex", justifyContent: "space-between" }}>
                   <span style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>סה״כ נפח שבועי</span>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: "#A78BFA" }}>84 סטים</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: "#93C5FD" }}>84 סטים</span>
                 </div>
               </div>
             </div>

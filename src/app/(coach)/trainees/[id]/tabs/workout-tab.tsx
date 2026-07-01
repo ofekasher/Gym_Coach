@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Plus, Dumbbell, Edit2, Save, X, Loader2, Trash2, ChevronDown, ChevronUp, FileDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -127,6 +127,10 @@ function ExerciseRow({ se, traineeId, onUpdate, onDelete }: {
   );
 }
 
+function esc(s: string | undefined | null): string {
+  return String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
 function exportWorkoutPDF(plan: any, traineeName: string) {
   const html = `<!DOCTYPE html><html dir="rtl"><head><meta charset="UTF-8">
 <style>
@@ -142,29 +146,32 @@ function exportWorkoutPDF(plan: any, traineeName: string) {
   .stars { color: #F5C518; }
   @media print { body { padding: 16px; } }
 </style></head><body>
-<h1>תוכנית אימון — ${traineeName}</h1>
-<div class="sub">${plan.name} · ${new Date().toLocaleDateString("he-IL")}</div>
+<h1>תוכנית אימון — ${esc(traineeName)}</h1>
+<div class="sub">${esc(plan.name)} · ${new Date().toLocaleDateString("he-IL")}</div>
 ${(plan.sessions ?? []).map((s: any) => `
 <div class="session">
-  <div class="session-title">${s.name} <span style="color:#888;font-size:12px;font-weight:400">${s.dayLabel ?? ""}</span></div>
+  <div class="session-title">${esc(s.name)} <span style="color:#888;font-size:12px;font-weight:400">${esc(s.dayLabel)}</span></div>
   <table>
     <tr><th>תרגיל</th><th>סטים</th><th>חזרות</th><th>משקל</th><th>מנוחה</th></tr>
     ${(s.exercises ?? []).map((e: any) => `
     <tr>
       <td>
-        ${(e.priority ?? 0) > 0 ? `<span class="stars">${"★".repeat(e.priority)}</span> ` : ""}
-        ${e.exercise?.name ?? e.exerciseName ?? ""}
-        ${e.coachNote ? `<div class="coach-note">💬 ${e.coachNote}</div>` : ""}
+        ${(e.priority ?? 0) > 0 ? `<span class="stars">${"★".repeat(Math.min(e.priority, 5))}</span> ` : ""}
+        ${esc(e.exercise?.name ?? e.exerciseName)}
+        ${e.coachNote ? `<div class="coach-note">&#x1F4AC; ${esc(e.coachNote)}</div>` : ""}
       </td>
-      <td>${e.sets ?? ""}</td><td>${e.reps ?? ""}</td>
-      <td>${e.weight ? e.weight + " ק״ג" : "—"}</td>
-      <td>${(e.restTime ?? e.rest) ? (e.restTime ?? e.rest) + " שנ׳" : "—"}</td>
+      <td>${esc(String(e.sets ?? ""))}</td><td>${esc(String(e.reps ?? ""))}</td>
+      <td>${e.weight ? esc(String(e.weight)) + " ק״ג" : "—"}</td>
+      <td>${(e.restTime ?? e.rest) ? esc(String(e.restTime ?? e.rest)) + " שנ׳" : "—"}</td>
     </tr>`).join("")}
   </table>
 </div>`).join("")}
 </body></html>`;
   const w = window.open("", "_blank");
-  if (!w) return;
+  if (!w) {
+    alert("הדפדפן חסם את חלון ה-PDF. אנא אפשר חלונות קופצים ונסה שוב.");
+    return;
+  }
   w.document.write(html);
   w.document.close();
   w.focus();
@@ -182,8 +189,17 @@ export function WorkoutTab({ trainee }: { trainee: any }) {
     return trainee.workoutPlans?.[0];
   });
   const [openSession, setOpenSession] = useState<string | null>(null);
+  const [workoutLogs, setWorkoutLogs] = useState<any[]>([]);
 
   const isDemo = trainee.id.startsWith("demo-");
+
+  useEffect(() => {
+    if (!isDemo) return;
+    try {
+      const stored = localStorage.getItem(`demo_workout_log_${trainee.id}`);
+      if (stored) setWorkoutLogs(JSON.parse(stored));
+    } catch {}
+  }, [isDemo, trainee.id]);
 
   const saveToLocalStorage = (updatedPlan: any) => {
     try { localStorage.setItem(`demo_plan_${trainee.id}`, JSON.stringify(updatedPlan)); } catch {}
@@ -298,6 +314,24 @@ export function WorkoutTab({ trainee }: { trainee: any }) {
           </div>
         );
       })}
+
+      {/* Demo workout log */}
+      {isDemo && workoutLogs.length > 0 && (
+        <div style={{ background: "#161618", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 18, padding: "16px 18px" }}>
+          <p style={{ color: "#71717A", fontSize: 11, fontWeight: 700, marginBottom: 10 }}>אימונים שהושלמו לאחרונה</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {workoutLogs.slice(0, 5).map((log: any) => (
+              <div key={log.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "#1C1C1E", borderRadius: 10 }}>
+                <div>
+                  <span style={{ color: "#fff", fontSize: 13, fontWeight: 600 }}>{log.sessionName || log.planName}</span>
+                  <span style={{ color: "#52525B", fontSize: 11, marginRight: 8 }}>{log.exercisesCompleted}/{log.totalExercises} תרגילים · {log.totalSets} סטים</span>
+                </div>
+                <span style={{ color: "#48484A", fontSize: 11 }}>{new Date(log.date).toLocaleDateString("he-IL")}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

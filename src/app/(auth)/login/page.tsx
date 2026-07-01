@@ -51,6 +51,12 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" style={{ background: "#111111" }}>
+      {/* Subtle gym photo background */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        backgroundImage: "url(/images/gym/treadmill-run.jpg)", backgroundSize: "cover", backgroundPosition: "center",
+        opacity: 0.1, filter: "blur(2px) grayscale(0.3)",
+      }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, #111111 0%, rgba(17,17,17,0.85) 40%, #111111 100%)" }} />
       {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full opacity-10"

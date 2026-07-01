@@ -24,18 +24,34 @@ export function ChatWindow({ myId, otherId, otherName }: { myId: string; otherId
       } catch {}
       return;
     }
-    const res = await fetch(`/api/chat?with=${otherId}`);
-    if (res.ok) {
-      const { messages: msgs } = await res.json();
-      setMessages(msgs);
-    }
+    try {
+      const res = await fetch(`/api/chat?with=${otherId}`);
+      if (res.ok) {
+        const { messages: msgs } = await res.json();
+        setMessages(msgs);
+      }
+    } catch {}
   }, [otherId, isDemo, chatKey]);
 
   useEffect(() => {
     load();
-    pollingRef.current = setInterval(load, 2000);
-    return () => clearInterval(pollingRef.current);
-  }, [load]);
+    // Demo: poll localStorage every 2s; real API: poll every 5s, pause when tab hidden
+    const interval = isDemo ? 2000 : 5000;
+    const startPolling = () => {
+      pollingRef.current = setInterval(() => {
+        if (document.visibilityState !== "hidden") load();
+      }, interval);
+    };
+    startPolling();
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") load();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      clearInterval(pollingRef.current);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [load, isDemo]);
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
 

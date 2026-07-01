@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
 import { Dumbbell, Apple, CheckCircle2, Camera, Trophy, MessageSquare, UserPlus } from "lucide-react";
+import { BackHeader } from "@/components/shared/back-header";
 
 const EVENT_CONFIG: Record<string, { icon: any; color: string; label: string }> = {
   WORKOUT_PLAN_CREATED: { icon: Dumbbell, color: "text-primary bg-primary/10", label: "תוכנית אימון חדשה" },
@@ -42,7 +43,7 @@ export default async function MyTimelinePage() {
 
   return (
     <div className="space-y-4 animate-fade-in" dir="rtl">
-      <h1 className="text-2xl font-bold">ציר הזמן שלי</h1>
+      <BackHeader title="ציר הזמן שלי" />
 
       {events.length === 0 ? (
         <div className="text-center py-16">
