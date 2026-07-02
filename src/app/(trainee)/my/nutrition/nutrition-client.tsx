@@ -207,19 +207,58 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
   const waterPct = Math.min((waterTotal / WATER_GOAL) * 100, 100);
   const cups = Math.floor(waterTotal / 250);
 
-  // Debounced USDA food search (TODO: replace DEMO_KEY with real API key)
+  // Debounced food search: Open Food Facts first (better Israeli packaged products),
+  // fall back to USDA FoodData Central (better generic/fresh foods) when OFF has no match.
+  // TODO: replace USDA DEMO_KEY with a real API key
   useEffect(() => {
     if (activeTab !== "search" || !searchQuery.trim()) {
       setSearchResults([]);
       return;
     }
     setSearching(true);
-    const timer = setTimeout(() => {
-      fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(searchQuery)}&api_key=DEMO_KEY&pageSize=5`)
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data) => setSearchResults(data?.foods ?? []))
-        .catch((err) => { console.error("Food search failed", err); setSearchResults([]); })
-        .finally(() => setSearching(false));
+    const timer = setTimeout(async () => {
+      try {
+        const offRes = await fetch(
+          `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(searchQuery)}&search_simple=1&action=process&json=1&page_size=5&lc=he`
+        );
+        const offData = offRes.ok ? await offRes.json() : null;
+        const offResults = (offData?.products ?? [])
+          .filter((p: any) => (p.product_name_he || p.product_name) && p.nutriments?.["energy-kcal_100g"] != null)
+          .map((p: any) => ({
+            source: "off" as const,
+            name: p.product_name_he || p.product_name,
+            calories: Math.round(p.nutriments["energy-kcal_100g"]),
+            protein: p.nutriments["proteins_100g"] != null ? Math.round(p.nutriments["proteins_100g"]) : undefined,
+            carbs: p.nutriments["carbohydrates_100g"] != null ? Math.round(p.nutriments["carbohydrates_100g"]) : undefined,
+            fat: p.nutriments["fat_100g"] != null ? Math.round(p.nutriments["fat_100g"]) : undefined,
+            image: p.image_small_url,
+          }));
+
+        if (offResults.length > 0) {
+          setSearchResults(offResults);
+          return;
+        }
+
+        const usdaRes = await fetch(
+          `https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(searchQuery)}&api_key=DEMO_KEY&pageSize=5`
+        );
+        const usdaData = usdaRes.ok ? await usdaRes.json() : null;
+        const findNutrient = (nutrients: any[], name: string) => nutrients?.find((n: any) => n.nutrientName?.includes(name))?.value;
+        const usdaResults = (usdaData?.foods ?? []).map((f: any) => ({
+          source: "usda" as const,
+          name: f.description ?? "",
+          calories: Math.round(findNutrient(f.foodNutrients, "Energy") ?? 0),
+          protein: findNutrient(f.foodNutrients, "Protein") != null ? Math.round(findNutrient(f.foodNutrients, "Protein")) : undefined,
+          carbs: findNutrient(f.foodNutrients, "Carbohydrate") != null ? Math.round(findNutrient(f.foodNutrients, "Carbohydrate")) : undefined,
+          fat: findNutrient(f.foodNutrients, "Total lipid") != null ? Math.round(findNutrient(f.foodNutrients, "Total lipid")) : undefined,
+        }));
+        setSearchResults(usdaResults);
+      } catch (err) {
+        console.error("Food search failed", err);
+        setSearchResults([]);
+      } finally {
+        setSearching(false);
+      }
     }, 500);
     return () => clearTimeout(timer);
   }, [searchQuery, activeTab]);
@@ -240,15 +279,13 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
   };
 
   const selectSearchResult = (result: any) => {
-    const nutrients = result.foodNutrients ?? [];
-    const find = (name: string) => nutrients.find((n: any) => n.nutrientName?.includes(name))?.value ?? "";
     setManualForm({
-      foodName: result.description ?? "",
+      foodName: result.name ?? "",
       grams: "100",
-      calories: String(find("Energy") || ""),
-      protein: String(find("Protein") || ""),
-      carbs: String(find("Carbohydrate") || ""),
-      fat: String(find("Total lipid") || ""),
+      calories: String(result.calories ?? ""),
+      protein: String(result.protein ?? ""),
+      carbs: String(result.carbs ?? ""),
+      fat: String(result.fat ?? ""),
     });
     setActiveTab("manual");
   };
@@ -533,22 +570,31 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                   />
                 </div>
                 {searching && <div style={{ color: "#9ca3af", fontSize: 13, textAlign: "center" }}>מחפש...</div>}
-                {!searching && searchResults.map((r, i) => {
-                  const cal = r.foodNutrients?.find((n: any) => n.nutrientName?.includes("Energy"))?.value;
-                  return (
-                    <div
-                      key={i}
-                      onClick={() => selectSearchResult(r)}
-                      style={{
-                        display: "flex", justifyContent: "space-between", padding: "10px 8px",
-                        borderBottom: "1px solid rgba(255,255,255,0.06)", cursor: "pointer",
-                      }}
-                    >
-                      <span style={{ color: "#fff", fontSize: 13 }}>{r.description}</span>
-                      <span style={{ color: GREEN, fontSize: 12 }}>{cal ? `${Math.round(cal)} קל׳ / 100 גרם` : ""}</span>
+                {!searching && searchQuery.trim() && searchResults.length === 0 && (
+                  <div style={{ color: "#9ca3af", fontSize: 13, textAlign: "center", padding: "12px 0" }}>לא נמצאו תוצאות</div>
+                )}
+                {!searching && searchResults.map((r, i) => (
+                  <div
+                    key={i}
+                    onClick={() => selectSearchResult(r)}
+                    style={{
+                      display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 8px", gap: 8,
+                      borderBottom: "1px solid rgba(255,255,255,0.06)", cursor: "pointer",
+                    }}
+                  >
+                    {r.image && (
+                      <img src={r.image} alt="" style={{ width: 32, height: 32, borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
+                    )}
+                    <span style={{ color: "#fff", fontSize: 13, flex: 1 }}>{r.name}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+                      <span style={{
+                        fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 99,
+                        background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.4)",
+                      }}>{r.source === "off" ? "OFF" : "USDA"}</span>
+                      <span style={{ color: GREEN, fontSize: 12 }}>{r.calories ? `${r.calories} קל׳ / 100 גרם` : ""}</span>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             )}
 
