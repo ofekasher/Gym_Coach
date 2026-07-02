@@ -24,7 +24,7 @@ const FACTORS = [
 ];
 
 export function ReadinessWidget() {
-  const [state, setState] = useState<"check" | "done">("check");
+  const [state, setState] = useState<"collapsed" | "check" | "done">("collapsed");
   const [ratings, setRatings] = useState({ sleep: 0, energy: 0, soreness: 0 });
   const [saved, setSaved] = useState<ReadinessData | null>(null);
 
@@ -71,7 +71,7 @@ export function ReadinessWidget() {
               </div>
             </div>
           </div>
-          <button onClick={() => { setState("check"); setRatings({ sleep: 0, energy: 0, soreness: 0 }); }} style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.3)", padding: 4 }}>
+          <button onClick={() => { setState("collapsed"); setRatings({ sleep: 0, energy: 0, soreness: 0 }); }} style={{ background: "none", border: "none", cursor: "pointer", color: "rgba(255,255,255,0.3)", padding: 4 }}>
             <X style={{ width: 14, height: 14 }} />
           </button>
         </div>
@@ -79,10 +79,28 @@ export function ReadinessWidget() {
     );
   }
 
+  if (state === "collapsed") {
+    return (
+      <button
+        onClick={() => setState("check")}
+        style={{
+          width: "100%", background: "#1A1A1F", border: "1px solid rgba(255,255,255,0.06)",
+          borderRadius: 18, padding: "14px 16px", marginBottom: 14, cursor: "pointer",
+          display: "flex", alignItems: "center", gap: 8, textAlign: "right",
+        }}
+      >
+        <Zap style={{ width: 16, height: 16, color: "#60A5FA" }} />
+        <span style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>בדיקת מוכנות יומית</span>
+        <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", marginRight: "auto" }}>30 שניות</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2.2" strokeLinecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+    );
+  }
+
   return (
     <div style={{ background: "#1A1A1F", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 18, padding: "16px 16px", marginBottom: 14 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-        <Zap style={{ width: 16, height: 16, color: "#A78BFA" }} />
+        <Zap style={{ width: 16, height: 16, color: "#60A5FA" }} />
         <span style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>בדיקת מוכנות יומית</span>
         <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", marginRight: "auto" }}>30 שניות</span>
       </div>
@@ -91,7 +109,7 @@ export function ReadinessWidget() {
         {FACTORS.map(({ key, label, icon: Icon, low, high }) => (
           <div key={key}>
             <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
-              <Icon style={{ width: 13, height: 13, color: "#A78BFA" }} />
+              <Icon style={{ width: 13, height: 13, color: "#60A5FA" }} />
               <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.8)" }}>{label}</span>
             </div>
             <div style={{ display: "flex", gap: 4 }}>
@@ -133,7 +151,7 @@ export function ReadinessWidget() {
         disabled={!score}
         style={{
           marginTop: 12, width: "100%", height: 44, borderRadius: 12, cursor: score ? "pointer" : "not-allowed",
-          background: score ? "linear-gradient(135deg,#7C3AED,#5B21B6)" : "rgba(255,255,255,0.05)",
+          background: score ? "linear-gradient(135deg,#2563EB,#1D4ED8)" : "rgba(255,255,255,0.05)",
           border: "none", color: score ? "#fff" : "rgba(255,255,255,0.3)",
           fontWeight: 700, fontSize: 14,
           display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
