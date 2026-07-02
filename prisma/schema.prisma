@@ -134,6 +134,8 @@ model User {
   receivedMessages Message[]       @relation("ReceivedMessages")
   subscription    TraineeSubscription?
   coachSettings   CoachSettings?
+  nutritionLogs   NutritionLog[]
+  waterLogs       WaterLog[]
 }
 
 model PushSubscription {
@@ -410,4 +412,32 @@ model CoachAlert {
 
   coach   User @relation("CoachAlerts", fields: [coachId], references: [id], onDelete: Cascade)
   trainee User @relation("TraineeAlerts", fields: [traineeId], references: [id], onDelete: Cascade)
+}
+
+model NutritionLog {
+  id           String   @id @default(cuid())
+  traineeId    String
+  date         DateTime @default(now())
+  mealName     String
+  foodName     String
+  plannedGrams Float?
+  actualGrams  Float
+  calories     Float
+  protein      Float?
+  carbs        Float?
+  fat          Float?
+  source       String   @default("plan") // "plan" | "manual" | "photo" | "search"
+  createdAt    DateTime @default(now())
+
+  trainee User @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+}
+
+model WaterLog {
+  id        String   @id @default(cuid())
+  traineeId String
+  date      DateTime @default(now())
+  amount    Int
+  createdAt DateTime @default(now())
+
+  trainee User @relation(fields: [traineeId], references: [id], onDelete: Cascade)
 }
