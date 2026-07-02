@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 const GREEN = "#a8ff3e";
 const GROCERY_PHOTO = "https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=800&q=70&auto=format&fit=crop";
@@ -51,6 +52,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
 
   const [extraItems, setExtraItems] = useState<Record<string, any[]>>({});
   const [showAddModal, setShowAddModal] = useState(false);
+  const [modalClosing, setModalClosing] = useState(false);
   const [activeMealForModal, setActiveMealForModal] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"manual" | "search" | "photo">("manual");
   const [manualForm, setManualForm] = useState({ foodName: "", grams: "", calories: "", protein: "", carbs: "", fat: "" });
@@ -264,13 +266,17 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
   }, [searchQuery, activeTab]);
 
   const resetModal = () => {
-    setShowAddModal(false);
-    setActiveTab("manual");
-    setManualForm({ foodName: "", grams: "", calories: "", protein: "", carbs: "", fat: "" });
-    setSearchQuery("");
-    setSearchResults([]);
-    setPhotoPreview(null);
-    setAnalyzing(false);
+    setModalClosing(true);
+    setTimeout(() => {
+      setShowAddModal(false);
+      setModalClosing(false);
+      setActiveTab("manual");
+      setManualForm({ foodName: "", grams: "", calories: "", protein: "", carbs: "", fat: "" });
+      setSearchQuery("");
+      setSearchResults([]);
+      setPhotoPreview(null);
+      setAnalyzing(false);
+    }, 300);
   };
 
   const openAddModal = (mealName: string) => {
@@ -522,17 +528,26 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
       </div>
 
       {showAddModal && (
-        <>
-          <div onClick={resetModal} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 50 }} />
-          <div style={{
-            position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)",
-            width: "100%", maxWidth: 480, background: "#1c1c2e", borderRadius: "24px 24px 0 0",
-            padding: 20, zIndex: 50, maxHeight: "85vh", overflowY: "auto",
-          }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <span style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>הוספת מזון — {activeMealForModal}</span>
-              <button onClick={resetModal} style={{ background: "transparent", border: "none", color: "#9ca3af", fontSize: 18, cursor: "pointer" }}>✕</button>
-            </div>
+          <div key="modal-root">
+            <motion.div
+              onClick={resetModal}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: modalClosing ? 0 : 1 }}
+              className="fixed inset-0 bg-black/80 z-[100]"
+            />
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: modalClosing ? "100%" : 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-sm bg-[#1c1c2e] rounded-t-3xl z-[101] max-h-[85vh] overflow-y-auto"
+              style={{ padding: 20 }}
+            >
+              <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-4" />
+
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                <span style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>הוספת מזון — {activeMealForModal}</span>
+                <button onClick={resetModal} style={{ background: "transparent", border: "none", color: "#9ca3af", fontSize: 18, cursor: "pointer" }}>✕</button>
+              </div>
 
             <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
               {[
@@ -660,9 +675,9 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                 </button>
               </div>
             )}
+            </motion.div>
           </div>
-        </>
-      )}
+        )}
     </div>
   );
 }
