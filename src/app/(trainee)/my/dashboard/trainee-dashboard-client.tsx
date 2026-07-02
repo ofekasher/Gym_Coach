@@ -275,30 +275,32 @@ export function TraineeDashboardClient({ user }: { user: any }) {
                   >
                     <Link href="/my/workout" style={{ textDecoration: "none" }}>
                       <div style={{
-                        position: "relative", height: 80, borderRadius: 16, overflow: "hidden", marginBottom: 12,
+                        position: "relative", height: 64, borderRadius: 16, overflow: "hidden", marginBottom: 12,
                         backgroundImage: `url(${getMuscleGymPhoto(session.exercises?.[0]?.exercise?.muscleGroup)})`,
                         backgroundSize: "cover", backgroundPosition: "center",
                       }}>
-                        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)" }} />
-                        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px" }}>
-                          <div style={{
-                            width: 12, height: 12, borderRadius: "50%", flexShrink: 0,
-                            background: done ? GREEN : "rgba(255,255,255,0.25)",
-                          }} />
-                          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", textAlign: "right" }}>
-                            {session.dayLabel && (
-                              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{session.dayLabel}</div>
-                            )}
-                            <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginTop: 2 }}>
-                              {session.name}{muscles ? ` — ${muscles}` : ""}
-                            </div>
+                        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)" }} />
+                        <div style={{
+                          position: "absolute", right: 30, top: "50%", transform: "translateY(-50%)",
+                          display: "flex", flexDirection: "column", alignItems: "flex-end", textAlign: "right",
+                        }}>
+                          {session.dayLabel && (
+                            <div style={{ fontSize: 12, color: "#d1d5db", marginBottom: 2 }}>{session.dayLabel}</div>
+                          )}
+                          <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", lineHeight: 1.25 }}>
+                            {session.name}{muscles ? ` — ${muscles}` : ""}
                           </div>
                         </div>
+                        <div style={{
+                          position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)",
+                          width: 10, height: 10, borderRadius: "50%",
+                          background: done ? GREEN : "#6b7280",
+                        }} />
                         {isNext && (
                           <div style={{
-                            position: "absolute", bottom: 8, left: 12,
+                            position: "absolute", top: 8, left: 12,
                             background: GREEN, color: "#0a0a0a", fontSize: 12, fontWeight: 700,
-                            padding: "4px 8px", borderRadius: 99,
+                            padding: "2px 8px", borderRadius: 99,
                           }}>האימון הבא</div>
                         )}
                       </div>
