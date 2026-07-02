@@ -275,7 +275,7 @@ export function TraineeDashboardClient({ user }: { user: any }) {
                   >
                     <Link href="/my/workout" style={{ textDecoration: "none" }}>
                       <div style={{
-                        position: "relative", height: 96, borderRadius: 16, overflow: "hidden", marginBottom: 12,
+                        position: "relative", height: 80, borderRadius: 16, overflow: "hidden", marginBottom: 12,
                         backgroundImage: `url(${getMuscleGymPhoto(session.exercises?.[0]?.exercise?.muscleGroup)})`,
                         backgroundSize: "cover", backgroundPosition: "center",
                       }}>
@@ -289,7 +289,7 @@ export function TraineeDashboardClient({ user }: { user: any }) {
                             {session.dayLabel && (
                               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{session.dayLabel}</div>
                             )}
-                            <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginTop: 2 }}>
+                            <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginTop: 2 }}>
                               {session.name}{muscles ? ` — ${muscles}` : ""}
                             </div>
                           </div>
@@ -297,8 +297,8 @@ export function TraineeDashboardClient({ user }: { user: any }) {
                         {isNext && (
                           <div style={{
                             position: "absolute", bottom: 8, left: 12,
-                            background: GREEN, color: "#0a0a0a", fontSize: 11, fontWeight: 800,
-                            padding: "3px 10px", borderRadius: 99,
+                            background: GREEN, color: "#0a0a0a", fontSize: 12, fontWeight: 700,
+                            padding: "4px 8px", borderRadius: 99,
                           }}>האימון הבא</div>
                         )}
                       </div>
