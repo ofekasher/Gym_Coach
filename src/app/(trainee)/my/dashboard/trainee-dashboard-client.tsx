@@ -3,12 +3,36 @@ import Link from "next/link";
 import { format, subDays, isToday } from "date-fns";
 import { he } from "date-fns/locale";
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { NotificationsBell } from "@/components/shared/notifications-panel";
 import { ReadinessWidget } from "@/components/shared/readiness-widget";
 import { getMuscleGymPhoto } from "@/lib/gym-photos";
 
 const BG = "transparent";
 const CARD = { background: "#161B22", borderRadius: 28, border: "1px solid rgba(255,255,255,0.06)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" };
+const GREEN = "#a8ff3e";
+
+function ProgressRing({ pct }: { pct: number }) {
+  const r = 30, circum = 2 * Math.PI * r;
+  return (
+    <div style={{ position: "relative", width: 72, height: 72, flexShrink: 0 }}>
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle cx="36" cy="36" r={r} fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth="7" />
+        <motion.circle
+          cx="36" cy="36" r={r} fill="none" stroke="#0a0a0a" strokeWidth="7"
+          strokeLinecap="round" strokeDasharray={circum}
+          initial={{ strokeDashoffset: circum }}
+          animate={{ strokeDashoffset: circum - (pct / 100) * circum }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          transform="rotate(-90 36 36)"
+        />
+      </svg>
+      <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 16, color: "#0a0a0a" }}>
+        {pct}%
+      </div>
+    </div>
+  );
+}
 
 
 export function TraineeDashboardClient({ user }: { user: any }) {
@@ -119,7 +143,25 @@ export function TraineeDashboardClient({ user }: { user: any }) {
           </div>
         </div>
 
-        {/* Hero Card - FitBuddy-style: subdued dark card, blue used only as accent */}
+        {/* Section 1 — FitBuddy-style green progress card */}
+        {plan && (
+          <div style={{
+            background: `linear-gradient(135deg, ${GREEN} 0%, #5ecc00 100%)`,
+            borderRadius: 20, padding: 16, marginBottom: 16,
+            display: "flex", alignItems: "center", gap: 14,
+            boxShadow: "0 12px 28px rgba(168,255,62,0.25)",
+          }}>
+            <ProgressRing pct={planProgressPct} />
+            <div style={{ flex: 1, textAlign: "right" }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: "#0a0a0a" }}>{plan.name}</div>
+              <div style={{ fontSize: 14, color: "rgba(10,10,10,0.7)", marginTop: 2 }}>
+                ביצעת {planSessionsDone} מתוך {planSessionsTotal || totalWorkouts}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Hero Card - subdued dark card, green used as accent */}
         <div style={{ ...CARD, padding: "20px 20px 16px", marginBottom: 16 }}>
           <div style={{ fontSize: 15, fontWeight: 700, color: "rgba(255,255,255,0.5)", marginBottom: 14 }}>
             היי שלי
@@ -134,7 +176,7 @@ export function TraineeDashboardClient({ user }: { user: any }) {
               { value: String(streak), label: "רצף ימים 🔥" },
             ].map((s) => (
               <div key={s.label} style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 20, fontWeight: 800, color: "#3B82F6" }}>{s.value}</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: GREEN }}>{s.value}</div>
                 <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginTop: 2, lineHeight: 1.3 }}>{s.label}</div>
               </div>
             ))}
@@ -146,10 +188,10 @@ export function TraineeDashboardClient({ user }: { user: any }) {
               <div key={i} style={{
                 flex: 1, height: 36, borderRadius: 10, display: "flex", flexDirection: "column",
                 alignItems: "center", justifyContent: "center", gap: 2,
-                background: d.today ? "rgba(59,130,246,0.25)" : d.done ? "rgba(59,130,246,0.1)" : "rgba(255,255,255,0.04)",
+                background: d.today ? "rgba(168,255,62,0.25)" : d.done ? "rgba(168,255,62,0.1)" : "rgba(255,255,255,0.04)",
               }}>
                 <span style={{ fontSize: 8, fontWeight: 600, color: d.today ? "#fff" : "rgba(255,255,255,0.4)" }}>{d.label}</span>
-                {d.done && <div style={{ width: 4, height: 4, borderRadius: "50%", background: d.today ? "#fff" : "#3B82F6" }} />}
+                {d.done && <div style={{ width: 4, height: 4, borderRadius: "50%", background: d.today ? "#fff" : GREEN }} />}
               </div>
             ))}
           </div>
@@ -213,71 +255,72 @@ export function TraineeDashboardClient({ user }: { user: any }) {
         {/* Readiness check-in */}
         <ReadinessWidget />
 
-        {/* Plan progress card — FitBuddy style: centered title, thin bar, %, subtitle */}
+        {/* Section 2 — Weekly workouts, FitBuddy style */}
         {plan && (
-          <div style={{ ...CARD, padding: "20px 20px", marginBottom: 20, textAlign: "center" }}>
-            <div style={{ fontSize: 20, fontWeight: 800, color: "#fff", marginBottom: 14 }}>{plan.name}</div>
-            <div style={{ height: 6, borderRadius: 99, background: "rgba(255,255,255,0.08)", marginBottom: 10 }}>
-              <div style={{ height: "100%", borderRadius: 99, width: `${planProgressPct}%`, background: "#3B82F6", transition: "width 0.5s ease" }} />
-            </div>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 600, marginBottom: 16 }}>{planProgressPct}%</div>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 18 }}>
-              בוצעו {planSessionsDone} אימונים מתוך {planSessionsTotal || totalWorkouts}
-            </div>
-
-            <div style={{ fontSize: 13, fontWeight: 700, color: "#fff", textAlign: "right", marginBottom: 12 }}>התוכנית השבועית שלך:</div>
-
-            {/* Weekly plan list — photo thumbnail left, day+muscles middle, status dot right */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <>
+            <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 12 }}>האימונים שלך השבוע:</div>
+            <div style={{ marginBottom: 20 }}>
               {sessions.length === 0 ? (
                 <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, padding: "16px 0" }}>המאמן שלך יוסיף תוכנית בקרוב</div>
-              ) : sessions.slice(0, 3).map((session: any, idx: number) => (
-                <Link key={session.id} href="/my/workout" style={{ textDecoration: "none" }}>
-                  <div style={{
-                    background: "#1E242D", borderRadius: 18, overflow: "hidden",
-                    display: "flex", alignItems: "center", gap: 12, padding: 8,
-                    border: "1px solid rgba(255,255,255,0.05)",
-                  }}>
-                    <div style={{
-                      width: 64, height: 64, borderRadius: 14, flexShrink: 0,
-                      backgroundImage: `url(${getMuscleGymPhoto(session.exercises?.[0]?.exercise?.muscleGroup)})`,
-                      backgroundSize: "cover", backgroundPosition: "center",
-                    }} />
-                    <div style={{ flex: 1, textAlign: "right" }}>
-                      {session.dayLabel && (
-                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>{session.dayLabel}</div>
-                      )}
-                      <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginTop: 2 }}>
-                        {session.name}
-                        {session.exercises?.[0]?.exercise?.muscleGroup && (
-                          <span style={{ fontWeight: 400, color: "rgba(255,255,255,0.5)" }}>
-                            {" "}— {Array.from(new Set(session.exercises.map((e: any) => e.exercise?.muscleGroup).filter(Boolean))).join(", ")}
-                          </span>
+              ) : sessions.slice(0, 3).map((session: any, idx: number) => {
+                const done = idx < planSessionsDone;
+                const isNext = idx === planSessionsDone;
+                const muscles = Array.from(new Set(session.exercises?.map((e: any) => e.exercise?.muscleGroup).filter(Boolean) ?? [])).join(", ");
+                return (
+                  <motion.div
+                    key={session.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                  >
+                    <Link href="/my/workout" style={{ textDecoration: "none" }}>
+                      <div style={{
+                        position: "relative", height: 96, borderRadius: 16, overflow: "hidden", marginBottom: 12,
+                        backgroundImage: `url(${getMuscleGymPhoto(session.exercises?.[0]?.exercise?.muscleGroup)})`,
+                        backgroundSize: "cover", backgroundPosition: "center",
+                      }}>
+                        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)" }} />
+                        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px" }}>
+                          <div style={{
+                            width: 12, height: 12, borderRadius: "50%", flexShrink: 0,
+                            background: done ? GREEN : "rgba(255,255,255,0.25)",
+                          }} />
+                          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", textAlign: "right" }}>
+                            {session.dayLabel && (
+                              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>{session.dayLabel}</div>
+                            )}
+                            <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginTop: 2 }}>
+                              {session.name}{muscles ? ` — ${muscles}` : ""}
+                            </div>
+                          </div>
+                        </div>
+                        {isNext && (
+                          <div style={{
+                            position: "absolute", bottom: 8, left: 12,
+                            background: GREEN, color: "#0a0a0a", fontSize: 11, fontWeight: 800,
+                            padding: "3px 10px", borderRadius: 99,
+                          }}>האימון הבא</div>
                         )}
                       </div>
-                    </div>
-                    <div style={{
-                      width: 12, height: 12, borderRadius: "50%", flexShrink: 0, marginLeft: 8,
-                      background: idx < planSessionsDone ? "#3B82F6" : "rgba(255,255,255,0.15)",
-                    }} />
-                  </div>
-                </Link>
-              ))}
+                    </Link>
+                  </motion.div>
+                );
+              })}
             </div>
-          </div>
+          </>
         )}
 
         {/* Quick links */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
           <span style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>Today task</span>
-          <Link href="/my/nutrition" style={{ fontSize: 12, color: "#3B82F6", fontWeight: 700, textDecoration: "none" }}>ראה הכל</Link>
+          <Link href="/my/nutrition" style={{ fontSize: 12, color: GREEN, fontWeight: 700, textDecoration: "none" }}>ראה הכל</Link>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {[
             { href: "/my/nutrition", icon: "🥗", label: "מעקב תזונה", sub: "עדכן ארוחות היום", color: "linear-gradient(135deg,#065F46,#10B981)" },
-            { href: "/my/checkin", icon: "📊", label: "צ׳ק-אין שבועי", sub: "שקל ועדכן מדידות", color: "linear-gradient(135deg,#1D4ED8,#3B82F6)" },
-            { href: "/my/ai", icon: "🤖", label: "מאמן AI", sub: "שאל שאלה על אימון", color: "linear-gradient(135deg,#2563EB,#60A5FA)" },
+            { href: "/my/checkin", icon: "📊", label: "צ׳ק-אין שבועי", sub: "שקל ועדכן מדידות", color: "linear-gradient(135deg,#5ecc00,#a8ff3e)" },
+            { href: "/my/ai", icon: "🤖", label: "מאמן AI", sub: "שאל שאלה על אימון", color: "linear-gradient(135deg,#5ecc00,#a8ff3e)" },
           ].map((item) => (
             <Link key={item.href} href={item.href} style={{ textDecoration: "none" }}>
               <div style={{ ...CARD, padding: "12px 14px", display: "flex", alignItems: "center", gap: 12 }}>
