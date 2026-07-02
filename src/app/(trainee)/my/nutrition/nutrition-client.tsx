@@ -49,6 +49,18 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
   const [waterTotal, setWaterTotal] = useState(0);
   const [waterLoading, setWaterLoading] = useState(false);
 
+  const [extraItems, setExtraItems] = useState<Record<string, any[]>>({});
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [activeMealForModal, setActiveMealForModal] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<"manual" | "search" | "photo">("manual");
+  const [manualForm, setManualForm] = useState({ foodName: "", grams: "", calories: "", protein: "", carbs: "", fat: "" });
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [savingManual, setSavingManual] = useState(false);
+
   useEffect(() => {
     try {
       const stored = localStorage.getItem("demo_nutrition_demo-trainee-1");
@@ -97,7 +109,8 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
   // Calories eaten so far: sum over checked items, scaled by actual vs. planned grams
   let eatenCalories = 0;
   for (const meal of meals) {
-    for (const food of meal.foodItems ?? []) {
+    const allFoods = [...(meal.foodItems ?? []), ...(extraItems[meal.name] ?? [])];
+    for (const food of allFoods) {
       const key = `${meal.name}::${food.name}`;
       if (!checkedItems[key]) continue;
       const grams = actualGrams[key] ?? food.quantity ?? 0;
@@ -194,6 +207,117 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
   const waterPct = Math.min((waterTotal / WATER_GOAL) * 100, 100);
   const cups = Math.floor(waterTotal / 250);
 
+  // Debounced USDA food search (TODO: replace DEMO_KEY with real API key)
+  useEffect(() => {
+    if (activeTab !== "search" || !searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    setSearching(true);
+    const timer = setTimeout(() => {
+      fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?query=${encodeURIComponent(searchQuery)}&api_key=DEMO_KEY&pageSize=5`)
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => setSearchResults(data?.foods ?? []))
+        .catch((err) => { console.error("Food search failed", err); setSearchResults([]); })
+        .finally(() => setSearching(false));
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery, activeTab]);
+
+  const resetModal = () => {
+    setShowAddModal(false);
+    setActiveTab("manual");
+    setManualForm({ foodName: "", grams: "", calories: "", protein: "", carbs: "", fat: "" });
+    setSearchQuery("");
+    setSearchResults([]);
+    setPhotoPreview(null);
+    setAnalyzing(false);
+  };
+
+  const openAddModal = (mealName: string) => {
+    setActiveMealForModal(mealName);
+    setShowAddModal(true);
+  };
+
+  const selectSearchResult = (result: any) => {
+    const nutrients = result.foodNutrients ?? [];
+    const find = (name: string) => nutrients.find((n: any) => n.nutrientName?.includes(name))?.value ?? "";
+    setManualForm({
+      foodName: result.description ?? "",
+      grams: "100",
+      calories: String(find("Energy") || ""),
+      protein: String(find("Protein") || ""),
+      carbs: String(find("Carbohydrate") || ""),
+      fat: String(find("Total lipid") || ""),
+    });
+    setActiveTab("manual");
+  };
+
+  const handlePhotoSelect = (file: File) => {
+    setPhotoPreview(URL.createObjectURL(file));
+    setAnalyzing(true);
+    // TODO: POST to /api/trainee/analyze-food-photo once built
+    setTimeout(() => {
+      setManualForm({
+        foodName: "חזה עוף צלוי",
+        grams: "100",
+        calories: "165",
+        protein: "31",
+        carbs: "0",
+        fat: "3.6",
+      });
+      setAnalyzing(false);
+      setActiveTab("manual");
+    }, 1500);
+  };
+
+  const submitManualForm = async () => {
+    if (!manualForm.foodName || !manualForm.calories) return;
+    setSavingManual(true);
+    const grams = Number(manualForm.grams) || 100;
+    const calories = Number(manualForm.calories) || 0;
+    const newFood = {
+      id: `extra-${Date.now()}`,
+      name: manualForm.foodName,
+      quantity: grams,
+      calories,
+      protein: manualForm.protein ? Number(manualForm.protein) : undefined,
+      carbs: manualForm.carbs ? Number(manualForm.carbs) : undefined,
+      fat: manualForm.fat ? Number(manualForm.fat) : undefined,
+    };
+
+    setExtraItems((prev) => ({
+      ...prev,
+      [activeMealForModal]: [...(prev[activeMealForModal] ?? []), newFood],
+    }));
+    const key = `${activeMealForModal}::${newFood.name}`;
+    setCheckedItems((prev) => ({ ...prev, [key]: true }));
+    setActualGrams((prev) => ({ ...prev, [key]: grams }));
+
+    try {
+      await fetch("/api/trainee/nutrition-log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mealName: activeMealForModal,
+          foodName: newFood.name,
+          actualGrams: grams,
+          calories,
+          protein: newFood.protein,
+          carbs: newFood.carbs,
+          fat: newFood.fat,
+          plannedGrams: null,
+          source: "manual",
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to log manual food", err);
+    } finally {
+      setSavingManual(false);
+      resetModal();
+    }
+  };
+
   return (
     <div style={{ background: "#12121f", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px 0" }}>
@@ -235,7 +359,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
             </div>
 
             <div style={{ display: "flex", flexDirection: "column" }}>
-              {(meal.foodItems ?? []).map((food: any, fi: number) => {
+              {[...(meal.foodItems ?? []), ...(extraItems[meal.name] ?? [])].map((food: any, fi: number) => {
                 const key = `${meal.name}::${food.name}`;
                 const checked = !!checkedItems[key];
                 const grams = actualGrams[key] ?? food.quantity ?? 0;
@@ -299,6 +423,17 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                 );
               })}
             </div>
+
+            <button
+              onClick={() => openAddModal(meal.name)}
+              style={{
+                width: "100%", border: "1px dashed rgba(255,255,255,0.2)", borderRadius: 12,
+                padding: "8px 0", color: "#9ca3af", fontSize: 13, textAlign: "center",
+                marginTop: 8, background: "transparent", cursor: "pointer",
+              }}
+            >
+              + הוסף מזון שלא בתפריט
+            </button>
           </div>
         ))}
 
@@ -327,6 +462,140 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
           </div>
         </div>
       </div>
+
+      {showAddModal && (
+        <>
+          <div onClick={resetModal} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 50 }} />
+          <div style={{
+            position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)",
+            width: "100%", maxWidth: 480, background: "#1c1c2e", borderRadius: "24px 24px 0 0",
+            padding: 20, zIndex: 50, maxHeight: "85vh", overflowY: "auto",
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <span style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>הוספת מזון — {activeMealForModal}</span>
+              <button onClick={resetModal} style={{ background: "transparent", border: "none", color: "#9ca3af", fontSize: 18, cursor: "pointer" }}>✕</button>
+            </div>
+
+            <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+              {[
+                { key: "manual", label: "ידני" },
+                { key: "search", label: "חיפוש" },
+                { key: "photo", label: "צילום" },
+              ].map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setActiveTab(tab.key as any)}
+                  style={{
+                    padding: "6px 16px", borderRadius: 99, fontSize: 13, fontWeight: 700, border: "none", cursor: "pointer",
+                    background: activeTab === tab.key ? GREEN : "rgba(255,255,255,0.1)",
+                    color: activeTab === tab.key ? "#0a0a0a" : "#9ca3af",
+                  }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {activeTab === "search" && (
+              <div style={{ marginBottom: 16 }}>
+                <div style={{ position: "relative", marginBottom: 10 }}>
+                  <span style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)" }}>🔍</span>
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="חפש מזון..."
+                    style={{
+                      width: "100%", padding: "10px 36px 10px 12px", borderRadius: 10, fontSize: 14,
+                      background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff",
+                    }}
+                  />
+                </div>
+                {searching && <div style={{ color: "#9ca3af", fontSize: 13, textAlign: "center" }}>מחפש...</div>}
+                {!searching && searchResults.map((r, i) => {
+                  const cal = r.foodNutrients?.find((n: any) => n.nutrientName?.includes("Energy"))?.value;
+                  return (
+                    <div
+                      key={i}
+                      onClick={() => selectSearchResult(r)}
+                      style={{
+                        display: "flex", justifyContent: "space-between", padding: "10px 8px",
+                        borderBottom: "1px solid rgba(255,255,255,0.06)", cursor: "pointer",
+                      }}
+                    >
+                      <span style={{ color: "#fff", fontSize: 13 }}>{r.description}</span>
+                      <span style={{ color: GREEN, fontSize: 12 }}>{cal ? `${Math.round(cal)} קל׳ / 100 גרם` : ""}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {activeTab === "photo" && (
+              <div style={{ marginBottom: 16 }}>
+                {!photoPreview && (
+                  <label style={{
+                    display: "block", border: "2px dashed rgba(255,255,255,0.2)", borderRadius: 16,
+                    padding: 32, textAlign: "center", cursor: "pointer",
+                  }}>
+                    <div style={{ fontSize: 48, marginBottom: 8 }}>📷</div>
+                    <div style={{ color: "#9ca3af", fontSize: 13 }}>צלם או העלה תמונה של האוכל</div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={(e) => e.target.files?.[0] && handlePhotoSelect(e.target.files[0])}
+                      style={{ display: "none" }}
+                    />
+                  </label>
+                )}
+                {photoPreview && (
+                  <div style={{ textAlign: "center" }}>
+                    <img src={photoPreview} alt="" style={{ width: "100%", maxHeight: 200, objectFit: "cover", borderRadius: 16, marginBottom: 10 }} />
+                    {analyzing && <div style={{ color: GREEN, fontSize: 13 }}>מנתח תמונה...</div>}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === "manual" && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 16 }}>
+                {[
+                  { key: "foodName", label: "שם המזון", type: "text" },
+                  { key: "grams", label: "כמות (גרמים)", type: "number" },
+                  { key: "calories", label: "קלוריות", type: "number" },
+                  { key: "protein", label: "חלבון (אופציונלי)", type: "number" },
+                  { key: "carbs", label: "פחמימה (אופציונלי)", type: "number" },
+                  { key: "fat", label: "שומן (אופציונלי)", type: "number" },
+                ].map((field) => (
+                  <div key={field.key}>
+                    <label style={{ display: "block", fontSize: 12, color: "#9ca3af", marginBottom: 4 }}>{field.label}</label>
+                    <input
+                      type={field.type}
+                      value={(manualForm as any)[field.key]}
+                      onChange={(e) => setManualForm((prev) => ({ ...prev, [field.key]: e.target.value }))}
+                      style={{
+                        width: "100%", padding: "10px 12px", borderRadius: 10, fontSize: 14,
+                        background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#fff",
+                      }}
+                    />
+                  </div>
+                ))}
+                <button
+                  onClick={submitManualForm}
+                  disabled={savingManual || !manualForm.foodName || !manualForm.calories}
+                  style={{
+                    width: "100%", padding: "12px 0", borderRadius: 12, border: "none", cursor: "pointer",
+                    background: GREEN, color: "#0a0a0a", fontSize: 15, fontWeight: 800, marginTop: 4,
+                  }}
+                >
+                  {savingManual ? "שומר..." : "הוסף"}
+                </button>
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 }
