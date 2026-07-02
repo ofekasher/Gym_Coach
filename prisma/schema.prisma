@@ -222,6 +222,10 @@ model TraineeProfile {
   height            Float?
   startingWeight    Float?
   currentWeight     Float?
+  targetWeight      Float?
+  bodyFat           Float?
+  goal              String?
+  equipment         String[]
   goals             String[]
   injuries          String?
   medicalConditions String?
@@ -229,6 +233,7 @@ model TraineeProfile {
   medications       String?
   experience        String?
   notes             String?
+  notifications     Boolean   @default(true)
   updatedAt         DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
