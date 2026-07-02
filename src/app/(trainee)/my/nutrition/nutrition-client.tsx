@@ -253,22 +253,43 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
     setActiveTab("manual");
   };
 
-  const handlePhotoSelect = (file: File) => {
+  const handlePhotoSelect = async (file: File) => {
     setPhotoPreview(URL.createObjectURL(file));
     setAnalyzing(true);
-    // TODO: POST to /api/trainee/analyze-food-photo once built
-    setTimeout(() => {
-      setManualForm({
-        foodName: "חזה עוף צלוי",
-        grams: "100",
-        calories: "165",
-        protein: "31",
-        carbs: "0",
-        fat: "3.6",
+    try {
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve((reader.result as string).split(",")[1]);
+        reader.readAsDataURL(file);
       });
-      setAnalyzing(false);
+
+      const res = await fetch("/api/trainee/analyze-food-photo", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ imageBase64: base64, mediaType: file.type }),
+      });
+      const data = await res.json();
+
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
+
+      setManualForm({
+        foodName: data.foodName ?? "",
+        grams: String(data.grams ?? 100),
+        calories: String(data.calories ?? ""),
+        protein: String(data.protein ?? ""),
+        carbs: String(data.carbs ?? ""),
+        fat: String(data.fat ?? ""),
+      });
       setActiveTab("manual");
-    }, 1500);
+    } catch (err) {
+      console.error("Photo analysis failed", err);
+      alert("שגיאה בניתוח התמונה");
+    } finally {
+      setAnalyzing(false);
+    }
   };
 
   const submitManualForm = async () => {
