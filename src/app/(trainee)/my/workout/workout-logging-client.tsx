@@ -27,7 +27,7 @@ function SwapModal({ exerciseName, muscleGroup, onSwap, onClose }: {
           <div style={{ width: 36, height: 4, borderRadius: 99, background: "rgba(255,255,255,0.15)", margin: "0 auto 14px" }} />
           <div style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>החלפת תרגיל</div>
           <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", marginTop: 4 }}>
-            במקום: <span style={{ color: "#3B82F6" }}>{exerciseName}</span>
+            במקום: <span style={{ color: GREEN }}>{exerciseName}</span>
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -38,7 +38,7 @@ function SwapModal({ exerciseName, muscleGroup, onSwap, onClose }: {
               display: "flex", alignItems: "center", justifyContent: "space-between",
               transition: "border-color 0.15s",
             }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(59,130,246,0.4)"}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(168,255,62,0.4)"}
             onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.07)"}
             >
               <span style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>{alt.name}</span>
@@ -68,7 +68,55 @@ function SwapModal({ exerciseName, muscleGroup, onSwap, onClose }: {
 }
 
 const BG = "transparent";
+const GREEN = "#a8ff3e";
 const CARD = { background: "#161B22", borderRadius: 28, border: "1px solid rgba(255,255,255,0.06)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" };
+
+const EXERCISE_INFO_FALLBACK: Record<string, { description: string; tip: string }> = {
+  default: { description: "בצע את התרגיל בטכניקה נכונה ובקצב מבוקר.", tip: "שמור על גב ישר לאורך כל התנועה" },
+};
+
+function getExerciseInfo(ex: any): { description: string; tip: string } {
+  const description = ex.exercise?.description || EXERCISE_INFO_FALLBACK.default.description;
+  const tip = ex.exercise?.tips?.[0] || EXERCISE_INFO_FALLBACK.default.tip;
+  return { description, tip };
+}
+
+function InfoModal({ ex, displayName, onClose }: { ex: any; displayName: string; onClose: () => void }) {
+  const { description, tip } = getExerciseInfo(ex);
+  return (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 200,
+      background: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)",
+      display: "flex", alignItems: "flex-end", justifyContent: "center",
+    }} onClick={onClose}>
+      <div style={{
+        background: "#1A1A1F", borderRadius: "24px 24px 0 0",
+        width: "100%", maxWidth: 480, padding: "20px 16px 40px",
+        border: "1px solid rgba(255,255,255,0.08)",
+      }} onClick={(e) => e.stopPropagation()} dir="rtl">
+        <div style={{ width: 36, height: 4, borderRadius: 99, background: "rgba(255,255,255,0.15)", margin: "0 auto 14px" }} />
+        <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", textAlign: "center", marginBottom: 14 }}>{displayName}</div>
+        <img
+          src={getMuscleGymPhoto(ex.exercise?.muscleGroup)}
+          alt={displayName}
+          style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 16, marginBottom: 14 }}
+        />
+        <div style={{ fontSize: 13, color: "rgba(255,255,255,0.65)", lineHeight: 1.6, marginBottom: 12 }}>{description}</div>
+        <div style={{ fontSize: 13, fontWeight: 700, color: GREEN, marginBottom: 10 }}>
+          {ex.sets ?? 3} סטים × {ex.reps ?? 12} חזרות
+        </div>
+        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", background: "rgba(168,255,62,0.08)", borderRadius: 12, padding: "10px 12px", marginBottom: 16 }}>
+          💡 טיפ: {tip}
+        </div>
+        <button onClick={onClose} style={{
+          width: "100%", padding: "12px 0", borderRadius: 14,
+          border: "1px solid rgba(255,255,255,0.1)", background: "transparent",
+          color: "rgba(255,255,255,0.4)", fontSize: 13, fontWeight: 600, cursor: "pointer",
+        }}>סגור</button>
+      </div>
+    </div>
+  );
+}
 
 function getMusclePhoto(muscleGroup: string | undefined, idx: number): string {
   return getMuscleGymPhoto(muscleGroup);
@@ -98,7 +146,7 @@ function RestTimer({ seconds, onDone }: { seconds: number; onDone: () => void })
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "16px 0" }}>
       <svg width="88" height="88" viewBox="0 0 88 88">
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth={stroke}/>
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="#3B82F6" strokeWidth={stroke}
+        <circle cx={cx} cy={cy} r={r} fill="none" stroke={GREEN} strokeWidth={stroke}
           strokeLinecap="round" strokeDasharray={`${(pct / 100) * circum} ${circum}`}
           transform={`rotate(-90 ${cx} ${cy})`}/>
         <text x={cx} y={cy + 6} textAnchor="middle" fontSize="18" fontWeight="800" fill="#fff">{left}s</text>
@@ -106,7 +154,7 @@ function RestTimer({ seconds, onDone }: { seconds: number; onDone: () => void })
       <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 6 }}>מנוחה</div>
       <button onClick={onDone} style={{
         marginTop: 10, padding: "6px 20px", borderRadius: 99, border: "none", cursor: "pointer",
-        background: "rgba(59,130,246,0.2)", color: "#3B82F6", fontSize: 12, fontWeight: 700,
+        background: "rgba(168,255,62,0.2)", color: GREEN, fontSize: 12, fontWeight: 700,
       }}>דלג</button>
     </div>
   );
@@ -130,7 +178,7 @@ function SetRow({
         {/* Set number */}
         <div style={{
           width: 26, height: 26, borderRadius: "50%", flexShrink: 0,
-          background: log.done ? "#10B981" : "rgba(59,130,246,0.2)",
+          background: log.done ? "#10B981" : "rgba(168,255,62,0.2)",
           display: "flex", alignItems: "center", justifyContent: "center",
           fontSize: 11, fontWeight: 800, color: log.done ? "#fff" : "#3B82F6",
         }}>
@@ -237,7 +285,7 @@ function VideoPlayer({ videoId, title }: { videoId: string; title: string }) {
             </div>
           </div>
           <div style={{ textAlign: "right" }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: "#3B82F6" }}>סרטון הדרכה</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: GREEN }}>סרטון הדרכה</div>
             <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{title}</div>
           </div>
         </button>
@@ -281,9 +329,11 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
   const [workoutDone, setWorkoutDone] = useState(false);
   const [swapFor, setSwapFor] = useState<{ exId: string; name: string; muscleGroup: string } | null>(null);
   const [swappedNames, setSwappedNames] = useState<Record<string, string>>({});
+  const [infoFor, setInfoFor] = useState<{ ex: any; displayName: string } | null>(null);
 
   const session = sessions[sessionIdx];
   const exercises = session?.exercises ?? [];
+  const muscleGroups = Array.from(new Set(exercises.map((e: any) => e.exercise?.muscleGroup).filter(Boolean)));
   const doneCount = exercises.filter((e: any) => exStatus[e.id] === "done" || exStatus[e.id] === "skip").length;
   const totalPct = exercises.length > 0 ? Math.round((doneCount / exercises.length) * 100) : 0;
 
@@ -372,6 +422,26 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
     <div style={{ background: BG, minHeight: "100vh", paddingBottom: 120 }} dir="rtl">
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px 0" }}>
 
+        {/* FitBuddy-style hero header */}
+        {session && (
+          <div style={{
+            position: "relative", height: 160, borderRadius: 20, overflow: "hidden", marginBottom: 20,
+            backgroundImage: `url(${getMuscleGymPhoto(exercises[0]?.exercise?.muscleGroup)})`,
+            backgroundSize: "cover", backgroundPosition: "center",
+          }}>
+            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)" }} />
+            <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 14 }}>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", textAlign: "right" }}>{session.dayLabel ?? ""}</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: "#fff", textAlign: "center" }}>{session.name}</div>
+              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
+                {muscleGroups.map((m) => (
+                  <span key={m as string} style={{ background: "rgba(255,255,255,0.1)", color: "#fff", fontSize: 11, padding: "4px 12px", borderRadius: 99 }}>{m as string}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div style={{ marginBottom: 20 }}>
           <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>אימון</div>
           <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>{plan.name}</div>
@@ -382,8 +452,8 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
             {sessions.map((s: any, i: number) => (
               <button key={s.id} onClick={() => { setSessionIdx(i); setExStatus({}); setSetLogs({}); }} style={{
                 flexShrink: 0, padding: "8px 16px", borderRadius: 99, border: "none", cursor: "pointer", fontWeight: 700, fontSize: 12,
-                background: i === sessionIdx ? "#3B82F6" : "#1A1A1F",
-                color: i === sessionIdx ? "#fff" : "rgba(255,255,255,0.4)",
+                background: i === sessionIdx ? GREEN : "#1A1A1F",
+                color: i === sessionIdx ? "#0a0a0a" : "rgba(255,255,255,0.4)",
               }}>{s.name}</button>
             ))}
           </div>
@@ -393,10 +463,10 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
         <div style={{ ...CARD, padding: "14px 16px", marginBottom: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
             <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{session?.name}</span>
-            <span style={{ fontSize: 12, color: "#3B82F6", fontWeight: 700 }}>{totalPct}%</span>
+            <span style={{ fontSize: 12, color: GREEN, fontWeight: 700 }}>{totalPct}%</span>
           </div>
           <div style={{ height: 6, borderRadius: 99, background: "rgba(255,255,255,0.07)" }}>
-            <div style={{ height: "100%", borderRadius: 99, width: `${totalPct}%`, background: "linear-gradient(to left,#60A5FA,#1D4ED8)", transition: "width 0.4s ease" }}/>
+            <div style={{ height: "100%", borderRadius: 99, width: `${totalPct}%`, background: `linear-gradient(to left,${GREEN},#5ecc00)`, transition: "width 0.4s ease" }}/>
           </div>
           <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 6 }}>{doneCount} / {exercises.length} תרגילים</div>
         </div>
@@ -422,7 +492,7 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
             return (
               <div key={ex.id} style={{
                 borderRadius: 26, overflow: "hidden",
-                border: isDone ? "1px solid rgba(16,185,129,0.3)" : isActive ? "1px solid rgba(59,130,246,0.4)" : "1px solid rgba(255,255,255,0.05)",
+                border: isDone ? "1px solid rgba(16,185,129,0.3)" : isActive ? "1px solid rgba(168,255,62,0.4)" : "1px solid rgba(255,255,255,0.05)",
                 background: "#161B22",
                 boxShadow: "0 8px 24px rgba(0,0,0,0.35)",
               }}>
@@ -438,7 +508,7 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                         <div style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>{displayName}</div>
                         {swappedNames[ex.id] && (
-                          <span style={{ fontSize: 9, fontWeight: 700, color: "#3B82F6", background: "rgba(59,130,246,0.2)", padding: "2px 6px", borderRadius: 99 }}>הוחלף</span>
+                          <span style={{ fontSize: 9, fontWeight: 700, color: GREEN, background: "rgba(168,255,62,0.2)", padding: "2px 6px", borderRadius: 99 }}>הוחלף</span>
                         )}
                       </div>
                       <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>
@@ -446,6 +516,13 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
                         {isActive && sets.length > 0 && ` · ${doneSets}/${sets.length} הושלמו`}
                       </div>
                     </div>
+                    {/* Info button */}
+                    <button onClick={() => setInfoFor({ ex, displayName })} style={{
+                      width: 32, height: 32, borderRadius: 10, border: "1px solid rgba(255,255,255,0.15)",
+                      background: "rgba(255,255,255,0.08)", cursor: "pointer", flexShrink: 0, marginLeft: 6,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      color: "rgba(255,255,255,0.7)", fontSize: 13, fontWeight: 800,
+                    }} title="מידע על התרגיל">?</button>
                     {/* Swap button */}
                     {!isDone && !isSkip && (
                       <button onClick={() => setSwapFor({ exId: ex.id, name: displayName, muscleGroup: ex.exercise?.muscleGroup ?? "" })} style={{
@@ -466,12 +543,12 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
                     />
                     <div style={{ marginRight: 8,
                       width: 32, height: 32, borderRadius: "50%",
-                      background: isDone ? "#10B981" : isSkip ? "rgba(255,255,255,0.1)" : isActive ? "#3B82F6" : "rgba(255,255,255,0.12)",
+                      background: isDone ? "#10B981" : isSkip ? "rgba(255,255,255,0.1)" : isActive ? GREEN : "rgba(255,255,255,0.12)",
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}>
                       {isDone && <svg width="14" height="14" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>}
                       {isSkip && <svg width="14" height="14" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>}
-                      {isActive && <span style={{ fontSize: 10, fontWeight: 800, color: "#fff" }}>{doneSets}/{sets.length}</span>}
+                      {isActive && <span style={{ fontSize: 10, fontWeight: 800, color: "#0a0a0a" }}>{doneSets}/{sets.length}</span>}
                       {status === "pending" && <span style={{ fontSize: 12, fontWeight: 800, color: "rgba(255,255,255,0.4)" }}>{idx + 1}</span>}
                     </div>
                   </div>
@@ -498,8 +575,8 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
                     {/* Add set */}
                     <button onClick={() => addSet(ex.id, ex)} style={{
                       width: "100%", padding: "8px 0", borderRadius: 10,
-                      border: "1px dashed rgba(59,130,246,0.3)", background: "transparent",
-                      color: "#3B82F6", fontSize: 12, fontWeight: 700, cursor: "pointer", marginBottom: 10,
+                      border: "1px dashed rgba(168,255,62,0.3)", background: "transparent",
+                      color: GREEN, fontSize: 12, fontWeight: 700, cursor: "pointer", marginBottom: 10,
                     }}>+ הוסף סט</button>
 
                     <div style={{ display: "flex", gap: 8 }}>
@@ -519,7 +596,7 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
                 {status === "pending" && (
                   <button onClick={() => initSets(ex)} style={{
                     width: "100%", padding: "12px 16px", border: "none", cursor: "pointer",
-                    background: "transparent", textAlign: "right", fontSize: 12, color: "#3B82F6", fontWeight: 700,
+                    background: "transparent", textAlign: "right", fontSize: 12, color: GREEN, fontWeight: 700,
                   }}>התחל תרגיל →</button>
                 )}
 
@@ -535,6 +612,10 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
             );
           })}
         </div>
+
+      {infoFor && (
+        <InfoModal ex={infoFor.ex} displayName={infoFor.displayName} onClose={() => setInfoFor(null)} />
+      )}
 
       {swapFor && (
         <SwapModal
