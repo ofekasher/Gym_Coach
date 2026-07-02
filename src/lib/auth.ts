@@ -24,6 +24,7 @@ const DEMO_USERS: Record<string, { id: string; email: string; name: string; role
 // demo1234 hashed with bcrypt (cost 10)
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  trustHost: true,
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",

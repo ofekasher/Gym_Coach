@@ -11,10 +11,21 @@ export const isDatabaseConfigured =
   !dbUrl.includes("[region]") &&
   !dbUrl.includes("placeholder");
 
-export const prisma =
+// Constructing PrismaClient without a valid DATABASE_URL throws immediately,
+// which would crash every request in demo mode. Only construct it when configured.
+export const prisma: PrismaClient =
   globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
-  });
+  (isDatabaseConfigured
+    ? new PrismaClient({
+        log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
+      })
+    : (new Proxy(
+        {},
+        {
+          get() {
+            throw new Error("Prisma is not configured (DATABASE_URL missing) — this code path should be guarded by isDatabaseConfigured");
+          },
+        }
+      ) as PrismaClient));
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
