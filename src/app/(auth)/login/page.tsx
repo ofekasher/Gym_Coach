@@ -60,21 +60,21 @@ export default function LoginPage() {
       {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full opacity-10"
-          style={{ background: "radial-gradient(ellipse, #F5C518 0%, transparent 70%)", transform: "translate(-50%, -40%)" }} />
+          style={{ background: "radial-gradient(ellipse, #3B82F6 0%, transparent 70%)", transform: "translate(-50%, -40%)" }} />
         <div className="absolute bottom-0 right-0 w-[300px] h-[300px] rounded-full opacity-5"
-          style={{ background: "radial-gradient(circle, #F5C518 0%, transparent 70%)", transform: "translate(30%, 30%)" }} />
+          style={{ background: "radial-gradient(circle, #3B82F6 0%, transparent 70%)", transform: "translate(30%, 30%)" }} />
       </div>
 
       <div className="w-full max-w-sm relative z-10">
         {/* Hero splash top */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold mb-5"
-            style={{ background: "rgba(245,197,24,0.12)", border: "1px solid rgba(245,197,24,0.25)", color: "#F5C518" }}>
+            style={{ background: "rgba(59,130,246,0.12)", border: "1px solid rgba(59,130,246,0.25)", color: "#3B82F6" }}>
             <Zap className="w-3 h-3 fill-current" />
             AI POWERED
           </div>
           <h1 className="text-5xl font-extrabold text-white leading-tight mb-1">Smart</h1>
-          <h1 className="text-5xl font-extrabold leading-tight mb-3" style={{ color: "#F5C518" }}>FitCoach</h1>
+          <h1 className="text-5xl font-extrabold leading-tight mb-3" style={{ color: "#3B82F6" }}>FitCoach</h1>
           <p className="text-sm" style={{ color: "#71717A" }}>המאמן שלך. התוכנית שלך. הגרסה הכי טובה שלך.</p>
         </div>
 
@@ -139,9 +139,9 @@ export default function LoginPage() {
               type="submit"
               className="w-full h-12 rounded-full text-sm font-extrabold transition-all"
               style={{
-                background: "#F5C518",
-                color: "#111111",
-                boxShadow: "0 6px 24px rgba(245,197,24,0.35)",
+                background: "#3B82F6",
+                color: "#fff",
+                boxShadow: "0 6px 24px rgba(59,130,246,0.35)",
               }}
               disabled={loading}
             >
@@ -151,11 +151,11 @@ export default function LoginPage() {
 
           <p className="text-center text-xs mt-5" style={{ color: "#52525B" }}>
             קיבלת הזמנה?{" "}
-            <a href="/register" className="font-semibold hover:underline" style={{ color: "#F5C518" }}>הרשמה כמתאמן/ת</a>
+            <a href="/register" className="font-semibold hover:underline" style={{ color: "#3B82F6" }}>הרשמה כמתאמן/ת</a>
           </p>
         </div>
 
-        <p className="text-center text-xs mt-4 opacity-40" style={{ color: "#F5C518" }}>coach@demo.com / demo1234</p>
+        <p className="text-center text-xs mt-4 opacity-40" style={{ color: "#3B82F6" }}>coach@demo.com / demo1234</p>
       </div>
     </div>
   );

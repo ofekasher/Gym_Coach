@@ -5,23 +5,10 @@ import { he } from "date-fns/locale";
 import { useState, useEffect } from "react";
 import { NotificationsBell } from "@/components/shared/notifications-panel";
 import { ReadinessWidget } from "@/components/shared/readiness-widget";
-import { getMuscleGymPhoto, GYM_PHOTOS } from "@/lib/gym-photos";
+import { getMuscleGymPhoto } from "@/lib/gym-photos";
 
 const BG = "transparent";
 const CARD = { background: "#161B22", borderRadius: 28, border: "1px solid rgba(255,255,255,0.06)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" };
-
-const MUSCLE_COLORS: Record<string, string> = {
-  "חזה": "#3B82F6", "כתפיים": "#3B82F6", "גב": "#10B981",
-  "רגליים": "#F59E0B", "זרועות": "#F87171", "בטן": "#34D399",
-};
-
-const EXERCISE_BG: string[] = [
-  "linear-gradient(145deg,#1a0a2e,#3d1a6e,#6b2fa0)",
-  "linear-gradient(145deg,#0a1a2e,#1a3d6e,#2f6ba0)",
-  "linear-gradient(145deg,#1a1a0a,#3d3a1a,#7a6020)",
-  "linear-gradient(145deg,#0a2e1a,#1a6e3d,#20a060)",
-  "linear-gradient(145deg,#2e0a1a,#6e1a3d,#a02060)",
-];
 
 
 export function TraineeDashboardClient({ user }: { user: any }) {

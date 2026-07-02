@@ -70,14 +70,6 @@ function SwapModal({ exerciseName, muscleGroup, onSwap, onClose }: {
 const BG = "transparent";
 const CARD = { background: "#161B22", borderRadius: 28, border: "1px solid rgba(255,255,255,0.06)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" };
 
-const EXERCISE_GRADIENTS = [
-  "linear-gradient(145deg,#1a0a2e,#3d1a6e)",
-  "linear-gradient(145deg,#0a1a2e,#1a3d6e)",
-  "linear-gradient(145deg,#0a2e1a,#1a6e3d)",
-  "linear-gradient(145deg,#2e0a1a,#6e1a3d)",
-  "linear-gradient(145deg,#1a1a0a,#3d3a1a)",
-];
-
 function getMusclePhoto(muscleGroup: string | undefined, idx: number): string {
   return getMuscleGymPhoto(muscleGroup);
 }
@@ -437,9 +429,10 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
                 {/* Photo header */}
                 <div style={{
                   height: 78, position: "relative",
-                  background: `${EXERCISE_GRADIENTS[idx % EXERCISE_GRADIENTS.length]}, url(${getMusclePhoto(ex.exercise?.muscleGroup, idx)}) center/cover no-repeat`,
+                  backgroundImage: `url(${getMusclePhoto(ex.exercise?.muscleGroup, idx)})`,
+                  backgroundSize: "cover", backgroundPosition: "center",
                 }}>
-                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right,rgba(10,14,20,0.85),rgba(10,14,20,0.2))" }}/>
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right,rgba(10,14,20,0.88),rgba(10,14,20,0.25))" }}/>
                   <div style={{ position: "relative", zIndex: 1, padding: "12px 14px", height: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>

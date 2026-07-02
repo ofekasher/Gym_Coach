@@ -166,9 +166,10 @@ export default function CheckInPage() {
                     onClick={() => setValue("followedPlan", opt.value)}
                     className={`flex-1 py-2.5 rounded-xl text-sm font-medium border transition-all ${
                       watch("followedPlan") === opt.value
-                        ? opt.value ? "gradient-primary text-white border-transparent" : "bg-destructive/10 border-destructive/30 text-destructive"
+                        ? opt.value ? "text-white border-transparent" : "bg-destructive/10 border-destructive/30 text-destructive"
                         : "border-border hover:border-primary/30"
                     }`}
+                    style={watch("followedPlan") === opt.value && opt.value ? { background: "#3B82F6" } : undefined}
                   >
                     {opt.label}
                   </button>
@@ -235,7 +236,11 @@ export default function CheckInPage() {
           </CardContent>
         </Card>
 
-        <Button type="submit" size="lg" disabled={saving} className="w-full gap-2">
+        <Button
+          type="submit" size="lg" disabled={saving}
+          className="w-full gap-2 bg-none hover:opacity-90"
+          style={{ background: "#3B82F6", boxShadow: "0 6px 24px rgba(59,130,246,0.3)" }}
+        >
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
           שמור צ׳ק-אין
         </Button>
