@@ -1,13 +1,12 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Apple, Dumbbell, MessageCircle, User } from "lucide-react";
+import { Home, Apple, Dumbbell, User } from "lucide-react";
 
 const NAV = [
   { href: "/my/dashboard", label: "בית", Icon: Home },
   { href: "/my/nutrition", label: "תזונה", Icon: Apple },
   { href: "/my/workout", label: "אימונים", Icon: Dumbbell },
-  { href: "/my/ai", label: "יועץ אישי", Icon: MessageCircle },
   { href: "/my/profile", label: "פרופיל", Icon: User },
 ];
 

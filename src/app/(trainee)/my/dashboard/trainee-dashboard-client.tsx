@@ -340,6 +340,21 @@ export function TraineeDashboardClient({ user }: { user: any }) {
         </div>
 
       </div>
+
+      <Link href="/my/ai">
+        <motion.div
+          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05 }}
+          className="fixed bottom-24 left-4 z-40 w-14 h-14 rounded-full bg-[#a8ff3e] flex items-center justify-center shadow-lg shadow-[#a8ff3e]/30"
+        >
+          <motion.div
+            animate={{ scale: [1, 1.08, 1] }}
+            transition={{ repeat: Infinity, duration: 2 }}
+            className="absolute inset-0 rounded-full bg-[#a8ff3e]/30"
+          />
+          <span className="text-2xl">🤖</span>
+        </motion.div>
+      </Link>
     </div>
   );
 }
