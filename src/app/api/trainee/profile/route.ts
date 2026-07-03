@@ -30,6 +30,7 @@ export async function PUT(req: NextRequest) {
   const {
     height, currentWeight, targetWeight, bodyFat,
     goal, equipment, limitations, notifications,
+    weeklyWorkouts, dailyCalories, dailySteps, targetBodyFat, motivation, targetDate,
   } = body;
 
   const data: Record<string, any> = {};
@@ -41,6 +42,12 @@ export async function PUT(req: NextRequest) {
   if (equipment !== undefined) data.equipment = equipment;
   if (limitations !== undefined) data.limitations = limitations;
   if (notifications !== undefined) data.notifications = notifications;
+  if (weeklyWorkouts !== undefined) data.weeklyWorkouts = weeklyWorkouts;
+  if (dailyCalories !== undefined) data.dailyCalories = dailyCalories;
+  if (dailySteps !== undefined) data.dailySteps = dailySteps;
+  if (targetBodyFat !== undefined) data.targetBodyFat = targetBodyFat;
+  if (motivation !== undefined) data.motivation = motivation;
+  if (targetDate !== undefined) data.targetDate = targetDate ? new Date(targetDate) : null;
 
   const profile = await prisma.traineeProfile.upsert({
     where: { userId: session.user.id },

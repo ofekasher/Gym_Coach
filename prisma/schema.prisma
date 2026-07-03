@@ -235,6 +235,12 @@ model TraineeProfile {
   experience        String?
   notes             String?
   notifications     Boolean   @default(true)
+  weeklyWorkouts    Int?
+  dailyCalories     Int?
+  dailySteps        Int?
+  targetBodyFat     Float?
+  motivation        String?
+  targetDate        DateTime?
   updatedAt         DateTime  @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

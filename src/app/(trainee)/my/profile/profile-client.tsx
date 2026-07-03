@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 import { BackHeader } from "@/components/shared/back-header";
 
 const GREEN = "#a8ff3e";
@@ -293,7 +294,12 @@ export function ProfileClient({ user }: { user: any }) {
               {GOAL_OPTIONS.map((g) => <option key={g} value={g}>{g}</option>)}
             </select>
           ) : (
-            <div style={{ fontSize: 14, color: "#fff" }}>{goal}</div>
+            <Link href="/my/goal" style={{ textDecoration: "none" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 14, color: "#fff" }}>{goal}</span>
+                <span style={{ fontSize: 16, color: "rgba(255,255,255,0.4)" }}>←</span>
+              </div>
+            </Link>
           )}
         </div>
 
