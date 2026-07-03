@@ -4,6 +4,7 @@ import Anthropic from "@anthropic-ai/sdk";
 
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const isConfigured = !!ANTHROPIC_KEY && !ANTHROPIC_KEY.includes("your-");
+const anthropic = isConfigured ? new Anthropic({ apiKey: ANTHROPIC_KEY }) : null;
 
 const PROMPT = `אתה מומחה תזונה. נתח את התמונה והחזר JSON בלבד (ללא טקסט נוסף):
 {
@@ -34,9 +35,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const client = new Anthropic({ apiKey: ANTHROPIC_KEY });
-
-    const response = await client.messages.create({
+    const response = await anthropic!.messages.create({
       model: "claude-sonnet-5",
       max_tokens: 1024,
       messages: [
