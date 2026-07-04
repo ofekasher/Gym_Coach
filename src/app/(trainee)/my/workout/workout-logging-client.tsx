@@ -330,6 +330,8 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
   const [swapFor, setSwapFor] = useState<{ exId: string; name: string; muscleGroup: string } | null>(null);
   const [swappedNames, setSwappedNames] = useState<Record<string, string>>({});
   const [infoFor, setInfoFor] = useState<{ ex: any; displayName: string } | null>(null);
+  const [finishingWorkout, setFinishingWorkout] = useState(false);
+  const [saveToast, setSaveToast] = useState(false);
 
   const session = sessions[sessionIdx];
   const exercises = session?.exercises ?? [];
@@ -377,6 +379,63 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
     setExStatus((s) => ({ ...s, [exId]: "skip" }));
   }
 
+  async function finishWorkout() {
+    setFinishingWorkout(true);
+
+    // Build the payload the real POST /api/workout/log route expects:
+    // { traineeId, sessionId, status, exerciseLogs: [{ exerciseId, sets, reps, weight }] }
+    const exerciseLogs = exercises
+      .filter((ex: any) => exStatus[ex.id] === "done")
+      .map((ex: any) => {
+        const sets = (setLogs[ex.id] ?? []).filter((s) => s.done);
+        const weights = sets.map((s) => parseFloat(s.weight)).filter((w) => !isNaN(w));
+        return {
+          exerciseId: ex.exerciseId,
+          sets: sets.length,
+          reps: sets[sets.length - 1]?.reps ?? "",
+          weight: weights.length ? Math.max(...weights) : undefined,
+        };
+      });
+
+    try {
+      const res = await fetch("/api/workout/log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          traineeId: userId,
+          sessionId: session?.id,
+          status: "COMPLETED",
+          exerciseLogs,
+        }),
+      });
+      if (!res.ok) console.error("Failed to save workout to DB");
+    } catch (err) {
+      console.error("Workout save error:", err);
+    }
+
+    // Keep localStorage as a fallback/local history cache
+    try {
+      const key = `demo_workout_log_${userId}`;
+      const existing = JSON.parse(localStorage.getItem(key) ?? "[]");
+      const entry = {
+        id: Date.now().toString(),
+        date: new Date().toISOString(),
+        sessionName: session?.name ?? "",
+        planName: plan?.name ?? "",
+        exercisesCompleted: doneCount,
+        totalExercises: exercises.length,
+        totalSets: Object.values(setLogs).flat().filter((s: any) => s.done).length,
+        status: "COMPLETED",
+      };
+      localStorage.setItem(key, JSON.stringify([entry, ...existing.slice(0, 29)]));
+    } catch {}
+
+    setFinishingWorkout(false);
+    setSaveToast(true);
+    setTimeout(() => setSaveToast(false), 2000);
+    setWorkoutDone(true);
+  }
+
   if (!plan) {
     return (
       <div style={{ background: BG, minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 32 }} dir="rtl">
@@ -414,6 +473,16 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
             background: "rgba(255,255,255,0.15)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer",
           }}>אימון חדש</button>
         </div>
+
+        {saveToast && (
+          <div style={{
+            position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)",
+            background: GREEN, color: "#0a0a0a", fontWeight: 800, fontSize: 14,
+            padding: "10px 20px", borderRadius: 999, zIndex: 100,
+          }}>
+            האימון נשמר! 💪
+          </div>
+        )}
       </div>
     );
   }
@@ -630,29 +699,23 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
       )}
 
         {doneCount > 0 && (
-          <button onClick={() => {
-            try {
-              const key = `demo_workout_log_${userId}`;
-              const existing = JSON.parse(localStorage.getItem(key) ?? "[]");
-              const entry = {
-                id: Date.now().toString(),
-                date: new Date().toISOString(),
-                sessionName: session?.name ?? "",
-                planName: plan?.name ?? "",
-                exercisesCompleted: doneCount,
-                totalExercises: exercises.length,
-                totalSets: Object.values(setLogs).flat().filter((s: any) => s.done).length,
-                status: "COMPLETED",
-              };
-              localStorage.setItem(key, JSON.stringify([entry, ...existing.slice(0, 29)]));
-            } catch {}
-            setWorkoutDone(true);
-          }} style={{
-            width: "100%", marginTop: 20, padding: "16px 0", borderRadius: 18, border: "none", cursor: "pointer",
+          <button onClick={finishWorkout} disabled={finishingWorkout} style={{
+            width: "100%", marginTop: 20, padding: "16px 0", borderRadius: 18, border: "none", cursor: finishingWorkout ? "default" : "pointer",
             background: "linear-gradient(135deg,#1E3A8A,#2563EB)", color: "#fff", fontSize: 15, fontWeight: 800,
+            opacity: finishingWorkout ? 0.7 : 1,
           }}>
-            🏆 סיים אימון ({doneCount}/{exercises.length})
+            {finishingWorkout ? "שומר..." : `🏆 סיים אימון (${doneCount}/${exercises.length})`}
           </button>
+        )}
+
+        {saveToast && (
+          <div style={{
+            position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)",
+            background: GREEN, color: "#0a0a0a", fontWeight: 800, fontSize: 14,
+            padding: "10px 20px", borderRadius: 999, zIndex: 100,
+          }}>
+            האימון נשמר! 💪
+          </div>
         )}
       </div>
     </div>
