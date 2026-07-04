@@ -15,6 +15,9 @@ export function ExerciseGifCard({ exerciseName }: Props) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [opened, setOpened] = useState(false);
+  const [videoData, setVideoData] = useState<any>(null);
+  const [loadingVideo, setLoadingVideo] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   const load = async () => {
     if (data || loading) return;
@@ -29,6 +32,26 @@ export function ExerciseGifCard({ exerciseName }: Props) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadVideo = async () => {
+    if (videoData || loadingVideo) return;
+    setLoadingVideo(true);
+    try {
+      const res = await fetch(`/api/exercises/youtube?name=${encodeURIComponent(exerciseName)}`);
+      const json = await res.json();
+      setVideoData(json);
+    } catch (err) {
+      console.error("Failed to load exercise video", err);
+      setVideoData({ videoId: null });
+    } finally {
+      setLoadingVideo(false);
+    }
+  };
+
+  const handleShowVideo = () => {
+    setShowVideo(true);
+    loadVideo();
   };
 
   const hasInfo = data && (data.target || data.equipment || data.difficulty || data.description);
@@ -81,6 +104,41 @@ export function ExerciseGifCard({ exerciseName }: Props) {
                         ))}
                       </ol>
                     </>
+                  )}
+
+                  {!showVideo && (
+                    <button
+                      onClick={handleShowVideo}
+                      className="w-full bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 text-red-400 text-xs font-semibold py-2 rounded-lg transition-all flex items-center justify-center gap-2 mt-3"
+                    >
+                      ▶ הצג סרטון הדגמה ב-YouTube
+                    </button>
+                  )}
+
+                  {showVideo && (
+                    <div className="mt-3">
+                      {loadingVideo && (
+                        <div className="text-white/40 text-xs text-center py-4">טוען סרטון...</div>
+                      )}
+                      {videoData?.videoId && !loadingVideo && (
+                        <div className="rounded-xl overflow-hidden">
+                          <iframe
+                            width="100%"
+                            height="200"
+                            src={`https://www.youtube.com/embed/${videoData.videoId}`}
+                            title={videoData.title}
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="rounded-xl"
+                          />
+                        </div>
+                      )}
+                      {videoData && !videoData.videoId && !loadingVideo && (
+                        <div className="text-white/40 text-xs text-center py-2">
+                          לא נמצא סרטון לתרגיל זה
+                        </div>
+                      )}
+                    </div>
                   )}
                 </>
               ) : (
