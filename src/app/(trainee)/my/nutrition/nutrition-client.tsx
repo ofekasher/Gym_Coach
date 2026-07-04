@@ -41,8 +41,6 @@ const DEFAULT_MEALS = [
 ];
 
 export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: any }) {
-  const [coachPlan, setCoachPlan] = useState<any>(null);
-
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   const [actualGrams, setActualGrams] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState<Record<string, boolean>>({});
@@ -64,20 +62,6 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
   const [savingManual, setSavingManual] = useState(false);
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("demo_nutrition_demo-trainee-1");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        setCoachPlan({
-          calories: parsed.calories ?? 2000,
-          protein: parsed.protein ?? 153,
-          carbs: parsed.carbs ?? 200,
-          fat: parsed.fat ?? 62,
-          meals: parsed.meals ?? [],
-        });
-      }
-    } catch {}
-
     // Pre-check items already logged today
     fetch("/api/trainee/nutrition-log")
       .then((res) => (res.ok ? res.json() : null))
@@ -101,7 +85,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
       .catch((err) => console.error("Failed to load water log", err));
   }, []);
 
-  const activePlan = coachPlan ?? propPlan;
+  const activePlan = propPlan;
   const meals = activePlan?.meals?.length ? activePlan.meals : DEFAULT_MEALS;
   const targetCalories = activePlan?.calories ?? 2000;
   const targetProtein = activePlan?.protein ?? 153;
