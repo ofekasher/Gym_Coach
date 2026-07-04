@@ -3,6 +3,7 @@ import { useState, useMemo } from "react";
 import { Search, Plus, Trash2, Loader2, ChevronDown, Dumbbell, Zap, Filter, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ExerciseAnimationButton } from "@/components/shared/exercise-animation-modal";
+import { ExerciseGifCard } from "@/components/shared/ExerciseGifCard";
 
 const MUSCLE_GROUPS = ["חזה", "גב", "רגליים", "כתפיים", "זרועות", "בטן", "גוף מלא", "ישבן", "גב תחתון"];
 const DIFFICULTIES = ["קל", "בינוני", "מתקדם"];
@@ -312,6 +313,10 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
                         ))}
                       </div>
                     )}
+                    <div style={{ marginBottom: 8 }}>
+                      <ExerciseGifCard exerciseName={ex.name} />
+                    </div>
+
                     {ex.isCustom && ex.coachId === coachId && (
                       <button onClick={() => deleteExercise(ex.id)} style={{
                         marginTop: 8,

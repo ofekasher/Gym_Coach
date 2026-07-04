@@ -4,6 +4,7 @@ import { getVideoId } from "@/lib/exercise-videos";
 import { ExerciseAnimationButton } from "@/components/shared/exercise-animation-modal";
 import { getAlternatives, type AlternativeExercise } from "@/lib/exercise-alternatives";
 import { getMuscleGymPhoto } from "@/lib/gym-photos";
+import { ExerciseGifCard } from "@/components/shared/ExerciseGifCard";
 
 function SwapModal({ exerciseName, muscleGroup, onSwap, onClose }: {
   exerciseName: string;
@@ -107,6 +108,9 @@ function InfoModal({ ex, displayName, onClose }: { ex: any; displayName: string;
         </div>
         <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", background: "rgba(168,255,62,0.08)", borderRadius: 12, padding: "10px 12px", marginBottom: 16 }}>
           💡 טיפ: {tip}
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <ExerciseGifCard exerciseName={ex.exercise?.name ?? displayName} />
         </div>
         <button onClick={onClose} style={{
           width: "100%", padding: "12px 0", borderRadius: 14,
