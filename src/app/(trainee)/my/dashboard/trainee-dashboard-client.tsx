@@ -200,10 +200,10 @@ export function TraineeDashboardClient({ user }: { user: any }) {
         {/* 4 Metric tiles */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
           <div style={{ ...CARD, padding: "14px 16px" }}>
-            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: 6 }}>🔥 קלוריות נשרפו</div>
-            <div style={{ fontSize: 22, fontWeight: 800, color: "#F97316" }}>
-              {totalWorkouts * 320} <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>Kcal</span>
+            <div style={{ fontSize: 22, fontWeight: 800, color: "#fff" }}>
+              {totalWorkouts} <span style={{ fontSize: 12, fontWeight: 700, color: GREEN }}>אימונים הושלמו</span>
             </div>
+            <div style={{ fontSize: 10, color: GREEN, fontWeight: 600, marginTop: 4 }}>השבוע</div>
           </div>
           <div style={{ ...CARD, padding: "14px 16px", position: "relative", cursor: "pointer" }} onClick={() => setShowWaterPicker(v => !v)}>
             <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: 6 }}>💧 מים היום</div>
