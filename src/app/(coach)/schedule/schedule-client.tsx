@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 const DAYS_HE = ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"];
 const DAYS_LONG = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
 const MONTHS_HE = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
-const COLORS = ["#F5C518", "#60A5FA", "#34D399", "#F87171", "#A78BFA", "#FB923C", "#38BDF8", "#4ADE80"];
+const COLORS = ["#a8ff3e", "#60A5FA", "#34D399", "#F87171", "#A78BFA", "#FB923C", "#38BDF8", "#4ADE80"];
 
 type Appointment = { id: string; date: string; time: string; duration: number; traineeId: string; traineeName: string; type: string; notes: string; color: string };
 
@@ -19,9 +19,9 @@ function todayISO() { return new Date().toISOString().slice(0, 10); }
 
 const S = {
   input: { background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, color: "#fff", fontSize: 14, padding: "10px 14px", outline: "none", width: "100%" },
-  label: { color: "#48484A", fontSize: 11, fontWeight: 700 as const, letterSpacing: "0.04em", display: "block" as const, marginBottom: 5 },
-  btnYellow: { background: "#F5C518", color: "#111", border: "none", borderRadius: 999, padding: "10px 22px", fontWeight: 800 as const, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 },
-  btnGhost: { background: "rgba(255,255,255,0.05)", color: "#71717A", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 999, padding: "10px 18px", fontWeight: 700 as const, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 },
+  label: { color: "rgba(255,255,255,0.4)", fontSize: 11, fontWeight: 700 as const, letterSpacing: "0.04em", display: "block" as const, marginBottom: 5 },
+  btnYellow: { background: "#a8ff3e", color: "#111", border: "none", borderRadius: 999, padding: "10px 22px", fontWeight: 800 as const, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 },
+  btnGhost: { background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 999, padding: "10px 18px", fontWeight: 700 as const, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 },
 };
 
 export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId: string }) {
@@ -97,24 +97,24 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
   };
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20, minHeight: 600 }} dir="rtl">
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20, minHeight: 600, background: "#080810" }} dir="rtl">
       {/* Calendar */}
       <div>
         {/* Month nav */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-          <button onClick={prevMonth} style={{ background: "#161618", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 10, width: 36, height: 36, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <ChevronRight style={{ width: 18, height: 18, color: "#71717A" }} />
+          <button onClick={prevMonth} style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, width: 36, height: 36, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <ChevronRight style={{ width: 18, height: 18, color: "rgba(255,255,255,0.5)" }} />
           </button>
           <h2 style={{ color: "#fff", fontWeight: 800, fontSize: 18 }}>{MONTHS_HE[month]} {year}</h2>
-          <button onClick={nextMonth} style={{ background: "#161618", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 10, width: 36, height: 36, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <ChevronLeft style={{ width: 18, height: 18, color: "#71717A" }} />
+          <button onClick={nextMonth} style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, width: 36, height: 36, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <ChevronLeft style={{ width: 18, height: 18, color: "rgba(255,255,255,0.5)" }} />
           </button>
         </div>
 
         {/* Day headers */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(7,1fr)", marginBottom: 6, gap: 2 }}>
           {DAYS_HE.map(d => (
-            <div key={d} style={{ textAlign: "center", color: "#48484A", fontSize: 11, fontWeight: 700, padding: "6px 0" }}>{d}</div>
+            <div key={d} style={{ textAlign: "center", color: "rgba(255,255,255,0.4)", fontSize: 11, fontWeight: 700, padding: "6px 0" }}>{d}</div>
           ))}
         </div>
 
@@ -130,11 +130,11 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
             return (
               <button key={d} onClick={() => setSelectedDate(iso)} style={{
                 aspectRatio: "1", border: "none", cursor: "pointer", borderRadius: 12,
-                background: isSelected ? "#F5C518" : isToday ? "rgba(245,197,24,0.1)" : "rgba(255,255,255,0.03)",
+                background: isSelected ? "#a8ff3e" : isToday ? "rgba(168,255,62,0.1)" : "rgba(255,255,255,0.04)",
                 position: "relative", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column",
                 transition: "all 0.15s"
               }}>
-                <span style={{ color: isSelected ? "#111" : isToday ? "#F5C518" : "#E5E5E5", fontSize: 14, fontWeight: isSelected || isToday ? 800 : 500 }}>{d}</span>
+                <span style={{ color: isSelected ? "#111" : isToday ? "#a8ff3e" : "#fff", fontSize: 14, fontWeight: isSelected || isToday ? 800 : 500 }}>{d}</span>
                 {hasAppts && (
                   <div style={{ display: "flex", gap: 2, marginTop: 2 }}>
                     {(apptByDate[iso] ?? []).slice(0, 3).map((a) => (
@@ -153,7 +153,7 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
             <p style={{ color: "#fff", fontWeight: 800, fontSize: 16, margin: 0 }}>{formatDateHe(selectedDate)}</p>
-            <p style={{ color: "#52525B", fontSize: 12, margin: 0 }}>{DAYS_LONG[new Date(selectedDate).getDay()]}</p>
+            <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, margin: 0 }}>{DAYS_LONG[new Date(selectedDate).getDay()]}</p>
           </div>
           <button onClick={() => setShowForm(true)} style={S.btnYellow}>
             <Plus style={{ width: 14, height: 14 }} />הוסף
@@ -163,39 +163,39 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
         {/* Appointments for day */}
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {dayAppts.length === 0 && (
-            <div style={{ background: "#161618", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 16, padding: "28px 16px", textAlign: "center" }}>
-              <p style={{ color: "#48484A", fontSize: 13 }}>אין אימונים ביום זה</p>
+            <div style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(24px)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "28px 16px", textAlign: "center" }}>
+              <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>אין אימונים ביום זה</p>
             </div>
           )}
           {dayAppts.sort((a, b) => a.time.localeCompare(b.time)).map(appt => (
-            <div key={appt.id} style={{ background: "#161618", border: `1px solid rgba(255,255,255,0.06)`, borderRadius: 14, padding: "12px 14px", borderRight: `3px solid ${appt.color}`, position: "relative" }}>
+            <div key={appt.id} style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(24px)", border: `1px solid rgba(255,255,255,0.08)`, borderRadius: 14, padding: "12px 14px", borderRight: `3px solid ${appt.color}`, position: "relative" }}>
               <button onClick={() => removeAppt(appt.id)} style={{ position: "absolute", top: 8, left: 8, background: "none", border: "none", cursor: "pointer" }}>
-                <X style={{ width: 14, height: 14, color: "#48484A" }} />
+                <X style={{ width: 14, height: 14, color: "rgba(255,255,255,0.4)" }} />
               </button>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
                 <Clock style={{ width: 12, height: 12, color: appt.color }} />
                 <span style={{ color: appt.color, fontSize: 12, fontWeight: 700 }}>{appt.time}</span>
-                <span style={{ color: "#48484A", fontSize: 11 }}>• {appt.duration} דק׳</span>
+                <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 11 }}>• {appt.duration} דק׳</span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <User style={{ width: 12, height: 12, color: "#71717A" }} />
-                <span style={{ color: "#E5E5E5", fontSize: 14, fontWeight: 700 }}>{appt.traineeName}</span>
+                <User style={{ width: 12, height: 12, color: "rgba(255,255,255,0.5)" }} />
+                <span style={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>{appt.traineeName}</span>
               </div>
               <div style={{ marginTop: 4 }}>
                 <span style={{ background: `${appt.color}18`, color: appt.color, fontSize: 10, fontWeight: 700, borderRadius: 6, padding: "2px 8px" }}>{appt.type}</span>
               </div>
-              {appt.notes && <p style={{ color: "#52525B", fontSize: 11, marginTop: 6 }}>{appt.notes}</p>}
+              {appt.notes && <p style={{ color: "rgba(255,255,255,0.3)", fontSize: 11, marginTop: 6 }}>{appt.notes}</p>}
             </div>
           ))}
         </div>
 
         {/* Add form */}
         {showForm && (
-          <div style={{ background: "#161618", border: "1px solid rgba(245,197,24,0.15)", borderRadius: 16, padding: "16px" }}>
+          <div style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(24px)", border: "1px solid rgba(168,255,62,0.15)", borderRadius: 16, padding: "16px" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
               <h3 style={{ color: "#fff", fontWeight: 800, fontSize: 14, margin: 0 }}>אימון חדש</h3>
               <button onClick={() => setShowForm(false)} style={{ background: "none", border: "none", cursor: "pointer" }}>
-                <X style={{ width: 16, height: 16, color: "#52525B" }} />
+                <X style={{ width: 16, height: 16, color: "rgba(255,255,255,0.3)" }} />
               </button>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -222,9 +222,9 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
                   {TYPES.map(t => (
                     <button key={t} onClick={() => setForm({ ...form, type: t })} style={{
                       padding: "6px 12px", borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: "pointer",
-                      background: form.type === t ? "#F5C518" : "rgba(255,255,255,0.05)",
-                      color: form.type === t ? "#111" : "#71717A",
-                      border: `1px solid ${form.type === t ? "#F5C518" : "rgba(255,255,255,0.08)"}`,
+                      background: form.type === t ? "#a8ff3e" : "rgba(255,255,255,0.05)",
+                      color: form.type === t ? "#111" : "rgba(255,255,255,0.5)",
+                      border: `1px solid ${form.type === t ? "#a8ff3e" : "rgba(255,255,255,0.08)"}`,
                     }}>{t}</button>
                   ))}
                 </div>
