@@ -1,34 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
-
-const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
-const isClaudeConfigured = !!ANTHROPIC_KEY && !ANTHROPIC_KEY.includes("your-");
-const anthropic = isClaudeConfigured ? new Anthropic({ apiKey: ANTHROPIC_KEY }) : null;
-
-async function translateToEnglish(hebrewName: string): Promise<string> {
-  // Already English (or no Claude key available) — use as-is
-  if (/^[a-zA-Z\s]+$/.test(hebrewName) || !anthropic) return hebrewName;
-
-  try {
-    const response = await anthropic.messages.create({
-      model: "claude-haiku-4-5-20251001",
-      max_tokens: 50,
-      messages: [{
-        role: "user",
-        content: `Translate this Hebrew gym exercise name to English.
-Return ONLY the English exercise name, nothing else.
-Hebrew: "${hebrewName}"
-English:`,
-      }],
-    });
-
-    const translated = response.content[0].type === "text" ? response.content[0].text.trim() : hebrewName;
-    return translated || hebrewName;
-  } catch (err) {
-    console.error("Exercise name translation error:", err);
-    return hebrewName;
-  }
-}
+import { translateExerciseName } from "@/lib/exercise-name-translations";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -42,7 +13,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "ExerciseDB is not configured" }, { status: 503 });
   }
 
-  const englishName = await translateToEnglish(name);
+  const englishName = translateExerciseName(name);
 
   try {
     const res = await fetch(
