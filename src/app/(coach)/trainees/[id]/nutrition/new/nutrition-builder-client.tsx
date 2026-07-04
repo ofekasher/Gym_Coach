@@ -170,7 +170,7 @@ export function NutritionBuilderClient({ trainee }: { trainee: any }) {
           {/* Live totals */}
           <div className="mt-4 grid grid-cols-4 gap-2 text-center">
             {[
-              { label: "קלוריות", actual: Math.round(totalActual.calories), target: macros.calories, color: "text-amber-400" },
+              { label: "קלוריות", actual: Math.round(totalActual.calories), target: macros.calories, color: "text-[#a8ff3e]" },
               { label: "חלבון", actual: Math.round(totalActual.protein), target: macros.protein, color: "text-red-400" },
               { label: "פחמימות", actual: Math.round(totalActual.carbs), target: macros.carbs, color: "text-blue-400" },
               { label: "שומן", actual: Math.round(totalActual.fat), target: macros.fat, color: "text-green-400" },
@@ -280,7 +280,7 @@ export function NutritionBuilderClient({ trainee }: { trainee: any }) {
                   </div>
                   <div className="grid grid-cols-4 gap-2">
                     {[
-                      { field: "calories", label: "קק״ל", color: "text-amber-400" },
+                      { field: "calories", label: "קק״ל", color: "text-[#a8ff3e]" },
                       { field: "protein", label: "חלבון ג׳", color: "text-red-400" },
                       { field: "carbs", label: "פחמי׳ ג׳", color: "text-blue-400" },
                       { field: "fat", label: "שומן ג׳", color: "text-green-400" },

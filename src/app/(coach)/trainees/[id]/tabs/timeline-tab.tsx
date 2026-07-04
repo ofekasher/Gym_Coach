@@ -8,7 +8,7 @@ const EVENT_CONFIG: Record<string, { icon: any; color: string; label: string }> 
   NUTRITION_PLAN_UPDATED: { icon: Apple, color: "text-green-400 bg-green-400/10", label: "תוכנית תזונה עודכנה" },
   CHECKIN_COMPLETED: { icon: CheckCircle2, color: "text-blue-400 bg-blue-400/10", label: "צ׳ק-אין הושלם" },
   PROGRESS_PHOTOS_UPLOADED: { icon: Camera, color: "text-purple-400 bg-purple-400/10", label: "תמונות הועלו" },
-  NEW_PR: { icon: Trophy, color: "text-amber-400 bg-amber-400/10", label: "שיא אישי חדש!" },
+  NEW_PR: { icon: Trophy, color: "text-[#a8ff3e] bg-[#a8ff3e]/10", label: "שיא אישי חדש!" },
   COACH_NOTE: { icon: MessageSquare, color: "text-muted-foreground bg-secondary", label: "הערת מאמן" },
   TRAINEE_JOINED: { icon: UserPlus, color: "text-emerald-400 bg-emerald-400/10", label: "הצטרף/ה לאימונים" },
 };
@@ -54,7 +54,7 @@ export function TimelineTab({ trainee }: { trainee: any }) {
 
                 {event.type === "NEW_PR" && event.metadata && (
                   <div className="mt-2 glass rounded-lg p-2 text-xs">
-                    <span className="text-amber-400 font-medium">
+                    <span className="text-[#a8ff3e] font-medium">
                       {(event.metadata as any).exerciseName}: {(event.metadata as any).weight} ק״ג
                     </span>
                   </div>

@@ -12,7 +12,7 @@ const PREF_LABELS: Record<string, string> = {
 const S = {
   input: { background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, color: "#fff", fontSize: 13, padding: "7px 12px", outline: "none", width: "100%" },
   label: { color: "#48484A", fontSize: 10, fontWeight: 700 as const, textTransform: "uppercase" as const, letterSpacing: "0.05em", display: "block" as const, marginBottom: 4 },
-  btnYellow: { background: "#F5C518", color: "#111", border: "none", borderRadius: 999, padding: "8px 18px", fontWeight: 800 as const, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 },
+  btnYellow: { background: "#a8ff3e", color: "#111", border: "none", borderRadius: 999, padding: "8px 18px", fontWeight: 800 as const, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 },
   btnGhost: { background: "rgba(255,255,255,0.05)", color: "#71717A", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 999, padding: "8px 16px", fontWeight: 700 as const, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 },
 };
 
@@ -65,7 +65,7 @@ function FoodItemRow({ item, onUpdate, onDelete, isDemo }: { item: any; onUpdate
           </div>
           <div style={{ display: "flex", gap: 6, flexShrink: 0, flexWrap: "wrap" as const }}>
             <span style={{ background: "rgba(255,255,255,0.06)", color: "#A1A1AA", borderRadius: 7, padding: "3px 8px", fontSize: 11 }}>{item.quantity} {item.unit}</span>
-            <span style={{ background: "rgba(245,197,24,0.1)", color: "#F5C518", borderRadius: 7, padding: "3px 8px", fontSize: 11 }}>{item.calories} קק״ל</span>
+            <span style={{ background: "rgba(168,255,62,0.1)", color: "#a8ff3e", borderRadius: 7, padding: "3px 8px", fontSize: 11 }}>{item.calories} קק״ל</span>
             {item.protein > 0 && <span style={{ background: "rgba(248,113,113,0.1)", color: "#F87171", borderRadius: 7, padding: "3px 8px", fontSize: 11 }}>ח׳: {item.protein}ג</span>}
           </div>
           <button onClick={() => setEditing(true)} style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 8, padding: "5px 8px", cursor: "pointer" }}>
@@ -99,8 +99,8 @@ export function NutritionTab({ trainee }: { trainee: any }) {
   if (!plan) {
     return (
       <div style={{ textAlign: "center", padding: "60px 0" }}>
-        <div style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(245,197,24,0.08)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
-          <Apple style={{ width: 28, height: 28, color: "#F5C518" }} />
+        <div style={{ width: 64, height: 64, borderRadius: "50%", background: "rgba(168,255,62,0.08)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+          <Apple style={{ width: 28, height: 28, color: "#a8ff3e" }} />
         </div>
         <p style={{ color: "#52525B", marginBottom: 20 }}>אין תוכנית תזונה פעילה</p>
         <Link href={`/trainees/${trainee.id}/nutrition/new`}>
@@ -169,7 +169,7 @@ export function NutritionTab({ trainee }: { trainee: any }) {
   };
 
   const MACRO_ITEMS = [
-    { key: "calories", label: "קלוריות", color: "#F5C518", unit: "קק״ל" },
+    { key: "calories", label: "קלוריות", color: "#a8ff3e", unit: "קק״ל" },
     { key: "protein", label: "חלבון", color: "#F87171", unit: "גרם" },
     { key: "carbs", label: "פחמימות", color: "#60A5FA", unit: "גרם" },
     { key: "fat", label: "שומן", color: "#34D399", unit: "גרם" },
@@ -216,7 +216,7 @@ export function NutritionTab({ trainee }: { trainee: any }) {
       {plan.preferences?.length > 0 && (
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" as const }}>
           {plan.preferences.map((p: string) => (
-            <span key={p} style={{ background: "rgba(245,197,24,0.08)", color: "#F5C518", border: "1px solid rgba(245,197,24,0.15)", borderRadius: 999, padding: "3px 12px", fontSize: 11, fontWeight: 700 }}>
+            <span key={p} style={{ background: "rgba(168,255,62,0.08)", color: "#a8ff3e", border: "1px solid rgba(168,255,62,0.15)", borderRadius: 999, padding: "3px 12px", fontSize: 11, fontWeight: 700 }}>
               {PREF_LABELS[p] ?? p}
             </span>
           ))}
@@ -228,7 +228,7 @@ export function NutritionTab({ trainee }: { trainee: any }) {
         const mealCals = meal.foodItems.reduce((s: number, f: any) => s + f.calories, 0);
         const isOpen = openMeal === meal.id;
         return (
-          <div key={meal.id} style={{ background: "#161618", border: `1px solid ${isOpen ? "rgba(245,197,24,0.15)" : "rgba(255,255,255,0.06)"}`, borderRadius: 18, overflow: "hidden" }}>
+          <div key={meal.id} style={{ background: "#161618", border: `1px solid ${isOpen ? "rgba(168,255,62,0.15)" : "rgba(255,255,255,0.06)"}`, borderRadius: 18, overflow: "hidden" }}>
             <button onClick={() => setOpenMeal(isOpen ? null : meal.id)} style={{ width: "100%", padding: "14px 18px", background: "none", border: "none", cursor: "pointer", display: "flex", alignItems: "center", gap: 12 }}>
               <div style={{ flex: 1, textAlign: "right" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 2 }}>
@@ -236,11 +236,11 @@ export function NutritionTab({ trainee }: { trainee: any }) {
                   {meal.time && <span style={{ color: "#48484A", fontSize: 11, background: "rgba(255,255,255,0.05)", borderRadius: 6, padding: "2px 8px" }}>{meal.time}</span>}
                 </div>
                 <div style={{ display: "flex", gap: 10 }}>
-                  <span style={{ color: "#F5C518", fontSize: 12, fontWeight: 700 }}>{Math.round(mealCals)} קק״ל</span>
+                  <span style={{ color: "#a8ff3e", fontSize: 12, fontWeight: 700 }}>{Math.round(mealCals)} קק״ל</span>
                   <span style={{ color: "#48484A", fontSize: 12 }}>{meal.foodItems.length} פריטים</span>
                 </div>
               </div>
-              {isOpen ? <ChevronUp style={{ width: 16, height: 16, color: "#F5C518" }} /> : <ChevronDown style={{ width: 16, height: 16, color: "#48484A" }} />}
+              {isOpen ? <ChevronUp style={{ width: 16, height: 16, color: "#a8ff3e" }} /> : <ChevronDown style={{ width: 16, height: 16, color: "#48484A" }} />}
             </button>
 
             {isOpen && (

@@ -109,6 +109,7 @@ model User {
   email        String   @unique
   name         String?
   image        String?
+  phone        String?
   role         Role     @default(TRAINEE)
   coachId      String?
   passwordHash String?

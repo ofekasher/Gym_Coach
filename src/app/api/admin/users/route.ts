@@ -2,11 +2,22 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 
 async function verifyAdmin() {
   const cookieStore = await cookies();
   const session = cookieStore.get("admin_session");
   return !!session?.value;
+}
+
+// Admins can manage any user; coaches may only create trainees under themselves.
+async function verifyRequester(): Promise<{ ok: boolean; coachId: string | null }> {
+  if (await verifyAdmin()) return { ok: true, coachId: null };
+
+  const session = await auth();
+  if (session?.user?.role === "COACH") return { ok: true, coachId: session.user.id };
+
+  return { ok: false, coachId: null };
 }
 
 export async function GET() {
@@ -25,9 +36,10 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  if (!(await verifyAdmin())) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const requester = await verifyRequester();
+  if (!requester.ok) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { action, name, email, password } = await req.json();
+  const { action, name, email, password, phone } = await req.json();
 
   if (action === "create") {
     if (!name || !email || !password) {
@@ -41,11 +53,23 @@ export async function POST(req: Request) {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const user = await prisma.user.create({
-      data: { name, email, passwordHash, role: "TRAINEE" },
-    });
+    try {
+      const user = await prisma.user.create({
+        data: {
+          name,
+          email,
+          passwordHash,
+          phone: phone ?? null,
+          role: "TRAINEE",
+          coachId: requester.coachId,
+        },
+      });
 
-    return NextResponse.json({ user }, { status: 201 });
+      return NextResponse.json({ user }, { status: 201 });
+    } catch (err) {
+      console.error("Failed to create trainee:", err);
+      return NextResponse.json({ error: "שגיאה ביצירת המתאמן" }, { status: 500 });
+    }
   }
 
   return NextResponse.json({ error: "Unknown action" }, { status: 400 });

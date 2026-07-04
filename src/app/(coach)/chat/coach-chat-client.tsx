@@ -19,8 +19,8 @@ export default function CoachChatClient({ myId, trainees }: { myId: string; trai
           {trainees.length === 0 && <div style={{ padding: 20, color: "#52525B", fontSize: 13 }}>אין מתאמנים עדיין</div>}
           {trainees.map(t => (
             <button key={t.id} onClick={() => setSelected(t)}
-              style={{ width: "100%", padding: "12px 16px", display: "flex", alignItems: "center", gap: 10, background: selected?.id === t.id ? "rgba(245,197,24,0.08)" : "none", border: "none", borderRight: selected?.id === t.id ? "3px solid #F5C518" : "3px solid transparent", cursor: "pointer", textAlign: "right" }}>
-              <div style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(245,197,24,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, color: "#F5C518", fontSize: 13, flexShrink: 0 }}>
+              style={{ width: "100%", padding: "12px 16px", display: "flex", alignItems: "center", gap: 10, background: selected?.id === t.id ? "rgba(168,255,62,0.08)" : "none", border: "none", borderRight: selected?.id === t.id ? "3px solid #a8ff3e" : "3px solid transparent", cursor: "pointer", textAlign: "right" }}>
+              <div style={{ width: 36, height: 36, borderRadius: "50%", background: "rgba(168,255,62,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, color: "#a8ff3e", fontSize: 13, flexShrink: 0 }}>
                 {t.name?.[0] ?? "?"}
               </div>
               <div>
