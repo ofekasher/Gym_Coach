@@ -1,15 +1,15 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Users, TrendingUp, Bell, CheckCircle2, AlertTriangle, ChevronLeft, Clock, Zap } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Users, TrendingUp, Bell, CheckCircle2, AlertTriangle, ChevronLeft, Clock, CalendarDays, Zap, UserPlus, ClipboardList } from "lucide-react";
 import { formatDistanceToNow, subDays } from "date-fns";
 import { he } from "date-fns/locale";
 
 interface TraineeWithData {
   id: string;
   name: string | null;
+  email?: string;
   checkIns: { date: Date; weight: number | null }[];
   workoutLogs: { date: Date; status: string }[];
   workoutPlans: { id: string; isActive: boolean }[];
@@ -30,6 +30,9 @@ interface Props {
   stats: { total: number; activeThisWeek: number; checkedInThisWeek: number; unreadAlerts: number };
 }
 
+const GREEN = "#a8ff3e";
+const PURPLE = "#6366f1";
+
 function getTraineeStatus(t: TraineeWithData): "green" | "yellow" | "red" {
   const weekAgo = subDays(new Date(), 7);
   const hasCheckIn = t.checkIns.some((c) => c.date >= weekAgo);
@@ -40,9 +43,9 @@ function getTraineeStatus(t: TraineeWithData): "green" | "yellow" | "red" {
 }
 
 const statusConfig = {
-  green: { label: "פעיל", style: { background: "rgba(16,185,129,0.12)", color: "#10B981", border: "1px solid rgba(16,185,129,0.2)" }, dot: "#10B981" },
-  yellow: { label: "בינוני", style: { background: "rgba(139,92,246,0.12)", color: "#8B5CF6", border: "1px solid rgba(139,92,246,0.2)" }, dot: "#8B5CF6" },
-  red: { label: "דורש מעקב", style: { background: "rgba(239,68,68,0.12)", color: "#EF4444", border: "1px solid rgba(239,68,68,0.2)" }, dot: "#EF4444" },
+  green: { label: "פעיל", bg: "bg-green-500/20", text: "text-green-400" },
+  yellow: { label: "בינוני", bg: "bg-purple-500/20", text: "text-purple-400" },
+  red: { label: "דורש מעקב", bg: "bg-red-500/20", text: "text-red-400" },
 };
 
 const alertTypeLabels: Record<string, string> = {
@@ -53,194 +56,221 @@ const alertTypeLabels: Record<string, string> = {
   PLAN_UPDATE_NEEDED: "דרוש עדכון תוכנית",
 };
 
-const avatarColors = ["#8B5CF6", "#10B981", "#3B82F6", "#F59E0B", "#F87171"];
+const avatarColors = [GREEN, "#8B5CF6", "#3B82F6", "#F59E0B", "#F87171"];
+
+const glassCard = "backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] rounded-2xl hover:bg-white/[0.07] transition-all duration-200";
+
+function progressForTrainee(t: TraineeWithData): number {
+  const total = t.workoutPlans?.[0] ? t.workoutLogs.length : 0;
+  return Math.min(100, t.workoutLogs.length * 20);
+}
 
 export function DashboardClient({ trainees, alerts, stats }: Props) {
+  const [filter, setFilter] = useState<"ALL" | "green" | "red">("ALL");
+
   const statCards = [
-    { label: "סה״כ מתאמנים", value: stats.total, icon: Users, iconColor: "#8B5CF6", iconBg: "rgba(139,92,246,0.12)", sub: "רשומים במערכת" },
-    { label: "פעילים השבוע", value: stats.activeThisWeek, icon: TrendingUp, iconColor: "#10B981", iconBg: "rgba(16,185,129,0.12)", sub: `${Math.round((stats.activeThisWeek / Math.max(stats.total, 1)) * 100)}% מהבסיס` },
-    { label: "צ׳ק-אין השבוע", value: stats.checkedInThisWeek, icon: CheckCircle2, iconColor: "#3B82F6", iconBg: "rgba(59,130,246,0.12)", sub: `מתוך ${stats.total}` },
-    { label: "התראות פתוחות", value: stats.unreadAlerts, icon: Bell, iconColor: "#EF4444", iconBg: "rgba(239,68,68,0.12)", sub: "דורשות מענה" },
+    { label: "מתאמנים", sub: "סה\"כ", value: stats.total, icon: Users, color: GREEN, bg: "rgba(168,255,62,0.12)" },
+    { label: "פעילים", sub: "השבוע", value: stats.activeThisWeek, icon: TrendingUp, color: PURPLE, bg: "rgba(99,102,241,0.15)" },
+    { label: "צ׳ק-אין", sub: "השבוע", value: stats.checkedInThisWeek, icon: CheckCircle2, color: "#3B82F6", bg: "rgba(59,130,246,0.12)" },
+    { label: "התראות", sub: "פתוחות", value: stats.unreadAlerts, icon: Bell, color: stats.unreadAlerts > 0 ? "#f87171" : GREEN, bg: "rgba(248,113,113,0.12)" },
   ];
 
+  const filteredTrainees = trainees.filter((t) => {
+    if (filter === "ALL") return true;
+    return getTraineeStatus(t) === filter;
+  });
+
   return (
-    <div className="space-y-6 animate-fade-in" dir="rtl">
-      {/* Page header */}
-      <div className="flex items-start justify-between">
+    <div className="flex" dir="rtl">
+      {/* Ambient orbs */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full blur-[120px]" style={{ background: "rgba(168,255,62,0.03)" }} />
+        <div className="absolute bottom-[-20%] left-[-10%] w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: "rgba(99,102,241,0.05)" }} />
+      </div>
+
+      {/* Main content */}
+      <div className="flex-1 space-y-6 relative">
         <div>
-          <div className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold mb-2"
-            style={{ background: "rgba(139,92,246,0.12)", border: "1px solid rgba(139,92,246,0.2)", color: "#8B5CF6" }}>
-            <Zap className="w-3 h-3 fill-current" />
-            AI POWERED
-          </div>
-          <h1 className="text-2xl font-extrabold text-white">דאשבורד ראשי</h1>
-          <p className="text-sm mt-0.5" style={{ color: "#52525B" }}>סקירה כללית של כל המתאמנים שלך</p>
+          <h1 className="text-2xl font-extrabold text-white" style={{ fontFamily: "Assistant, sans-serif" }}>דשבורד ראשי</h1>
+          <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "Assistant, sans-serif" }}>סקירה כללית של כל המתאמנים שלך</p>
         </div>
-      </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {statCards.map((s, i) => (
-          <motion.div
-            key={s.label}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.07, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className="rounded-2xl p-5" style={{ background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.07)" }}>
+        {/* KPI cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {statCards.map((s, i) => (
+            <motion.div
+              key={s.label}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.06, duration: 0.4 }}
+              className={`${glassCard} p-5`}
+            >
               <div className="flex items-center justify-between mb-3">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: s.iconBg }}>
-                  <s.icon className="w-4 h-4" style={{ color: s.iconColor }} />
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: s.bg }}>
+                  <s.icon size={16} style={{ color: s.color }} />
                 </div>
-                <span className="text-2xl font-extrabold text-white">{s.value}</span>
+                <span className="font-extrabold text-3xl" style={{ color: s.color === "#f87171" ? s.color : "#fff", fontFamily: "Inter, sans-serif" }}>{s.value}</span>
               </div>
-              <p className="text-xs font-semibold text-white">{s.label}</p>
-              <p className="text-[11px] mt-0.5" style={{ color: "#52525B" }}>{s.sub}</p>
-            </div>
-          </motion.div>
-        ))}
-      </div>
+              <p className="text-sm font-semibold text-white/90" style={{ fontFamily: "Assistant, sans-serif" }}>{s.label}</p>
+              <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "Assistant, sans-serif" }}>{s.sub}</p>
+            </motion.div>
+          ))}
+        </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Trainees */}
-        <div className="lg:col-span-2 space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-white">המתאמנים שלי</h2>
-            <Link href="/trainees">
-              <Button variant="ghost" size="sm" className="gap-1 rounded-xl text-xs hover:bg-zinc-800"
-                style={{ color: "#8B5CF6" }}>
-                כל המתאמנים <ChevronLeft className="w-3.5 h-3.5" />
-              </Button>
+        {/* Title + filters */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-white" style={{ fontFamily: "Assistant, sans-serif" }}>מתאמנים שלך ({trainees.length})</h2>
+          <div className="flex gap-2">
+            {([
+              { key: "ALL", label: "הכל" },
+              { key: "green", label: "פעיל" },
+              { key: "red", label: "דורש מעקב" },
+            ] as const).map((f) => (
+              <button
+                key={f.key}
+                onClick={() => setFilter(f.key)}
+                className="rounded-full px-3 py-1 text-sm border transition-colors"
+                style={filter === f.key
+                  ? { background: "rgba(168,255,62,0.1)", borderColor: "rgba(168,255,62,0.3)", color: GREEN }
+                  : { background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.6)" }}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Trainee cards grid */}
+        {filteredTrainees.length === 0 ? (
+          <div className={`${glassCard} text-center py-12`}>
+            <p className="mb-4 text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>עדיין אין מתאמנים</p>
+            <Link href="/invite">
+              <span className="inline-block rounded-full font-bold px-5 py-2.5 text-sm" style={{ background: GREEN, color: "#0a0a0a" }}>
+                הזמן מתאמן/ת ראשון/ה
+              </span>
             </Link>
           </div>
+        ) : (
+          <div className="grid md:grid-cols-2 gap-4">
+            {filteredTrainees.map((t, i) => {
+              const status = getTraineeStatus(t);
+              const cfg = statusConfig[status];
+              const lastCheckIn = t.checkIns[0];
+              const progress = progressForTrainee(t);
 
-          {trainees.length === 0 ? (
-            <div className="rounded-2xl text-center py-12" style={{ background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.07)" }}>
-              <p className="mb-4 text-sm" style={{ color: "#52525B" }}>עדיין אין מתאמנים</p>
-              <Link href="/invite">
-                <Button className="rounded-full font-bold" style={{ background: "#8B5CF6", color: "#111" }}>
-                  הזמן מתאמן/ת ראשון/ה
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-2.5">
-              {trainees.slice(0, 8).map((t, i) => {
-                const status = getTraineeStatus(t);
-                const cfg = statusConfig[status];
-                const lastCheckIn = t.checkIns[0];
-                const weightDiff = t.checkIns.length >= 2
-                  ? (t.checkIns[0].weight ?? 0) - (t.checkIns[1].weight ?? 0)
-                  : null;
-
-                return (
-                  <motion.div
-                    key={t.id}
-                    initial={{ opacity: 0, x: -12 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.04, duration: 0.35 }}
-                  >
-                    <Link href={`/trainees/${t.id}`}>
-                      <div className="rounded-2xl p-4 transition-all cursor-pointer group"
-                        style={{ background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.07)" }}
-                        onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(139,92,246,0.2)")}
-                        onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)")}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-black font-bold text-sm flex-shrink-0"
-                            style={{ background: avatarColors[i % avatarColors.length] }}>
-                            {t.name?.[0] ?? "?"}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <p className="font-semibold text-sm text-white">{t.name}</p>
-                              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                                style={cfg.style}>
-                                <span className="w-1.5 h-1.5 rounded-full" style={{ background: cfg.dot }} />
-                                {cfg.label}
-                              </span>
-                            </div>
-                            <div className="flex gap-3 mt-1 text-[11px]" style={{ color: "#52525B" }}>
-                              <span>{t.workoutLogs.length} אימונים</span>
-                              {lastCheckIn && (
-                                <span className="flex items-center gap-1">
-                                  <Clock className="w-3 h-3" />
-                                  {formatDistanceToNow(lastCheckIn.date, { locale: he, addSuffix: true })}
-                                </span>
-                              )}
-                              {weightDiff !== null && (
-                                <span style={{ color: weightDiff < 0 ? "#10B981" : weightDiff > 0 ? "#EF4444" : "#52525B", fontWeight: 500 }}>
-                                  {weightDiff > 0 ? "+" : ""}{weightDiff.toFixed(1)} ק״ג
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          <ChevronLeft className="w-4 h-4 flex-shrink-0 transition-colors"
-                            style={{ color: "#3A3A3C" }} />
-                        </div>
+              return (
+                <motion.div
+                  key={t.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05, duration: 0.4 }}
+                  className={`${glassCard} p-5`}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0"
+                      style={{ background: avatarColors[i % avatarColors.length], color: "#0a0a0a" }}>
+                      {t.name?.[0] ?? "?"}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-sm text-white">{t.name}</p>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${cfg.bg} ${cfg.text}`}>{cfg.label}</span>
                       </div>
+                      {t.email && <p className="text-xs truncate" style={{ color: "rgba(255,255,255,0.3)" }}>{t.email}</p>}
+                    </div>
+                  </div>
+
+                  <div className="text-xs mb-2" style={{ color: "rgba(255,255,255,0.5)" }}>
+                    {lastCheckIn
+                      ? `אימון אחרון: ${formatDistanceToNow(lastCheckIn.date, { locale: he, addSuffix: true })}`
+                      : "אין נתוני פעילות עדיין"}
+                  </div>
+
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex-1 h-1.5 rounded-full bg-white/10">
+                      <div className="h-full rounded-full" style={{ width: `${progress}%`, background: GREEN }} />
+                    </div>
+                    <span className="text-xs font-semibold" style={{ color: GREEN }}>{progress}%</span>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <Link href={`/trainees/${t.id}`} className="flex-1">
+                      <span className="block text-center text-xs font-bold px-3 py-1.5 rounded-lg" style={{ background: GREEN, color: "#0a0a0a" }}>
+                        פתח פרופיל ←
+                      </span>
                     </Link>
-                  </motion.div>
-                );
-              })}
-            </div>
-          )}
+                    <Link href="/chat" className="flex-1">
+                      <span className="block text-center text-xs px-3 py-1.5 rounded-lg" style={{ background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.7)", border: "1px solid rgba(255,255,255,0.1)" }}>
+                        שלח הודעה
+                      </span>
+                    </Link>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Right panel */}
+      <div className="w-[300px] flex-shrink-0 mr-6 space-y-6 relative">
+        <div>
+          <h3 className="text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-1.5" style={{ color: "rgba(255,255,255,0.4)" }}>
+            <CalendarDays size={13} /> היום
+          </h3>
+          <div className={`${glassCard} p-4 text-center`}>
+            <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>אין פגישות מתוזמנות היום</p>
+          </div>
         </div>
 
-        {/* Alerts */}
-        <div className="space-y-3">
-          <h2 className="text-base font-bold text-white flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: "rgba(239,68,68,0.12)" }}>
-              <Bell className="w-3.5 h-3.5" style={{ color: "#EF4444" }} />
-            </div>
-            התראות
-            {alerts.length > 0 && (
-              <span className="w-5 h-5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center font-bold">
-                {alerts.length}
-              </span>
-            )}
-          </h2>
-
+        <div>
+          <h3 className="text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-1.5" style={{ color: "rgba(255,255,255,0.4)" }}>
+            <Bell size={13} /> התראות
+          </h3>
           {alerts.length === 0 ? (
-            <div className="rounded-2xl text-center py-10" style={{ background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.07)" }}>
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3"
-                style={{ background: "rgba(16,185,129,0.12)" }}>
-                <CheckCircle2 className="w-5 h-5" style={{ color: "#10B981" }} />
-              </div>
-              <p className="text-sm" style={{ color: "#52525B" }}>אין התראות פתוחות</p>
+            <div className={`${glassCard} p-4 text-center`}>
+              <CheckCircle2 size={18} className="mx-auto mb-2" style={{ color: GREEN }} />
+              <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>אין התראות פתוחות</p>
             </div>
           ) : (
             <div className="space-y-2">
-              {alerts.map((alert, i) => (
-                <motion.div
-                  key={alert.id}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.06 }}
-                >
-                  <Link href={`/trainees/${alert.trainee.id}`}>
-                    <div className="rounded-2xl p-4 transition-all cursor-pointer"
-                      style={{ background: "#1C1C1E", border: "1px solid rgba(139,92,246,0.1)" }}
-                      onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(139,92,246,0.3)")}
-                      onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(139,92,246,0.1)")}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
-                          style={{ background: "rgba(139,92,246,0.12)" }}>
-                          <AlertTriangle className="w-3.5 h-3.5" style={{ color: "#8B5CF6" }} />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-xs font-bold" style={{ color: "#8B5CF6" }}>{alertTypeLabels[alert.type] ?? alert.type}</p>
-                          <p className="text-xs font-semibold text-white mt-0.5">{alert.trainee.name}</p>
-                          <p className="text-[11px] mt-0.5 line-clamp-2" style={{ color: "#52525B" }}>{alert.message}</p>
-                        </div>
+              {alerts.slice(0, 4).map((alert) => (
+                <Link key={alert.id} href={`/trainees/${alert.trainee.id}`}>
+                  <div className="rounded-xl p-3 mb-0" style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)" }}>
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle size={13} className="flex-shrink-0 mt-0.5" style={{ color: "#f87171" }} />
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold text-white">{alert.trainee.name}</p>
+                        <p className="text-[11px] line-clamp-2" style={{ color: "rgba(255,255,255,0.5)" }}>
+                          {alertTypeLabels[alert.type] ?? alert.message}
+                        </p>
                       </div>
                     </div>
-                  </Link>
-                </motion.div>
+                  </div>
+                </Link>
               ))}
             </div>
           )}
+        </div>
+
+        <div>
+          <h3 className="text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-1.5" style={{ color: "rgba(255,255,255,0.4)" }}>
+            <Zap size={13} /> פעולות מהירות
+          </h3>
+          <div className="space-y-2">
+            <Link href="/invite">
+              <div className={`${glassCard} p-3 flex items-center gap-2 justify-center`}>
+                <UserPlus size={14} style={{ color: GREEN }} />
+                <span className="text-sm font-semibold text-white">הוסף מתאמן</span>
+              </div>
+            </Link>
+            <Link href="/trainees">
+              <div className={`${glassCard} p-3 flex items-center gap-2 justify-center`}>
+                <ClipboardList size={14} style={{ color: GREEN }} />
+                <span className="text-sm font-semibold text-white">תוכנית חדשה</span>
+              </div>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
