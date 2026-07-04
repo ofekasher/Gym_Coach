@@ -30,11 +30,13 @@ export async function GET(req: NextRequest) {
     const exercise = data[0] ?? null;
 
     return NextResponse.json({
-      gifUrl: exercise?.gifUrl ?? null,
       target: exercise?.target ?? null,
       secondaryMuscles: exercise?.secondaryMuscles ?? [],
       instructions: exercise?.instructions ?? [],
       equipment: exercise?.equipment ?? null,
+      description: exercise?.description ?? null,
+      difficulty: exercise?.difficulty ?? null,
+      category: exercise?.category ?? null,
     });
   } catch (err) {
     console.error("ExerciseDB fetch error:", err);
