@@ -66,13 +66,15 @@ export default function InvitePage() {
 
   const whatsappMessage = created
     ? `היי ${created.name}! 👋
-${coachName} הוסיף אותך למערכת האימון האישי.
+${coachName} הוסיף אותך למערכת האימון האישי Lior Fit.
 
-כנס/י כאן: ${typeof window !== "undefined" ? window.location.origin : ""}/login
+כנס/י לאפליקציה כאן:
+${typeof window !== "undefined" ? window.location.origin : ""}/login
+
 אימייל: ${created.email}
-סיסמה זמנית: ${created.password}
+סיסמה: ${created.password}
 
-בהצלחה! 💪`
+לאחר הכניסה תגיע/י ישירות לאזור המתאמן שלך 💪`
     : "";
 
   const whatsappLink = created?.phone

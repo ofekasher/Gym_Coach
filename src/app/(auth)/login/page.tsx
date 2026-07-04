@@ -42,7 +42,10 @@ export default function LoginPage() {
       } else {
         const sessionRes = await fetch("/api/auth/session");
         const session = await sessionRes.json();
-        router.push(session?.user?.role === "COACH" ? "/dashboard" : "/my/dashboard");
+        const role = session?.user?.role;
+        if (role === "COACH") router.push("/dashboard");
+        else if (role === "ADMIN") router.push("/admin");
+        else router.push("/my/dashboard");
       }
     } finally {
       setLoading(false);
