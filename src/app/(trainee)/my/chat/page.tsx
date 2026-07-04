@@ -7,7 +7,7 @@ import { ChatWindow } from "@/components/shared/chat-window";
 import { BackHeader } from "@/components/shared/back-header";
 import { isDemoId } from "@/lib/demo-data";
 
-const DEMO_COACH = { id: "demo-coach-001", name: "יוני מאמן", email: "coach@demo.com" };
+const DEMO_COACH = { id: "demo-coach-001", name: "ליאור זיו", email: "coach@demo.com" };
 
 export default async function TraineeChatPage() {
   const session = await auth();

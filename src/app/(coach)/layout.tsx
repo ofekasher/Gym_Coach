@@ -4,7 +4,7 @@ import { CoachSidebar } from "@/components/shared/coach-sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { isDatabaseConfigured } from "@/lib/prisma";
 
-const DEMO_COACH_USER = { id: "demo-coach-1", name: "מאמן דמו", email: "coach@demo.com", role: "COACH" as const, image: null };
+const DEMO_COACH_USER = { id: "demo-coach-1", name: "ליאור זיו", email: "coach@demo.com", role: "COACH" as const, image: null };
 
 export default async function CoachLayout({ children }: { children: React.ReactNode }) {
   if (!isDatabaseConfigured) {

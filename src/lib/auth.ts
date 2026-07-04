@@ -8,7 +8,7 @@ const DEMO_USERS: Record<string, { id: string; email: string; name: string; role
   "coach@demo.com": {
     id: "demo-coach-001",
     email: "coach@demo.com",
-    name: "יוני מאמן",
+    name: "ליאור זיו",
     role: "COACH",
     passwordHash: "$2b$10$uw3l3EbMDVK3GR26puAt.e2/oU0IiyBKiCMCNN6kRIH/g/A7GfJNe",
   },

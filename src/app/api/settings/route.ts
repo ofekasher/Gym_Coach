@@ -5,7 +5,7 @@ import { isDemoId } from "@/lib/demo-data";
 
 const DEMO_SETTINGS = {
   settings: { businessName: "SmartFit Demo", bio: "מאמן כושר מקצועי", phone: "050-0000000", currency: "ILS", monthlyPrice: 400, quarterPrice: 1100, annualPrice: 3900, notifyWorkout: true, notifyCheckin: true, notifyInactive: true, notifyPayment: true },
-  coach: { name: "יוני מאמן", email: "coach@demo.com" },
+  coach: { name: "ליאור זיו", email: "coach@demo.com" },
 };
 
 export async function GET() {
