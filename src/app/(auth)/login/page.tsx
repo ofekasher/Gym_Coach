@@ -41,17 +41,29 @@ export default function LoginPage() {
         toast({ variant: "destructive", title: "שגיאה", description: "אימייל או סיסמה שגויים" });
       } else {
         // Force session to settle before reading role
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 500));
         router.refresh();
+        await new Promise(resolve => setTimeout(resolve, 200));
 
         const sessionRes = await fetch("/api/auth/session");
         const session = await sessionRes.json();
-        const role = session?.user?.role;
 
-        if (role === "COACH") router.push("/dashboard");
-        else if (role === "ADMIN") router.push("/admin");
-        else if (role === "TRAINEE") router.push("/my/dashboard");
-        else router.push("/my/dashboard");
+        console.log("SESSION RESPONSE:", JSON.stringify(session));
+        console.log("USER ROLE:", session?.user?.role);
+
+        const role = session?.user?.role?.toUpperCase();
+        console.log("ROLE UPPERCASE:", role);
+
+        if (role === "COACH") {
+          console.log("Redirecting to /dashboard");
+          router.push("/dashboard");
+        } else if (role === "ADMIN") {
+          console.log("Redirecting to /admin");
+          router.push("/admin");
+        } else {
+          console.log("Redirecting to /my/dashboard (fallback)");
+          router.push("/my/dashboard");
+        }
       }
     } finally {
       setLoading(false);
