@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { NotificationsBell } from "@/components/shared/notifications-panel";
 import { ReadinessWidget } from "@/components/shared/readiness-widget";
 import { getMuscleGymPhoto } from "@/lib/gym-photos";
+import { Droplet, Scale, Zap, Salad, ClipboardList, Bot } from "lucide-react";
 
 const BG = "transparent";
 const CARD = { background: "#161B22", borderRadius: 28, border: "1px solid rgba(255,255,255,0.06)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" };
@@ -206,7 +207,7 @@ export function TraineeDashboardClient({ user }: { user: any }) {
             <div style={{ fontSize: 10, color: GREEN, fontWeight: 600, marginTop: 4 }}>השבוע</div>
           </div>
           <div style={{ ...CARD, padding: "14px 16px", position: "relative", cursor: "pointer" }} onClick={() => setShowWaterPicker(v => !v)}>
-            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: 6 }}>💧 מים היום</div>
+            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}><Droplet size={11} /> מים היום</div>
             <div style={{ fontSize: 22, fontWeight: 800, color: "#60A5FA" }}>
               {waterMl === 0 ? <span style={{ fontSize: 14, color: "rgba(255,255,255,0.2)" }}>הוסף +</span>
                 : <>{waterDisplay} <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>{waterUnit}</span></>}
@@ -238,14 +239,14 @@ export function TraineeDashboardClient({ user }: { user: any }) {
           </div>
           {currentWeight && (
             <div style={{ ...CARD, padding: "14px 16px" }}>
-              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: 6 }}>⚖️ משקל</div>
+              <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}><Scale size={11} /> משקל</div>
               <div style={{ fontSize: 22, fontWeight: 800, color: "#93C5FD" }}>
                 {currentWeight} <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>ק״ג</span>
               </div>
             </div>
           )}
           <div style={{ ...CARD, padding: "14px 16px" }}>
-            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: 6 }}>⚡ אימונים</div>
+            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", fontWeight: 600, marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}><Zap size={11} /> אימונים</div>
             <div style={{ fontSize: 22, fontWeight: 800, color: "#34D399" }}>
               {totalWorkouts} <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", fontWeight: 500 }}>/חודש</span>
             </div>
@@ -320,14 +321,14 @@ export function TraineeDashboardClient({ user }: { user: any }) {
 
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           {[
-            { href: "/my/nutrition", icon: "🥗", label: "מעקב תזונה", sub: "עדכן ארוחות היום", color: "linear-gradient(135deg,#065F46,#10B981)" },
-            { href: "/my/checkin", icon: "📊", label: "צ׳ק-אין שבועי", sub: "שקל ועדכן מדידות", color: "linear-gradient(135deg,#5ecc00,#a8ff3e)" },
-            { href: "/my/ai", icon: "🤖", label: "מאמן AI", sub: "שאל שאלה על אימון", color: "linear-gradient(135deg,#5ecc00,#a8ff3e)" },
+            { href: "/my/nutrition", icon: Salad, label: "מעקב תזונה", sub: "עדכן ארוחות היום", color: "linear-gradient(135deg,#065F46,#10B981)" },
+            { href: "/my/checkin", icon: ClipboardList, label: "צ׳ק-אין שבועי", sub: "שקל ועדכן מדידות", color: "linear-gradient(135deg,#5ecc00,#a8ff3e)" },
+            { href: "/my/ai", icon: Bot, label: "מאמן AI", sub: "שאל שאלה על אימון", color: "linear-gradient(135deg,#5ecc00,#a8ff3e)" },
           ].map((item) => (
             <Link key={item.href} href={item.href} style={{ textDecoration: "none" }}>
               <div style={{ ...CARD, padding: "12px 14px", display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 42, height: 42, borderRadius: 14, background: item.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, flexShrink: 0 }}>
-                  {item.icon}
+                <div style={{ width: 42, height: 42, borderRadius: 14, background: item.color, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <item.icon size={20} color="#0a0a0a" />
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{item.label}</div>
@@ -352,7 +353,7 @@ export function TraineeDashboardClient({ user }: { user: any }) {
             transition={{ repeat: Infinity, duration: 2 }}
             className="absolute inset-0 rounded-full bg-[#a8ff3e]/30"
           />
-          <span className="text-2xl">🤖</span>
+          <Bot className="w-6 h-6 text-black" />
         </motion.div>
       </Link>
     </div>

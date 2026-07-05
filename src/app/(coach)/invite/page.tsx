@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Mail, Loader2, Eye, EyeOff, MessageCircle, Copy, UserPlus } from "lucide-react";
+import { Mail, Loader2, Eye, EyeOff, MessageCircle, Copy, UserPlus, Dices, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 
@@ -143,7 +143,7 @@ ${typeof window !== "undefined" ? window.location.origin : ""}/login
                   title="צור סיסמה אקראית"
                   className="w-12 flex-shrink-0 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/70 flex items-center justify-center"
                 >
-                  🎲
+                  <Dices className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -161,7 +161,7 @@ ${typeof window !== "undefined" ? window.location.origin : ""}/login
       ) : (
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className={glassCard}>
           <div className="text-center mb-5">
-            <div className="text-3xl mb-2">✅</div>
+            <CheckCircle2 className="w-9 h-9 mx-auto mb-2" style={{ color: GREEN }} />
             <div className="text-white font-bold text-lg">המתאמן נוסף בהצלחה!</div>
           </div>
 

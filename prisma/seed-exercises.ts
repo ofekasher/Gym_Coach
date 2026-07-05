@@ -4,7 +4,6 @@ import { EXERCISE_LIBRARY } from "../src/lib/exercise-library";
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("First library item:", EXERCISE_LIBRARY[0]);
   console.log(`Seeding ${EXERCISE_LIBRARY.length} exercises...`);
 
   await prisma.exercise.deleteMany({ where: { isCustom: false } });

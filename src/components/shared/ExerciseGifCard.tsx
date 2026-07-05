@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Dumbbell, Wrench, Star, PlayCircle } from "lucide-react";
 
 interface Props {
   exerciseName: string;
@@ -101,18 +102,18 @@ export function ExerciseGifCard({ exerciseName }: Props) {
           {data && !loading && hasInfo && (
             <div className="flex flex-wrap gap-2 mb-3">
               {data.target && (
-                <span className="bg-[#a8ff3e]/10 text-[#a8ff3e] text-xs px-2 py-0.5 rounded-full">
-                  💪 שריר ראשי: {muscleTranslations[data.target] ?? data.target}
+                <span className="bg-[#a8ff3e]/10 text-[#a8ff3e] text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <Dumbbell className="w-3 h-3" /> שריר ראשי: {muscleTranslations[data.target] ?? data.target}
                 </span>
               )}
               {data.equipment && (
-                <span className="bg-white/10 text-white/70 text-xs px-2 py-0.5 rounded-full">
-                  🔧 ציוד: {equipmentTranslations[data.equipment] ?? data.equipment}
+                <span className="bg-white/10 text-white/70 text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <Wrench className="w-3 h-3" /> ציוד: {equipmentTranslations[data.equipment] ?? data.equipment}
                 </span>
               )}
               {data.difficulty && (
-                <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: `${diffColor}1A`, color: diffColor }}>
-                  ⭐ רמה: {difficultyTranslations[data.difficulty] ?? data.difficulty}
+                <span className="text-xs px-2 py-0.5 rounded-full flex items-center gap-1" style={{ background: `${diffColor}1A`, color: diffColor }}>
+                  <Star className="w-3 h-3" /> רמה: {difficultyTranslations[data.difficulty] ?? data.difficulty}
                 </span>
               )}
             </div>
@@ -130,7 +131,7 @@ export function ExerciseGifCard({ exerciseName }: Props) {
               rel="noopener noreferrer"
               className="w-full mt-3 bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 text-red-400 text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all"
             >
-              ▶ צפה בסרטון הדגמה ב-YouTube
+              <PlayCircle className="w-4 h-4" /> צפה בסרטון הדגמה ב-YouTube
             </a>
           )}
           {loadingVideo && (

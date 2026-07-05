@@ -25,15 +25,16 @@ export async function GET(req: NextRequest) {
 
     const data = await res.json();
     const video = data.items?.[0];
+    const videoId = video?.id?.videoId ?? null;
 
-    if (!video) {
+    if (!videoId) {
       return NextResponse.json({ videoId: null });
     }
 
     return NextResponse.json({
-      videoId: video.id.videoId,
-      title: video.snippet.title,
-      thumbnail: video.snippet.thumbnails.medium.url,
+      videoId,
+      title: video?.snippet?.title ?? null,
+      thumbnail: video?.snippet?.thumbnails?.medium?.url ?? null,
     });
   } catch (err) {
     console.error("YouTube fetch error:", err);

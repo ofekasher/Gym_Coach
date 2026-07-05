@@ -40,28 +40,23 @@ export default function LoginPage() {
       if (res?.error) {
         toast({ variant: "destructive", title: "שגיאה", description: "אימייל או סיסמה שגויים" });
       } else {
-        // Force session to settle before reading role
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Poll for the session instead of a blind fixed delay — retries a few
+        // times in case the cookie hasn't propagated to this request yet.
+        let role: string | undefined;
+        for (let attempt = 0; attempt < 5 && !role; attempt++) {
+          if (attempt > 0) await new Promise(resolve => setTimeout(resolve, 200));
+          const sessionRes = await fetch("/api/auth/session");
+          const session = await sessionRes.json();
+          role = session?.user?.role?.toUpperCase();
+        }
+
         router.refresh();
-        await new Promise(resolve => setTimeout(resolve, 200));
-
-        const sessionRes = await fetch("/api/auth/session");
-        const session = await sessionRes.json();
-
-        console.log("SESSION RESPONSE:", JSON.stringify(session));
-        console.log("USER ROLE:", session?.user?.role);
-
-        const role = session?.user?.role?.toUpperCase();
-        console.log("ROLE UPPERCASE:", role);
 
         if (role === "COACH") {
-          console.log("Redirecting to /dashboard");
           router.push("/dashboard");
         } else if (role === "ADMIN") {
-          console.log("Redirecting to /admin");
           router.push("/admin");
         } else {
-          console.log("Redirecting to /my/dashboard (fallback)");
           router.push("/my/dashboard");
         }
       }
