@@ -2,7 +2,6 @@
 import { useState, useMemo } from "react";
 import { Search, Plus, Trash2, Loader2, ChevronDown, Dumbbell, Zap, Filter, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { ExerciseAnimationButton } from "@/components/shared/exercise-animation-modal";
 import { ExerciseGifCard } from "@/components/shared/ExerciseGifCard";
 
 const MUSCLE_GROUPS = ["חזה", "גב", "רגליים", "כתפיים", "זרועות", "בטן", "גוף מלא", "ישבן", "גב תחתון"];
@@ -267,9 +266,6 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
               }}>
                 {/* Card header */}
                 <div style={{ padding: "14px 16px", display: "flex", alignItems: "center", gap: 12 }}>
-                  {/* Demo/video button */}
-                  <ExerciseAnimationButton exerciseName={ex.name} muscleGroup={ex.muscleGroup} videoId={ex.videoUrl ?? null} />
-
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ color: "#F4F4F5", fontSize: 14, fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{ex.name}</div>
                     <div style={{ display: "flex", gap: 6, marginTop: 4, flexWrap: "wrap" }}>

@@ -11,6 +11,31 @@ const DIFFICULTY_COLOR: Record<string, string> = {
   advanced: "#f87171",
 };
 
+const muscleTranslations: Record<string, string> = {
+  abs: "בטן", quads: "ארבע ראשי", hamstrings: "ירך אחורי",
+  glutes: "ישבן", chest: "חזה", back: "גב", lats: "גב רחב",
+  biceps: "יד קדמית", triceps: "יד אחורית", shoulders: "כתפיים",
+  calves: "שוקיים", "upper back": "גב עליון", "lower back": "גב תחתון",
+  core: "ליבה", forearms: "אמות", "hip flexors": "מכופפי ירך",
+  adductors: "מכווצי ירך", abductors: "מרחיקי ירך",
+  "cardiovascular system": "מערכת לב-ריאה", spine: "עמוד שדרה",
+  "serratus anterior": "שריר משונן", traps: "טרפז",
+  pectorals: "חזה", deltoids: "דלתא",
+};
+
+const equipmentTranslations: Record<string, string> = {
+  "body weight": "משקל גוף", barbell: "מוט", dumbbell: "משקולות",
+  cable: "כבל", machine: "מכונה", kettlebell: "קטלבל",
+  "resistance band": "גומיות", "pull-up bar": "מתח", bench: "ספסל",
+  "ez barbell": "מוט EZ", "smith machine": "סמית משין",
+  "leverage machine": "מכונת מינוף", rope: "חבל", band: "גומייה",
+  "stability ball": "כדור פיזיו", "bosu ball": "בוסו", none: "ללא ציוד",
+};
+
+const difficultyTranslations: Record<string, string> = {
+  beginner: "מתחיל", intermediate: "בינוני", advanced: "מתקדם",
+};
+
 export function ExerciseGifCard({ exerciseName }: Props) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -77,17 +102,17 @@ export function ExerciseGifCard({ exerciseName }: Props) {
             <div className="flex flex-wrap gap-2 mb-3">
               {data.target && (
                 <span className="bg-[#a8ff3e]/10 text-[#a8ff3e] text-xs px-2 py-0.5 rounded-full">
-                  💪 שריר ראשי: {data.target}
+                  💪 שריר ראשי: {muscleTranslations[data.target] ?? data.target}
                 </span>
               )}
               {data.equipment && (
                 <span className="bg-white/10 text-white/70 text-xs px-2 py-0.5 rounded-full">
-                  🔧 ציוד: {data.equipment}
+                  🔧 ציוד: {equipmentTranslations[data.equipment] ?? data.equipment}
                 </span>
               )}
               {data.difficulty && (
                 <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: `${diffColor}1A`, color: diffColor }}>
-                  ⭐ רמה: {data.difficulty}
+                  ⭐ רמה: {difficultyTranslations[data.difficulty] ?? data.difficulty}
                 </span>
               )}
             </div>

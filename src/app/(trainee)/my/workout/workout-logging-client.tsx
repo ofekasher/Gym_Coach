@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { getVideoId } from "@/lib/exercise-videos";
-import { ExerciseAnimationButton } from "@/components/shared/exercise-animation-modal";
 import { getAlternatives, type AlternativeExercise } from "@/lib/exercise-alternatives";
 import { getMuscleGymPhoto } from "@/lib/gym-photos";
 import { ExerciseGifCard } from "@/components/shared/ExerciseGifCard";
@@ -608,12 +607,6 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
                         </svg>
                       </button>
                     )}
-                    {/* Demo animation button */}
-                    <ExerciseAnimationButton
-                      exerciseName={displayName}
-                      muscleGroup={ex.exercise?.muscleGroup ?? ""}
-                      videoId={ex.exercise?.videoUrl ?? null}
-                    />
                     <div style={{ marginRight: 8,
                       width: 32, height: 32, borderRadius: "50%",
                       background: isDone ? "#10B981" : isSkip ? "rgba(255,255,255,0.1)" : isActive ? GREEN : "rgba(255,255,255,0.12)",
