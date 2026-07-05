@@ -17,7 +17,6 @@ export function ExerciseGifCard({ exerciseName }: Props) {
   const [opened, setOpened] = useState(false);
   const [videoData, setVideoData] = useState<any>(null);
   const [loadingVideo, setLoadingVideo] = useState(false);
-  const [showVideo, setShowVideo] = useState(false);
 
   const load = async () => {
     if (data || loading) return;
@@ -49,9 +48,13 @@ export function ExerciseGifCard({ exerciseName }: Props) {
     }
   };
 
-  const handleShowVideo = () => {
-    setShowVideo(true);
-    loadVideo();
+  const handleOpen = () => {
+    const next = !opened;
+    setOpened(next);
+    if (next) {
+      load();
+      loadVideo();
+    }
   };
 
   const hasInfo = data && (data.target || data.equipment || data.difficulty || data.description);
@@ -60,7 +63,7 @@ export function ExerciseGifCard({ exerciseName }: Props) {
   return (
     <div>
       <button
-        onClick={() => { setOpened(!opened); load(); }}
+        onClick={handleOpen}
         className="text-[#a8ff3e] text-xs underline"
       >
         {opened ? "✕ סגור" : "▶ פרטי תרגיל"}
@@ -111,41 +114,23 @@ export function ExerciseGifCard({ exerciseName }: Props) {
             <div className="text-white/40 text-sm text-center mb-3">לא נמצא מידע נוסף לתרגיל זה</div>
           )}
 
-          {/* YouTube — always available, independent of ExerciseDB info */}
-          <div>
-            {!showVideo && (
-              <button
-                onClick={handleShowVideo}
-                className="w-full bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 text-red-400 text-xs font-semibold py-2 rounded-lg transition-all flex items-center justify-center gap-2"
-              >
-                ▶ הצג סרטון הדגמה ב-YouTube
-              </button>
-            )}
-
-            {showVideo && loadingVideo && (
-              <div className="text-white/40 text-xs text-center py-4">טוען סרטון...</div>
-            )}
-
-            {showVideo && videoData?.videoId && !loadingVideo && (
-              <div className="rounded-xl overflow-hidden">
-                <iframe
-                  width="100%"
-                  height="200"
-                  src={`https://www.youtube.com/embed/${videoData.videoId}`}
-                  title={videoData.title}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="rounded-xl"
-                />
-              </div>
-            )}
-
-            {showVideo && videoData && !videoData.videoId && !loadingVideo && (
-              <div className="text-white/40 text-xs text-center py-2">
-                לא נמצא סרטון לתרגיל זה
-              </div>
-            )}
-          </div>
+          {/* YouTube link — always show, no embed */}
+          {!loadingVideo && videoData?.videoId && (
+            <a
+              href={`https://www.youtube.com/watch?v=${videoData.videoId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full mt-3 bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 text-red-400 text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all"
+            >
+              ▶ צפה בסרטון הדגמה ב-YouTube
+            </a>
+          )}
+          {loadingVideo && (
+            <div className="text-white/40 text-xs text-center py-2 mt-2">טוען סרטון...</div>
+          )}
+          {!loadingVideo && videoData && !videoData.videoId && (
+            <div className="text-white/40 text-xs text-center py-2 mt-2">לא נמצא סרטון לתרגיל זה</div>
+          )}
         </div>
       )}
     </div>
