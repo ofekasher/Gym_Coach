@@ -68,84 +68,84 @@ export function ExerciseGifCard({ exerciseName }: Props) {
 
       {opened && (
         <div className="bg-white/[0.04] border border-white/[0.08] rounded-xl p-4 mt-3">
-          {loading && <div className="text-white/40 text-sm">טוען...</div>}
-          {data && !loading && (
+          {loading && <div className="text-white/40 text-sm mb-3">טוען מידע...</div>}
+
+          {data && !loading && hasInfo && (
             <>
-              {hasInfo ? (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {data.target && (
+                  <span className="bg-[#a8ff3e]/10 text-[#a8ff3e] text-xs px-2 py-0.5 rounded-full">
+                    💪 שריר ראשי: {data.target}
+                  </span>
+                )}
+                {data.equipment && (
+                  <span className="bg-white/10 text-white/70 text-xs px-2 py-0.5 rounded-full">
+                    🔧 ציוד: {data.equipment}
+                  </span>
+                )}
+                {data.difficulty && (
+                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: `${diffColor}1A`, color: diffColor }}>
+                    ⭐ רמה: {data.difficulty}
+                  </span>
+                )}
+              </div>
+
+              {data.description && (
+                <p className="text-white/60 text-xs leading-relaxed mb-3">{data.description}</p>
+              )}
+
+              {data.instructions?.length > 0 && (
                 <>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {data.target && (
-                      <span className="bg-[#a8ff3e]/10 text-[#a8ff3e] text-xs px-2 py-0.5 rounded-full">
-                        💪 שריר ראשי: {data.target}
-                      </span>
-                    )}
-                    {data.equipment && (
-                      <span className="bg-white/10 text-white/70 text-xs px-2 py-0.5 rounded-full">
-                        🔧 ציוד: {data.equipment}
-                      </span>
-                    )}
-                    {data.difficulty && (
-                      <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: `${diffColor}1A`, color: diffColor }}>
-                        ⭐ רמה: {data.difficulty}
-                      </span>
-                    )}
-                  </div>
-
-                  {data.description && (
-                    <p className="text-white/60 text-xs leading-relaxed mb-3">{data.description}</p>
-                  )}
-
-                  {data.instructions?.length > 0 && (
-                    <>
-                      <div className="text-white/70 text-xs font-bold mb-1">הוראות ביצוע:</div>
-                      <ol className="text-white/50 text-xs space-y-1 list-decimal list-inside">
-                        {data.instructions.slice(0, 4).map((inst: string, i: number) => (
-                          <li key={i}>{inst}</li>
-                        ))}
-                      </ol>
-                    </>
-                  )}
-
-                  {!showVideo && (
-                    <button
-                      onClick={handleShowVideo}
-                      className="w-full bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 text-red-400 text-xs font-semibold py-2 rounded-lg transition-all flex items-center justify-center gap-2 mt-3"
-                    >
-                      ▶ הצג סרטון הדגמה ב-YouTube
-                    </button>
-                  )}
-
-                  {showVideo && (
-                    <div className="mt-3">
-                      {loadingVideo && (
-                        <div className="text-white/40 text-xs text-center py-4">טוען סרטון...</div>
-                      )}
-                      {videoData?.videoId && !loadingVideo && (
-                        <div className="rounded-xl overflow-hidden">
-                          <iframe
-                            width="100%"
-                            height="200"
-                            src={`https://www.youtube.com/embed/${videoData.videoId}`}
-                            title={videoData.title}
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            className="rounded-xl"
-                          />
-                        </div>
-                      )}
-                      {videoData && !videoData.videoId && !loadingVideo && (
-                        <div className="text-white/40 text-xs text-center py-2">
-                          לא נמצא סרטון לתרגיל זה
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  <div className="text-white/70 text-xs font-bold mb-1">הוראות ביצוע:</div>
+                  <ol className="text-white/50 text-xs space-y-1 list-decimal list-inside mb-3">
+                    {data.instructions.slice(0, 4).map((inst: string, i: number) => (
+                      <li key={i}>{inst}</li>
+                    ))}
+                  </ol>
                 </>
-              ) : (
-                <div className="text-white/40 text-sm text-center">לא נמצא מידע לתרגיל זה</div>
               )}
             </>
           )}
+
+          {data && !loading && !hasInfo && (
+            <div className="text-white/40 text-sm text-center mb-3">לא נמצא מידע נוסף לתרגיל זה</div>
+          )}
+
+          {/* YouTube — always available, independent of ExerciseDB info */}
+          <div>
+            {!showVideo && (
+              <button
+                onClick={handleShowVideo}
+                className="w-full bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 text-red-400 text-xs font-semibold py-2 rounded-lg transition-all flex items-center justify-center gap-2"
+              >
+                ▶ הצג סרטון הדגמה ב-YouTube
+              </button>
+            )}
+
+            {showVideo && loadingVideo && (
+              <div className="text-white/40 text-xs text-center py-4">טוען סרטון...</div>
+            )}
+
+            {showVideo && videoData?.videoId && !loadingVideo && (
+              <div className="rounded-xl overflow-hidden">
+                <iframe
+                  width="100%"
+                  height="200"
+                  src={`https://www.youtube.com/embed/${videoData.videoId}`}
+                  title={videoData.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="rounded-xl"
+                />
+              </div>
+            )}
+
+            {showVideo && videoData && !videoData.videoId && !loadingVideo && (
+              <div className="text-white/40 text-xs text-center py-2">
+                לא נמצא סרטון לתרגיל זה
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
