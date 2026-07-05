@@ -40,11 +40,17 @@ export default function LoginPage() {
       if (res?.error) {
         toast({ variant: "destructive", title: "שגיאה", description: "אימייל או סיסמה שגויים" });
       } else {
+        // Force session to settle before reading role
+        await new Promise(resolve => setTimeout(resolve, 300));
+        router.refresh();
+
         const sessionRes = await fetch("/api/auth/session");
         const session = await sessionRes.json();
         const role = session?.user?.role;
+
         if (role === "COACH") router.push("/dashboard");
         else if (role === "ADMIN") router.push("/admin");
+        else if (role === "TRAINEE") router.push("/my/dashboard");
         else router.push("/my/dashboard");
       }
     } finally {
