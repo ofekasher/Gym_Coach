@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff, Loader2, Zap } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -89,13 +89,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm relative z-10">
         {/* Hero splash top */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold mb-5"
-            style={{ background: "rgba(59,130,246,0.12)", border: "1px solid rgba(59,130,246,0.25)", color: "#3B82F6" }}>
-            <Zap className="w-3 h-3 fill-current" />
-            AI POWERED
-          </div>
-          <h1 className="text-5xl font-extrabold text-white leading-tight mb-1">Smart</h1>
-          <h1 className="text-5xl font-extrabold leading-tight mb-3" style={{ color: "#3B82F6" }}>FitCoach</h1>
+          <img src="/images/logo.png" alt="Lior Fit" className="h-16 w-auto mx-auto mb-6" />
           <p className="text-sm" style={{ color: "#71717A" }}>המאמן שלך. התוכנית שלך. הגרסה הכי טובה שלך.</p>
         </div>
 
