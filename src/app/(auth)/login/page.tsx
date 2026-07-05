@@ -89,7 +89,12 @@ export default function LoginPage() {
       <div className="w-full max-w-sm relative z-10">
         {/* Hero splash top */}
         <div className="text-center mb-8">
-          <img src="/images/logo.png" alt="Lior Fit" className="h-16 w-auto mx-auto mb-6" />
+          <img
+            src="/images/logo.png"
+            alt="Lior Fit"
+            className="h-20 w-auto mx-auto mb-6"
+            style={{ filter: "invert(1)", mixBlendMode: "screen" }}
+          />
           <p className="text-sm" style={{ color: "#71717A" }}>המאמן שלך. התוכנית שלך. הגרסה הכי טובה שלך.</p>
         </div>
 
@@ -169,8 +174,6 @@ export default function LoginPage() {
             <a href="/register" className="font-semibold hover:underline" style={{ color: "#3B82F6" }}>הרשמה כמתאמן/ת</a>
           </p>
         </div>
-
-        <p className="text-center text-xs mt-4 opacity-40" style={{ color: "#3B82F6" }}>coach@demo.com / demo1234</p>
       </div>
     </div>
   );
