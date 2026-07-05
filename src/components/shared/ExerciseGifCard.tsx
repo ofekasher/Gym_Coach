@@ -57,7 +57,7 @@ export function ExerciseGifCard({ exerciseName }: Props) {
     }
   };
 
-  const hasInfo = data && (data.target || data.equipment || data.difficulty || data.description);
+  const hasInfo = data && (data.target || data.equipment || data.difficulty);
   const diffColor = data?.difficulty ? DIFFICULTY_COLOR[data.difficulty] ?? "#fff" : "#fff";
 
   return (
@@ -74,40 +74,23 @@ export function ExerciseGifCard({ exerciseName }: Props) {
           {loading && <div className="text-white/40 text-sm mb-3">טוען מידע...</div>}
 
           {data && !loading && hasInfo && (
-            <>
-              <div className="flex flex-wrap gap-2 mb-3">
-                {data.target && (
-                  <span className="bg-[#a8ff3e]/10 text-[#a8ff3e] text-xs px-2 py-0.5 rounded-full">
-                    💪 שריר ראשי: {data.target}
-                  </span>
-                )}
-                {data.equipment && (
-                  <span className="bg-white/10 text-white/70 text-xs px-2 py-0.5 rounded-full">
-                    🔧 ציוד: {data.equipment}
-                  </span>
-                )}
-                {data.difficulty && (
-                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: `${diffColor}1A`, color: diffColor }}>
-                    ⭐ רמה: {data.difficulty}
-                  </span>
-                )}
-              </div>
-
-              {data.description && (
-                <p className="text-white/60 text-xs leading-relaxed mb-3">{data.description}</p>
+            <div className="flex flex-wrap gap-2 mb-3">
+              {data.target && (
+                <span className="bg-[#a8ff3e]/10 text-[#a8ff3e] text-xs px-2 py-0.5 rounded-full">
+                  💪 שריר ראשי: {data.target}
+                </span>
               )}
-
-              {data.instructions?.length > 0 && (
-                <>
-                  <div className="text-white/70 text-xs font-bold mb-1">הוראות ביצוע:</div>
-                  <ol className="text-white/50 text-xs space-y-1 list-decimal list-inside mb-3">
-                    {data.instructions.slice(0, 4).map((inst: string, i: number) => (
-                      <li key={i}>{inst}</li>
-                    ))}
-                  </ol>
-                </>
+              {data.equipment && (
+                <span className="bg-white/10 text-white/70 text-xs px-2 py-0.5 rounded-full">
+                  🔧 ציוד: {data.equipment}
+                </span>
               )}
-            </>
+              {data.difficulty && (
+                <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: `${diffColor}1A`, color: diffColor }}>
+                  ⭐ רמה: {data.difficulty}
+                </span>
+              )}
+            </div>
           )}
 
           {data && !loading && !hasInfo && (
