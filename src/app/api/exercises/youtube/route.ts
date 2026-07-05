@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const res = await fetch(
-      `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=1&videoDuration=short&key=${apiKey}`,
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=3&videoDuration=short&videoEmbeddable=true&key=${apiKey}`,
       { next: { revalidate: 86400 } }
     );
 
