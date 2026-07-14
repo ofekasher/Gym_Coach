@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Plus, Dumbbell, Edit2, Save, X, Loader2, Trash2, ChevronDown, ChevronUp, FileDown } from "lucide-react";
+import { Plus, Dumbbell, Edit2, Save, X, Loader2, Trash2, ChevronDown, ChevronUp, FileDown, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const TEMPLATE_LABELS: Record<string, string> = {
@@ -68,7 +68,7 @@ function ExerciseRow({ se, traineeId, onUpdate, onDelete }: {
           </div>
           {/* Coach note */}
           <div style={{ marginBottom: 8 }}>
-            <label style={S.label}>💬 דגש למתאמן</label>
+            <label style={{ ...S.label, display: "flex", alignItems: "center", gap: 4 }}><MessageSquare size={12} /> דגש למתאמן</label>
             <input style={{ ...S.input, borderColor: "rgba(168,255,62,0.3)" }} value={form.coachNote}
               onChange={(e) => setForm({ ...form, coachNote: e.target.value })} placeholder="דגש שיוצג בולט..." />
           </div>
@@ -117,8 +117,8 @@ function ExerciseRow({ se, traineeId, onUpdate, onDelete }: {
             </button>
           </div>
           {se.coachNote && (
-            <div style={{ background: "rgba(168,255,62,0.07)", border: "1px solid rgba(168,255,62,0.2)", borderRadius: 8, padding: "5px 10px", fontSize: 12, color: "#a8ff3e" }}>
-              💬 {se.coachNote}
+            <div style={{ background: "rgba(168,255,62,0.07)", border: "1px solid rgba(168,255,62,0.2)", borderRadius: 8, padding: "5px 10px", fontSize: 12, color: "#a8ff3e", display: "flex", alignItems: "center", gap: 5 }}>
+              <MessageSquare size={12} /> {se.coachNote}
             </div>
           )}
         </div>

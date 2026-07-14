@@ -1,13 +1,14 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Sunrise, Cloud, Moon, Apple, Utensils, Droplet, type LucideIcon } from "lucide-react";
 
 const GREEN = "#a8ff3e";
 const GROCERY_PHOTO = "https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=800&q=70&auto=format&fit=crop";
 const WATER_GOAL = 2500;
 
-const MEAL_ICONS: Record<string, string> = {
-  "ארוחת בוקר": "☀️", "ארוחת צהריים": "☁️", "ארוחת ערב": "🌙", "חטיף": "🍎",
+const MEAL_ICONS: Record<string, LucideIcon> = {
+  "ארוחת בוקר": Sunrise, "ארוחת צהריים": Cloud, "ארוחת ערב": Moon, "חטיף": Apple,
 };
 
 const MEAL_PHOTOS: Record<string, string> = {
@@ -403,7 +404,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
           <div key={meal.id} style={{ marginBottom: 24 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
               <span style={{ fontSize: 15, fontWeight: 600, color: "#fff" }}>{meal.name}</span>
-              <span style={{ fontSize: 16 }}>{MEAL_ICONS[meal.name] ?? "🍽️"}</span>
+              {(() => { const Icon = MEAL_ICONS[meal.name] ?? Utensils; return <Icon size={17} color="#fff" />; })()}
             </div>
 
             <div style={{ display: "flex", flexDirection: "column" }}>
@@ -488,7 +489,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
         {/* Section 3 — water tracker */}
         <div style={{ background: "#1c1c2e", borderRadius: 16, padding: 16, marginBottom: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>💧 שתייה יומית</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: "#fff", display: "flex", alignItems: "center", gap: 6 }}><Droplet size={15} /> שתייה יומית</span>
             <span style={{ fontSize: 14, fontWeight: 700, color: GREEN }}>{waterTotal.toLocaleString()} מ״ל</span>
           </div>
           <div style={{ height: 8, borderRadius: 99, background: "rgba(255,255,255,0.1)" }}>

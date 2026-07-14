@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Trash2, Search, ChevronLeft, Loader2, Shuffle, Zap } from "lucide-react";
+import { Plus, Trash2, Search, ChevronLeft, Loader2, Shuffle, Zap, Split, Dumbbell, RefreshCw, Pencil, Dices, type LucideIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,51 +27,54 @@ type SessionExercise = {
 type Session = { name: string; dayLabel: string; exercises: SessionExercise[] };
 
 // ─── Template definitions ────────────────────────────────────────────────────
-const TEMPLATES = [
+const TEMPLATES: {
+  value: string; label: string; description: string; icon: LucideIcon; days: string;
+  sessions: { name: string; dayLabel: string; muscles: string[] }[];
+}[] = [
   {
     value: "PPL", label: "Push / Pull / Legs",
     description: "3 ימי אימון — דחיפה, משיכה, רגליים",
-    icon: "🔱", days: "3–6 ימים בשבוע",
+    icon: Split, days: "3–6 ימים בשבוע",
     sessions: [
-      { name: "Push 💪", dayLabel: "ראשון + רביעי", muscles: ["חזה", "כתפיים", "זרועות"] },
-      { name: "Pull 🦾", dayLabel: "שני + חמישי", muscles: ["גב", "זרועות"] },
-      { name: "Legs 🦵", dayLabel: "שישי", muscles: ["רגליים", "בטן"] },
+      { name: "Push", dayLabel: "ראשון + רביעי", muscles: ["חזה", "כתפיים", "זרועות"] },
+      { name: "Pull", dayLabel: "שני + חמישי", muscles: ["גב", "זרועות"] },
+      { name: "Legs", dayLabel: "שישי", muscles: ["רגליים", "בטן"] },
     ],
   },
   {
     value: "UPPER_LOWER", label: "Upper / Lower",
     description: "פיצול עליון ותחתון — 4 אימונים בשבוע",
-    icon: "⚡", days: "4 ימים בשבוע",
+    icon: Zap, days: "4 ימים בשבוע",
     sessions: [
-      { name: "Upper A 💪", dayLabel: "ראשון", muscles: ["חזה", "גב", "כתפיים"] },
-      { name: "Lower A 🦵", dayLabel: "שני", muscles: ["רגליים", "בטן"] },
-      { name: "Upper B 🦾", dayLabel: "רביעי", muscles: ["חזה", "גב", "זרועות"] },
-      { name: "Lower B 🔥", dayLabel: "חמישי", muscles: ["רגליים", "בטן"] },
+      { name: "Upper A", dayLabel: "ראשון", muscles: ["חזה", "גב", "כתפיים"] },
+      { name: "Lower A", dayLabel: "שני", muscles: ["רגליים", "בטן"] },
+      { name: "Upper B", dayLabel: "רביעי", muscles: ["חזה", "גב", "זרועות"] },
+      { name: "Lower B", dayLabel: "חמישי", muscles: ["רגליים", "בטן"] },
     ],
   },
   {
     value: "FBW", label: "Full Body",
     description: "כל הגוף בכל אימון — מתאים למתחילים",
-    icon: "🏋️", days: "3 ימים בשבוע",
+    icon: Dumbbell, days: "3 ימים בשבוע",
     sessions: [
-      { name: "Full Body A 🏋️", dayLabel: "ראשון", muscles: ["חזה", "גב", "רגליים"] },
-      { name: "Full Body B 💪", dayLabel: "רביעי", muscles: ["כתפיים", "גב", "רגליים", "זרועות"] },
-      { name: "Full Body C 🔥", dayLabel: "שישי", muscles: ["חזה", "רגליים", "בטן"] },
+      { name: "Full Body A", dayLabel: "ראשון", muscles: ["חזה", "גב", "רגליים"] },
+      { name: "Full Body B", dayLabel: "רביעי", muscles: ["כתפיים", "גב", "רגליים", "זרועות"] },
+      { name: "Full Body C", dayLabel: "שישי", muscles: ["חזה", "רגליים", "בטן"] },
     ],
   },
   {
     value: "AB", label: "A / B",
     description: "שתי תוכניות לסירוגין",
-    icon: "🔄", days: "2–4 ימים בשבוע",
+    icon: RefreshCw, days: "2–4 ימים בשבוע",
     sessions: [
-      { name: "אימון A 💪", dayLabel: "ראשון + חמישי", muscles: ["חזה", "כתפיים", "זרועות"] },
-      { name: "אימון B 🦾", dayLabel: "שלישי + שבת", muscles: ["גב", "רגליים", "בטן"] },
+      { name: "אימון A", dayLabel: "ראשון + חמישי", muscles: ["חזה", "כתפיים", "זרועות"] },
+      { name: "אימון B", dayLabel: "שלישי + שבת", muscles: ["גב", "רגליים", "בטן"] },
     ],
   },
   {
     value: "CUSTOM", label: "מותאם אישית",
     description: "בנה תוכנית חופשית לפי הצורך",
-    icon: "✏️", days: "לפי בחירתך",
+    icon: Pencil, days: "לפי בחירתך",
     sessions: [
       { name: "אימון 1", dayLabel: "יום א׳", muscles: [] },
     ],
@@ -286,8 +289,8 @@ export function WorkoutBuilderClient({ trainee, exercises, coachId }: {
               border: "none", display: "flex", alignItems: "center", gap: 14,
               boxShadow: "0 8px 32px rgba(124,58,237,0.35)",
             }}>
-            <div style={{ width: 46, height: 46, borderRadius: 14, background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>
-              🎲
+            <div style={{ width: 46, height: 46, borderRadius: 14, background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Dices size={22} color="#fff" />
             </div>
             <div style={{ textAlign: "right", flex: 1 }}>
               <div style={{ color: "#fff", fontWeight: 900, fontSize: 16 }}>תוכנית רנדומלית</div>
@@ -311,7 +314,7 @@ export function WorkoutBuilderClient({ trainee, exercises, coachId }: {
               }}>
                 {/* Main row */}
                 <div style={{ padding: "16px 18px", display: "flex", alignItems: "center", gap: 14 }}>
-                  <div style={{ fontSize: 26, flexShrink: 0 }}>{t.icon}</div>
+                  <div style={{ width: 26, height: 26, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}><t.icon size={22} /></div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ color: "#fff", fontWeight: 800, fontSize: 15 }}>{t.label}</div>
                     <div style={{ color: "#52525B", fontSize: 12, marginTop: 2 }}>{t.description}</div>

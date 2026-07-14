@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { Smile, Flame, Dumbbell, type LucideIcon } from "lucide-react";
 import { getVideoId } from "@/lib/exercise-videos";
 import { getAlternatives, type AlternativeExercise } from "@/lib/exercise-alternatives";
 import { getMuscleGymPhoto } from "@/lib/gym-photos";
@@ -126,10 +127,10 @@ function getMusclePhoto(muscleGroup: string | undefined, idx: number): string {
 }
 
 type Effort = "קל" | "בינוני" | "כבד";
-const EFFORT_CONFIG: Record<Effort, { color: string; bg: string; emoji: string }> = {
-  "קל":     { color: "#34D399", bg: "rgba(52,211,153,0.15)",  emoji: "😊" },
-  "בינוני": { color: "#F59E0B", bg: "rgba(245,158,11,0.15)",  emoji: "💪" },
-  "כבד":    { color: "#F87171", bg: "rgba(248,113,113,0.15)", emoji: "🔥" },
+const EFFORT_CONFIG: Record<Effort, { color: string; bg: string; icon: LucideIcon }> = {
+  "קל":     { color: "#34D399", bg: "rgba(52,211,153,0.15)",  icon: Smile },
+  "בינוני": { color: "#F59E0B", bg: "rgba(245,158,11,0.15)",  icon: Dumbbell },
+  "כבד":    { color: "#F87171", bg: "rgba(248,113,113,0.15)", icon: Flame },
 };
 
 interface SetLog { weight: string; reps: string; effort: Effort; done: boolean }
@@ -246,7 +247,7 @@ function SetRow({
               transition: "all 0.15s",
               display: "flex", alignItems: "center", justifyContent: "center", gap: 4,
             }}>
-              <span style={{ fontSize: 13 }}>{cfg.emoji}</span> {e}
+              <cfg.icon size={13} /> {e}
             </button>
           );
         })}
@@ -442,7 +443,7 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
   if (!plan) {
     return (
       <div style={{ background: BG, minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 32 }} dir="rtl">
-        <div style={{ fontSize: 48, marginBottom: 16 }}>🏋️</div>
+        <Dumbbell size={40} style={{ marginBottom: 16, color: "rgba(255,255,255,0.3)" }} />
         <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 8 }}>אין תוכנית אימון פעילה</div>
         <div style={{ fontSize: 13, color: "rgba(255,255,255,0.3)", textAlign: "center" }}>המאמן שלך יוסיף תוכנית בקרוב</div>
       </div>

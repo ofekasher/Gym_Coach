@@ -38,7 +38,7 @@ export function CoachSidebar({ user }: Props) {
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0"
             style={{ background: GREEN, boxShadow: `0 4px 20px ${GREEN}55` }}>
-            <span className="text-lg">🏋️</span>
+            <Dumbbell className="w-5 h-5 text-black" />
           </div>
           <div>
             <div className="font-extrabold text-[18px] text-white tracking-tight">Lior Fit</div>

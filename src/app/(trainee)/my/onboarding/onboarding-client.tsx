@@ -1,29 +1,29 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight, Check, Dumbbell, Target, User, Zap } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check, Dumbbell, Target, User, Zap, Hand, Scale, Calendar, Rocket, Flame, Heart, PersonStanding, Sprout, Leaf, TreePine, Bot, BarChart3 } from "lucide-react";
 
 const STEPS = [
-  { id: "welcome", title: "ברוך הבא!", icon: "👋" },
-  { id: "goal", title: "מה המטרה שלך?", icon: "🎯" },
-  { id: "experience", title: "רמת ניסיון", icon: "💪" },
-  { id: "body", title: "פרטי גוף", icon: "⚖️" },
-  { id: "days", title: "כמה ימים בשבוע?", icon: "📅" },
-  { id: "done", title: "הכל מוכן!", icon: "🚀" },
+  { id: "welcome", title: "ברוך הבא!", icon: Hand },
+  { id: "goal", title: "מה המטרה שלך?", icon: Target },
+  { id: "experience", title: "רמת ניסיון", icon: Dumbbell },
+  { id: "body", title: "פרטי גוף", icon: Scale },
+  { id: "days", title: "כמה ימים בשבוע?", icon: Calendar },
+  { id: "done", title: "הכל מוכן!", icon: Rocket },
 ];
 
 const GOALS = [
-  { id: "muscle_gain", label: "עלייה במסה", icon: "💪", desc: "בניית שריר ועלייה בכוח" },
-  { id: "weight_loss", label: "ירידה במשקל", icon: "🔥", desc: "שריפת שומן ועיצוב הגוף" },
-  { id: "strength", label: "עוצמה", icon: "⚡", desc: "הגדלת הכוח המקסימלי" },
-  { id: "health", label: "בריאות כללית", icon: "❤️", desc: "שיפור הכושר ואיכות החיים" },
-  { id: "endurance", label: "סיבולת", icon: "🏃", desc: "שיפור הסיבולת הלבבית" },
+  { id: "muscle_gain", label: "עלייה במסה", icon: Dumbbell, desc: "בניית שריר ועלייה בכוח" },
+  { id: "weight_loss", label: "ירידה במשקל", icon: Flame, desc: "שריפת שומן ועיצוב הגוף" },
+  { id: "strength", label: "עוצמה", icon: Zap, desc: "הגדלת הכוח המקסימלי" },
+  { id: "health", label: "בריאות כללית", icon: Heart, desc: "שיפור הכושר ואיכות החיים" },
+  { id: "endurance", label: "סיבולת", icon: PersonStanding, desc: "שיפור הסיבולת הלבבית" },
 ];
 
 const EXPERIENCE_LEVELS = [
-  { id: "beginner", label: "מתחיל", desc: "פחות משנה", icon: "🌱" },
-  { id: "intermediate", label: "בינוני", desc: "1-3 שנים", icon: "🌿" },
-  { id: "advanced", label: "מתקדם", desc: "יותר מ-3 שנים", icon: "🌳" },
+  { id: "beginner", label: "מתחיל", desc: "פחות משנה", icon: Sprout },
+  { id: "intermediate", label: "בינוני", desc: "1-3 שנים", icon: Leaf },
+  { id: "advanced", label: "מתקדם", desc: "יותר מ-3 שנים", icon: TreePine },
 ];
 
 export function OnboardingClient() {
@@ -80,7 +80,7 @@ export function OnboardingClient() {
 
         {/* Step icon + title */}
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <div style={{ fontSize: 52, marginBottom: 12 }}>{current.icon}</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}><current.icon size={44} color="#fff" /></div>
           <div style={{ fontSize: 24, fontWeight: 900, color: "#fff" }}>{current.title}</div>
           {step === 0 && <p style={{ fontSize: 14, color: "rgba(255,255,255,0.4)", marginTop: 8 }}>נשאל כמה שאלות קצרות כדי להתאים לך חוויה אישית</p>}
         </div>
@@ -89,12 +89,12 @@ export function OnboardingClient() {
         {step === 0 && (
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {[
-              { icon: "🎯", title: "תוכנית אישית", desc: "מאמן שיתאים לך תוכנית ייחודית" },
-              { icon: "📊", title: "מעקב התקדמות", desc: "רואה שיאים אישיים וגרפים בזמן אמת" },
-              { icon: "🤖", title: "AI לכושר", desc: "עונה על שאלות ועוזר לך בכל שלב" },
+              { icon: Target, title: "תוכנית אישית", desc: "מאמן שיתאים לך תוכנית ייחודית" },
+              { icon: BarChart3, title: "מעקב התקדמות", desc: "רואה שיאים אישיים וגרפים בזמן אמת" },
+              { icon: Bot, title: "AI לכושר", desc: "עונה על שאלות ועוזר לך בכל שלב" },
             ].map(f => (
               <div key={f.title} style={{ ...C, padding: "14px 16px", display: "flex", alignItems: "center", gap: 14 }}>
-                <div style={{ fontSize: 24, flexShrink: 0 }}>{f.icon}</div>
+                <div style={{ flexShrink: 0 }}><f.icon size={22} color="#fff" /></div>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{f.title}</div>
                   <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{f.desc}</div>
@@ -127,7 +127,7 @@ export function OnboardingClient() {
                   textAlign: "right",
                   transition: "all 0.15s",
                 }}>
-                  <span style={{ fontSize: 24 }}>{g.icon}</span>
+                  <g.icon size={22} color="#fff" />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{g.label}</div>
                     <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{g.desc}</div>
@@ -157,7 +157,7 @@ export function OnboardingClient() {
                   textAlign: "right",
                   transition: "all 0.15s",
                 }}>
-                  <span style={{ fontSize: 32 }}>{e.icon}</span>
+                  <e.icon size={28} color="#fff" />
                   <div>
                     <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>{e.label}</div>
                     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginTop: 3 }}>{e.desc}</div>

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { Send, Loader2, Sparkles, RotateCcw } from "lucide-react";
+import { Send, Loader2, Sparkles, RotateCcw, Bot } from "lucide-react";
 
 interface Msg { role: "user" | "assistant"; content: string }
 
@@ -95,7 +95,7 @@ export function AIChatClient({ userContext }: { userContext: any }) {
               background: PDIM, border: `1px solid rgba(59,130,246,0.2)`,
               borderRadius: 18, padding: "16px 18px", marginBottom: 20, textAlign: "center",
             }}>
-              <div style={{ fontSize: 28, marginBottom: 8 }}>🤖</div>
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 8 }}><Bot size={28} color="#fff" /></div>
               <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginBottom: 4 }}>
                 שלום {userContext.name}!
               </div>

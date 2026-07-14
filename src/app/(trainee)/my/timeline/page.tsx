@@ -72,8 +72,8 @@ export default async function MyTimelinePage() {
                       </span>
                     </div>
                     {event.type === "NEW_PR" && event.metadata && (
-                      <div className="mt-2 text-xs text-amber-400 font-medium">
-                        🏆 {(event.metadata as any).exerciseName}: {(event.metadata as any).weight} ק״ג
+                      <div className="mt-2 text-xs text-amber-400 font-medium flex items-center gap-1">
+                        <Trophy className="w-3 h-3" /> {(event.metadata as any).exerciseName}: {(event.metadata as any).weight} ק״ג
                       </div>
                     )}
                   </div>

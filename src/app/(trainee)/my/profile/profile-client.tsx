@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { BackHeader } from "@/components/shared/back-header";
+import { Flame, Dumbbell, Trophy, Bell, LogOut, type LucideIcon } from "lucide-react";
 
 const GREEN = "#a8ff3e";
 const CARD = "bg-[#1c1c2e] rounded-2xl mx-4 p-4 mt-4";
@@ -258,12 +259,12 @@ export function ProfileClient({ user }: { user: any }) {
         <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 10 }}>סטטיסטיקות</div>
         <div style={{ display: "flex", gap: 10 }}>
           {[
-            { icon: "🔥", label: "רצף", value: `${streak} ימים` },
-            { icon: "💪", label: "אימונים", value: `${completedCount} הושלמו` },
-            { icon: "🏆", label: "שיא אישי", value: prLabel },
+            { icon: Flame, label: "רצף", value: `${streak} ימים` },
+            { icon: Dumbbell, label: "אימונים", value: `${completedCount} הושלמו` },
+            { icon: Trophy, label: "שיא אישי", value: prLabel },
           ].map((s) => (
             <div key={s.label} style={{ background: "#12121f", borderRadius: 12, padding: 12, flex: 1, textAlign: "center" }}>
-              <div style={{ fontSize: 22 }}>{s.icon}</div>
+              <div style={{ display: "flex", justifyContent: "center" }}><s.icon size={20} color="#fff" /></div>
               <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginTop: 4 }}>{s.value}</div>
               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{s.label}</div>
             </div>
@@ -363,7 +364,7 @@ export function ProfileClient({ user }: { user: any }) {
       <div className={CARD} style={{ marginBottom: 8 }}>
         <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 12 }}>הגדרות</div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <span style={{ fontSize: 14, color: "#fff" }}>🔔 התראות</span>
+          <span style={{ fontSize: 14, color: "#fff", display: "flex", alignItems: "center", gap: 6 }}><Bell size={15} /> התראות</span>
           <ToggleSwitch on={notifications} onChange={toggleNotifications} />
         </div>
         <button
@@ -371,9 +372,10 @@ export function ProfileClient({ user }: { user: any }) {
           style={{
             width: "100%", textAlign: "right", background: "transparent", border: "none",
             padding: "12px 0 0", fontSize: 14, color: "#f87171", cursor: "pointer",
+            display: "flex", alignItems: "center", gap: 6,
           }}
         >
-          🚪 התנתקות
+          <LogOut size={15} /> התנתקות
         </button>
       </div>
     </div>

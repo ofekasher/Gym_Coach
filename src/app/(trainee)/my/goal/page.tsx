@@ -2,14 +2,15 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BackHeader } from "@/components/shared/back-header";
+import { Flame, Dumbbell, Zap, PersonStanding } from "lucide-react";
 
 const GREEN = "#a8ff3e";
 
 const GOAL_TYPES = [
-  { key: "הרזיה", icon: "🔥", sub: "ירידה במשקל" },
-  { key: "מסה", icon: "💪", sub: "בניית שריר" },
-  { key: "כוח", icon: "⚡", sub: "הגדלת כוח מקסימלי" },
-  { key: "כושר", icon: "🏃", sub: "שיפור סיבולת" },
+  { key: "הרזיה", icon: Flame, sub: "ירידה במשקל" },
+  { key: "מסה", icon: Dumbbell, sub: "בניית שריר" },
+  { key: "כוח", icon: Zap, sub: "הגדלת כוח מקסימלי" },
+  { key: "כושר", icon: PersonStanding, sub: "שיפור סיבולת" },
 ] as const;
 
 type GoalType = (typeof GOAL_TYPES)[number]["key"];
@@ -116,7 +117,7 @@ export default function GoalPage() {
                     : "bg-[#1c1c2e] border border-white/10 rounded-2xl p-4 flex flex-col items-center gap-2"
                 }
               >
-                <span className="text-4xl">{g.icon}</span>
+                <g.icon size={32} className="text-white" />
                 <span className="text-white font-bold text-sm">{g.key}</span>
                 <span className="text-gray-400 text-xs">{g.sub}</span>
               </button>

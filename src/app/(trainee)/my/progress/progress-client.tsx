@@ -1,7 +1,7 @@
 "use client";
 import { format } from "date-fns";
 import { useState } from "react";
-import { Trophy, TrendingUp, Dumbbell, Scale, Camera, Plus, Lock } from "lucide-react";
+import { Trophy, TrendingUp, TrendingDown, Dumbbell, Scale, Camera, Plus, Lock, Zap, Flame, Target, type LucideIcon } from "lucide-react";
 
 const CARD = { background: "#1A1A1F", borderRadius: 20, border: "1px solid rgba(255,255,255,0.05)" };
 
@@ -283,13 +283,13 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
             {/* Stats grid */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 20 }}>
               {[
-                { label: "ירידה במשקל", value: weightDiff != null ? `${Math.abs(weightDiff).toFixed(1)} ק״ג` : "--", color: "#34D399", icon: "📉" },
-                { label: "אימונים סה״כ", value: String(totalWorkouts), color: "#3B82F6", icon: "⚡" },
-                { label: "ממוצע קלוריות", value: "1,850", color: "#F59E0B", icon: "🔥" },
-                { label: "עקביות", value: `${consistencyPct}%`, color: "#60A5FA", icon: "🎯" },
+                { label: "ירידה במשקל", value: weightDiff != null ? `${Math.abs(weightDiff).toFixed(1)} ק״ג` : "--", color: "#34D399", icon: TrendingDown },
+                { label: "אימונים סה״כ", value: String(totalWorkouts), color: "#3B82F6", icon: Zap },
+                { label: "ממוצע קלוריות", value: "1,850", color: "#F59E0B", icon: Flame },
+                { label: "עקביות", value: `${consistencyPct}%`, color: "#60A5FA", icon: Target },
               ].map((s) => (
                 <div key={s.label} style={{ ...CARD, padding: "14px 16px" }}>
-                  <div style={{ fontSize: 18, marginBottom: 4 }}>{s.icon}</div>
+                  <div style={{ marginBottom: 4 }}><s.icon size={17} color={s.color} /></div>
                   <div style={{ fontSize: 22, fontWeight: 800, color: s.color }}>{s.value}</div>
                   <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginTop: 2, fontWeight: 600 }}>{s.label}</div>
                 </div>
@@ -316,7 +316,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
                 return (
                   <div key={c.id ?? i} style={{ ...CARD, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                      <div style={{ width: 38, height: 38, borderRadius: 12, background: "rgba(59,130,246,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 15, fontWeight: 800, color: "#3B82F6" }}>⚖️</div>
+                      <div style={{ width: 38, height: 38, borderRadius: 12, background: "rgba(59,130,246,0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: "#3B82F6" }}><Scale size={17} /></div>
                       <div>
                         <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{c.weight} ק״ג</div>
                         <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 2 }}>{c.date ? format(new Date(c.date), "dd/MM/yyyy") : ""}</div>
@@ -491,7 +491,7 @@ export function ProgressClient({ checkIns, workoutLogs, user }: { checkIns: any[
                         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                           <span style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>{ex.name}</span>
                           {latest.weight === pr && pr > 0 && (
-                            <span style={{ fontSize: 9, background: "rgba(167,139,250,0.2)", color: "#93C5FD", borderRadius: 6, padding: "2px 7px", fontWeight: 700 }}>🏆 שיא</span>
+                            <span style={{ fontSize: 9, background: "rgba(167,139,250,0.2)", color: "#93C5FD", borderRadius: 6, padding: "2px 7px", fontWeight: 700, display: "inline-flex", alignItems: "center", gap: 3 }}><Trophy size={9} /> שיא</span>
                           )}
                         </div>
                         <span style={{ fontSize: 10, color, background: `${color}18`, borderRadius: 6, padding: "2px 7px", fontWeight: 600, display: "inline-block", marginTop: 3 }}>{ex.muscleGroup}</span>

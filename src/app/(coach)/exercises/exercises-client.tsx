@@ -13,16 +13,6 @@ const DIFF_COLOR: Record<string, string> = {
   מתקדם: "#ef4444",
 };
 
-const EQUIP_ICON: Record<string, string> = {
-  "מוט": "🏋️",
-  "דמבלים": "💪",
-  "משקל גוף": "🤸",
-  "מכונה": "⚙️",
-  "כבל": "🔗",
-  "קטלבל": "🔔",
-  "ספסל": "🛋️",
-};
-
 export function ExercisesClient({ exercises: initial, coachId }: { exercises: any[]; coachId: string }) {
   const { toast } = useToast();
   const [exercises, setExercises] = useState(initial);
