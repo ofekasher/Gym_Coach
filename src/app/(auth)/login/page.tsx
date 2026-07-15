@@ -8,7 +8,6 @@ import { z } from "zod";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
 const schema = z.object({
@@ -65,108 +64,96 @@ export default function LoginPage() {
     }
   };
 
+  const GREEN = "#a8ff3e";
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden" style={{ background: "#111111" }}>
-      {/* Subtle gym photo background */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        backgroundImage: "url(/images/gym/treadmill-run.jpg)", backgroundSize: "cover", backgroundPosition: "center",
-        opacity: 0.1, filter: "blur(2px) grayscale(0.3)",
+    <div className="min-h-screen relative overflow-hidden flex flex-col" style={{ background: "#05050a" }} dir="rtl">
+      {/* Full-bleed hero background photo */}
+      <div className="absolute inset-0" style={{
+        backgroundImage: "url(/images/gym/coach-situps.jpg)", backgroundSize: "cover", backgroundPosition: "center",
       }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "linear-gradient(180deg, #111111 0%, rgba(17,17,17,0.85) 40%, #111111 100%)" }} />
-      {/* Background glow */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full opacity-10"
-          style={{ background: "radial-gradient(ellipse, #3B82F6 0%, transparent 70%)", transform: "translate(-50%, -40%)" }} />
-        <div className="absolute bottom-0 right-0 w-[300px] h-[300px] rounded-full opacity-5"
-          style={{ background: "radial-gradient(circle, #3B82F6 0%, transparent 70%)", transform: "translate(30%, 30%)" }} />
+      <div className="absolute inset-0" style={{
+        background: "linear-gradient(to top, rgba(4,4,10,0.95) 0%, rgba(4,4,10,0.5) 45%, rgba(4,4,10,0.6) 100%)",
+      }} />
+
+      {/* Wordmark */}
+      <div className="relative z-10 flex items-center gap-2 px-6 pt-14">
+        <span className="w-2.5 h-2.5 rounded-full" style={{ background: GREEN, boxShadow: `0 0 14px ${GREEN}` }} />
+        <span className="text-white font-extrabold text-lg tracking-wide">LIOR FIT</span>
       </div>
 
-      <div className="w-full max-w-sm relative z-10">
-        {/* Hero splash top */}
-        <div className="text-center mb-8">
-          <img
-            src="/images/logo.png"
-            alt="Lior Fit"
-            className="h-20 w-auto mx-auto mb-6"
-            style={{ filter: "invert(1)", mixBlendMode: "screen" }}
-          />
-          <p className="text-sm" style={{ color: "#71717A" }}>המאמן שלך. התוכנית שלך. הגרסה הכי טובה שלך.</p>
-        </div>
+      <div className="flex-1" />
 
-        {/* Login card */}
+      {/* Hero heading */}
+      <div className="relative z-10 px-6 pb-6">
+        <h1 className="text-white font-black text-4xl leading-tight" style={{ textShadow: "0 3px 18px rgba(0,0,0,0.7)" }}>
+          ברוכים הבאים למאמן<br />האישי שלכם
+        </h1>
+        <div className="font-extrabold text-lg mt-2" style={{ color: GREEN, textShadow: "0 2px 10px rgba(0,0,0,0.7)" }}>Lior Fit</div>
+      </div>
+
+      {/* Glass login card */}
+      <div className="relative z-10 px-6 pb-10">
         <div
-          className="rounded-3xl p-7"
+          className="rounded-3xl p-6"
           style={{
-            background: "#1C1C1E",
-            border: "1px solid rgba(255,255,255,0.07)",
-            boxShadow: "0 24px 60px rgba(0,0,0,0.5)"
+            background: "rgba(10,10,18,0.45)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            border: "1px solid rgba(255,255,255,0.12)",
           }}
         >
-          <h2 className="text-lg font-bold text-white mb-5 text-center">כניסה לחשבון</h2>
-
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" dir="rtl">
-            <div className="space-y-1.5">
-              <Label htmlFor="email" className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#71717A" }}>אימייל</Label>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+            <div>
               <Input
                 id="email"
                 type="email"
-                placeholder="name@example.com"
+                placeholder="אימייל"
                 autoComplete="email"
-                className="h-12 rounded-xl text-sm text-white placeholder:text-zinc-600"
-                style={{
-                  background: "#2C2C2E",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                }}
+                className="h-14 rounded-2xl text-sm text-white placeholder:text-white/50 text-center"
+                style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}
                 {...register("email")}
               />
-              {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+              {errors.email && <p className="text-xs text-destructive mt-1 text-center">{errors.email.message}</p>}
             </div>
 
-            <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-xs font-semibold uppercase tracking-wide" style={{ color: "#71717A" }}>סיסמה</Label>
+            <div>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPass ? "text" : "password"}
-                  placeholder="••••••••"
+                  placeholder="סיסמה"
                   autoComplete="current-password"
-                  className="h-12 rounded-xl pl-10 text-sm text-white placeholder:text-zinc-600"
-                  style={{
-                    background: "#2C2C2E",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                  }}
+                  className="h-14 rounded-2xl pl-10 text-sm text-white placeholder:text-white/50 text-center"
+                  style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}
                   {...register("password")}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPass(!showPass)}
                   className="absolute left-3 top-1/2 -translate-y-1/2 transition-colors"
-                  style={{ color: "#52525B" }}
+                  style={{ color: "rgba(255,255,255,0.4)" }}
                   aria-label={showPass ? "הסתר סיסמה" : "הצג סיסמה"}
                 >
                   {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
-              {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
+              {errors.password && <p className="text-xs text-destructive mt-1 text-center">{errors.password.message}</p>}
             </div>
 
             <Button
               type="submit"
-              className="w-full h-12 rounded-full text-sm font-extrabold transition-all"
-              style={{
-                background: "#3B82F6",
-                color: "#fff",
-                boxShadow: "0 6px 24px rgba(59,130,246,0.35)",
-              }}
+              className="w-full h-14 rounded-2xl text-base font-black transition-all mt-2"
+              style={{ background: GREEN, color: "#08120a" }}
               disabled={loading}
             >
               {loading ? <><Loader2 className="w-4 h-4 animate-spin ml-2" />מתחבר...</> : "כניסה לחשבון"}
             </Button>
           </form>
 
-          <p className="text-center text-xs mt-5" style={{ color: "#52525B" }}>
+          <p className="text-center text-xs mt-4" style={{ color: "rgba(255,255,255,0.55)" }}>
             קיבלת הזמנה?{" "}
-            <a href="/register" className="font-semibold hover:underline" style={{ color: "#3B82F6" }}>הרשמה כמתאמן/ת</a>
+            <a href="/register" className="font-bold hover:underline" style={{ color: GREEN }}>הרשמה כמתאמן/ת</a>
           </p>
         </div>
       </div>
