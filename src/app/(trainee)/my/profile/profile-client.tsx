@@ -3,8 +3,7 @@ import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { BackHeader } from "@/components/shared/back-header";
-import { Flame, Dumbbell, Trophy, Bell, LogOut, CalendarDays, type LucideIcon } from "lucide-react";
-import { getMuscleGymPhoto } from "@/lib/gym-photos";
+import { Flame, Dumbbell, Trophy, Bell, LogOut, CalendarDays, Ruler, CreditCard, ShieldCheck, HelpCircle, ChevronLeft, type LucideIcon } from "lucide-react";
 
 const GREEN = "#a8ff3e";
 const CARD = "bg-[#1c1c2e] rounded-2xl mx-4 p-4 mt-4";
@@ -203,23 +202,18 @@ export function ProfileClient({ user }: { user: any }) {
     <div style={{ background: "#12121f", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
       <BackHeader title="פרופיל" />
 
-      {/* Section 1 — photo hero header */}
-      <div style={{
-        position: "relative", height: 196, overflow: "hidden",
-        backgroundImage: `url(${getMuscleGymPhoto(undefined)})`, backgroundSize: "cover", backgroundPosition: "center",
-      }}>
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #12121f 4%, rgba(18,18,31,0.55) 60%, rgba(18,18,31,0.35) 100%)" }} />
-        <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "column", alignItems: "center", paddingBottom: 14 }}>
-          <div style={{
-            width: 84, height: 84, borderRadius: "50%", background: GREEN,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 30, fontWeight: 900, color: "#08120a",
-            border: "3px solid " + GREEN, boxShadow: "0 0 0 4px rgba(168,255,62,0.15)",
-          }}>
-            {user?.name?.[0] ?? "מ"}
-          </div>
-          <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", marginTop: 10, textShadow: "0 2px 10px rgba(0,0,0,0.7)" }}>{user?.name}</div>
-          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.65)", textShadow: "0 2px 8px rgba(0,0,0,0.7)" }}>{user?.email}</div>
+      {/* Section 1 — flat header row (avatar + name/email), matches design doc exactly */}
+      <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "20px 16px 4px" }}>
+        <div style={{
+          width: 60, height: 60, borderRadius: "50%", background: GREEN, flexShrink: 0,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 22, fontWeight: 900, color: "#08120a",
+        }}>
+          {user?.name?.[0] ?? "מ"}
+        </div>
+        <div>
+          <div style={{ fontSize: 19, fontWeight: 900, color: "#fff" }}>{user?.name}</div>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)" }}>{user?.email}</div>
         </div>
       </div>
 
@@ -288,15 +282,15 @@ export function ProfileClient({ user }: { user: any }) {
         <WeightGraph />
       </div>
 
-      {/* Section 4 — training stats */}
+      {/* Section 4 — training stats (order matches design: weeks / weight / workouts / streak) */}
       <div className={CARD}>
         <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 10 }}>סטטיסטיקות</div>
         <div style={{ display: "flex", gap: 10 }}>
           {[
             { icon: CalendarDays, label: "שבועות", value: String(weeksInProgram) },
-            { icon: Flame, label: "רצף", value: `${streak} ימים` },
-            { icon: Dumbbell, label: "אימונים", value: `${completedCount} הושלמו` },
-            { icon: Trophy, label: "שיא אישי", value: prLabel },
+            { icon: Dumbbell, label: "משקל", value: stats.currentWeight ? `${stats.currentWeight} ק״ג` : "—" },
+            { icon: Trophy, label: "אימונים", value: String(completedCount) },
+            { icon: Flame, label: "רצף", value: String(streak) },
           ].map((s) => (
             <div key={s.label} style={{ background: "#12121f", borderRadius: 12, padding: 12, flex: 1, textAlign: "center" }}>
               <div style={{ display: "flex", justifyContent: "center" }}><s.icon size={20} color="#fff" /></div>
@@ -395,22 +389,42 @@ export function ProfileClient({ user }: { user: any }) {
         )}
       </div>
 
-      {/* Section 6 — settings */}
-      <div className={CARD} style={{ marginBottom: 8 }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 12 }}>הגדרות</div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <span style={{ fontSize: 14, color: "#fff", display: "flex", alignItems: "center", gap: 6 }}><Bell size={15} /> התראות</span>
+      {/* Section 6 — settings menu, matches design list (התראות/יחידות מידה/המנוי שלי/פרטיות ואבטחה/עזרה ותמיכה) */}
+      <div className={CARD} style={{ marginBottom: 8, padding: "6px 4px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          <span style={{ fontSize: 14, color: "#fff", display: "flex", alignItems: "center", gap: 8 }}><Bell size={16} color={GREEN} /> התראות</span>
           <ToggleSwitch on={notifications} onChange={toggleNotifications} />
         </div>
+        {[
+          { icon: Ruler, label: "יחידות מידה" },
+          { icon: CreditCard, label: "המנוי שלי" },
+          { icon: ShieldCheck, label: "פרטיות ואבטחה" },
+          { icon: HelpCircle, label: "עזרה ותמיכה" },
+        ].map((item, i, arr) => (
+          <button
+            key={item.label}
+            type="button"
+            style={{
+              width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center",
+              padding: "12px 14px", background: "transparent", border: "none", cursor: "pointer",
+              borderBottom: i < arr.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
+            }}
+          >
+            <span style={{ fontSize: 14, color: "#fff", display: "flex", alignItems: "center", gap: 8 }}>
+              <item.icon size={16} color={GREEN} /> {item.label}
+            </span>
+            <ChevronLeft size={16} color="rgba(255,255,255,0.3)" />
+          </button>
+        ))}
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
           style={{
             width: "100%", textAlign: "right", background: "transparent", border: "none",
-            padding: "12px 0 0", fontSize: 14, color: "#f87171", cursor: "pointer",
-            display: "flex", alignItems: "center", gap: 6,
+            padding: "12px 14px", fontSize: 14, color: "#f87171", cursor: "pointer",
+            display: "flex", alignItems: "center", gap: 8,
           }}
         >
-          <LogOut size={15} /> התנתקות
+          <LogOut size={16} /> התנתקות
         </button>
       </div>
     </div>
