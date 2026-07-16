@@ -194,14 +194,15 @@ export function TraineeDashboardClient({ user }: { user: any }) {
             </div>
           </div>
 
-        {/* Section 2 — Weekly workouts, matches design doc's "האימונים שלך השבוע" list right after the calorie ring */}
-        {plan && (
-          <>
-            <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 12 }}>האימונים שלך השבוע:</div>
-            <div style={{ marginBottom: 20 }}>
-              {sessions.length === 0 ? (
-                <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, padding: "16px 0" }}>המאמן שלך יוסיף תוכנית בקרוב</div>
-              ) : sessions.slice(0, 3).map((session: any, idx: number) => {
+        {/* Section 2 — Weekly workouts, matches design doc's "האימונים שלך השבוע" list right after the calorie ring.
+            Always rendered (with an empty-state) so a missing plan never silently disappears the whole section. */}
+        <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 12 }}>האימונים שלך השבוע:</div>
+        <div style={{ marginBottom: 20 }}>
+          {(!plan || sessions.length === 0) ? (
+            <div style={{ ...CARD, padding: 20, textAlign: "center", color: "rgba(255,255,255,0.35)", fontSize: 13 }}>
+              המאמן שלך עדיין לא הקצה תוכנית אימונים — היא תופיע כאן ברגע שתתווסף
+            </div>
+          ) : sessions.slice(0, 3).map((session: any, idx: number) => {
                 const done = idx < planSessionsDone;
                 const isNext = idx === planSessionsDone;
                 const muscles = Array.from(new Set(session.exercises?.map((e: any) => e.exercise?.muscleGroup).filter(Boolean) ?? [])).join(", ");
@@ -246,9 +247,7 @@ export function TraineeDashboardClient({ user }: { user: any }) {
                   </motion.div>
                 );
               })}
-            </div>
-          </>
-        )}
+        </div>
 
         {/* Hero Card - subdued dark card, green used as accent */}
         <div style={{ ...CARD, padding: "20px 20px 16px", marginBottom: 16 }}>
