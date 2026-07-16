@@ -605,17 +605,17 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                 background: "#161B22",
                 boxShadow: "0 8px 24px rgba(0,0,0,0.35)",
               }}>
-                {/* Card header — small thumbnail, matches design doc screenshot 06 (no full-width photo banner) */}
-                <div style={{ padding: "14px 14px 12px", display: "flex", alignItems: "flex-start", gap: 10 }}>
+                {/* Card header — matches code/ExerciseCard.tsx exactly (the reference implementation, newer than the canvas prototype) */}
+                <div style={{ padding: 12, display: "flex", alignItems: "center", gap: 12 }}>
+                  <span style={{ fontSize: 12, fontWeight: 900, color: "#08120a", background: GREEN, width: 24, height: 24, borderRadius: 8, flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{idx + 1}</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                      <div style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>{displayName}</div>
-                      <span style={{ fontSize: 12, fontWeight: 800, color: GREEN, background: "rgba(168,255,62,0.14)", width: 22, height: 22, borderRadius: 7, flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{idx + 1}</span>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: isDone ? "rgba(255,255,255,0.55)" : "#fff" }}>{displayName}</div>
                       {swappedNames[ex.id] && (
                         <span style={{ fontSize: 9, fontWeight: 700, color: GREEN, background: "rgba(168,255,62,0.2)", padding: "2px 6px", borderRadius: 99 }}>הוחלף</span>
                       )}
                     </div>
-                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", marginTop: 4 }}>
+                    <div style={{ fontSize: 13, color: "rgba(255,255,255,0.55)" }}>
                       {ex.sets ?? 3} סטים × {ex.reps ?? 12} חזרות
                       {isActive && sets.length > 0 && ` · ${doneSets}/${sets.length} הושלמו`}
                     </div>
@@ -623,28 +623,28 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                       const hist = exerciseHistory[ex.exerciseId];
                       if (!hist) return null;
                       return (
-                        <div style={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 4 }}>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 4 }}>
                           {hist.pr > 0 && (
-                            <span style={{ fontSize: 12, color: GREEN, fontWeight: 700 }}>שיא: {hist.pr} ק״ג 🏆</span>
+                            <span style={{ fontSize: 12, color: GREEN, fontWeight: 700 }}>🏆 שיא: {hist.pr} ק״ג</span>
                           )}
                           {hist.lastLabel && (
-                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>בפעם שעברה: {hist.lastLabel} ↩︎</span>
+                            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>↩︎ בפעם שעברה: {hist.lastLabel}</span>
                           )}
                         </div>
                       );
                     })()}
                   </div>
 
-                  {/* Thumbnail — 78x78, radius 16, exact size from Lior Fit.dc.html */}
+                  {/* Thumbnail — 52x52, radius 13, matches code/ExerciseCard.tsx exactly */}
                   <div
                     onClick={() => setInfoFor({ ex, displayName })}
                     style={{
-                      width: 78, height: 78, borderRadius: 16, flexShrink: 0, cursor: "pointer",
+                      width: 52, height: 52, borderRadius: 13, flexShrink: 0, cursor: "pointer",
+                      border: "1px solid rgba(255,255,255,0.1)",
                       backgroundImage: `url(${getMusclePhoto(ex.exercise?.muscleGroup, idx)})`,
                       backgroundSize: "cover", backgroundPosition: "center",
                     }}
                   />
-
                 </div>
 
                 {/* החלף / הושלם action row — matches design doc; tapping the green button opens the exercise sheet */}
