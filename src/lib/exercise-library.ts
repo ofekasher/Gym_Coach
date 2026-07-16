@@ -92,6 +92,16 @@ const CHEST_DETAILS: Record<string, Partial<ExerciseEntry>> = {
     imageUrl: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dips_-_Chest_Version/0.jpg",
     defaultSets: 3, defaultReps: "8-12",
   },
+  "ex-chest-13": {
+    nameEn: "Flat Dumbbell Bench Press", secondaryMuscles: ["כתף קדמית", "טרייספס"],
+    imageUrl: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Bench_Press/0.jpg",
+    defaultSets: 4, defaultReps: "8-12",
+  },
+  "ex-chest-14": {
+    nameEn: "Machine Chest Press", secondaryMuscles: ["כתף קדמית", "טרייספס"],
+    imageUrl: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Machine_Bench_Press/0.jpg",
+    defaultSets: 3, defaultReps: "10-12",
+  },
 };
 
 const RAW_LIBRARY: ExerciseEntry[] = [
@@ -908,6 +918,20 @@ const RAW_LIBRARY: ExerciseEntry[] = [
     ["תנועת קשת מלאה"],
     ["תנע"],
     "e9l-PmHuQqo"),
+
+  ex("ex-chest-13", "לחיצת חזה שטוח עם משקולות", "חזה", "דמבלים + ספסל", "בינוני",
+    "גרסת דמבלים ללחיצת החזה הבסיסית — טווח תנועה גדול יותר ועומס עצמאי לכל צד.",
+    "1. שכב על ספסל אופקי עם דמבל בכל יד בגובה החזה\n2. לחץ את הדמבלים מעלה עד כמעט נעילת מרפקים\n3. הורד בשליטה עד גובה החזה\n4. חזור על התנועה",
+    ["שמור שכמות מכווצות לספסל", "אל תנעל מרפקים לגמרי בחלק העליון", "תנועה סימטרית בשתי הידיים"],
+    ["הפלת הדמבלים בצד אחד", "ירידה מהירה מדי"],
+    null),
+
+  ex("ex-chest-14", "לחיצת חזה במכונה", "חזה", "מכונה", "קל",
+    "לחיצת חזה בטוחה עם קו תנועה קבוע — טובה למתחילים ולעבודה עד כשל.",
+    "1. כוון את מושב המכונה כך שהידיות בגובה החזה התחתון\n2. אחוז בידיות ולחץ קדימה עד כמעט יישור מרפקים\n3. חזור בשליטה עד גובה החזה",
+    ["גב צמוד למשענת לאורך כל התרגיל", "אל תנעל מרפקים בחלק הקדמי"],
+    ["הרמת גב מהמשענת", "טווח תנועה חלקי"],
+    null),
 
   // ─── כתפיים — אימוץ חיצוני/פנימי ─────────────────────────────────────────
   ex("ex-shoulder-14", "סיבוב חיצוני של הכתף בכבל", "כתפיים", "מכונת כבל", "קל",
