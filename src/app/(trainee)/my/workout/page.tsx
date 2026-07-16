@@ -36,7 +36,22 @@ export default async function MyWorkoutPage() {
         },
       },
     });
-    return <WorkoutLoggingClient plan={plan} userId={userId} />;
+
+    // Personal record + last-performance per exercise, from the trainee's real log history.
+    const exerciseLogs = await prisma.exerciseLog.findMany({
+      where: { workoutLog: { traineeId: userId } },
+      include: { workoutLog: { select: { date: true } } },
+      orderBy: { workoutLog: { date: "desc" } },
+    });
+    const exerciseHistory: Record<string, { pr: number; lastLabel: string }> = {};
+    for (const log of exerciseLogs) {
+      const entry = exerciseHistory[log.exerciseId] ?? { pr: 0, lastLabel: "" };
+      if (log.weight != null && log.weight > entry.pr) entry.pr = log.weight;
+      if (!entry.lastLabel) entry.lastLabel = `${log.sets}×${log.reps}${log.weight ? ` · ${log.weight} ק״ג` : ""}`;
+      exerciseHistory[log.exerciseId] = entry;
+    }
+
+    return <WorkoutLoggingClient plan={plan} userId={userId} exerciseHistory={exerciseHistory} />;
   } catch {
     const demoUser = DEMO_TRAINEES.find(t => t.id === userId) ?? DEMO_TRAINEES[0];
     const plan = demoUser.workoutPlans[0] ?? null;

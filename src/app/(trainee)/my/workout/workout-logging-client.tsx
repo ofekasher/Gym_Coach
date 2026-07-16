@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { Smile, Flame, Dumbbell, type LucideIcon } from "lucide-react";
+import { motion } from "framer-motion";
+import confetti from "canvas-confetti";
+import { Smile, Flame, Dumbbell, Trophy, type LucideIcon } from "lucide-react";
 import { getVideoId } from "@/lib/exercise-videos";
 import { getAlternatives, type AlternativeExercise } from "@/lib/exercise-alternatives";
 import { getMuscleGymPhoto } from "@/lib/gym-photos";
@@ -324,7 +326,7 @@ function makeDefaultSets(count: number, reps: number): SetLog[] {
   return Array.from({ length: count }, () => ({ weight: "", reps: String(reps), effort: "בינוני" as Effort, done: false }));
 }
 
-export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: string }) {
+export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { plan: any; userId: string; exerciseHistory?: Record<string, { pr: number; lastLabel: string }> }) {
   const sessions = plan?.sessions ?? [];
   const [sessionIdx, setSessionIdx] = useState(0);
   const [exStatus, setExStatus] = useState<Record<string, "pending" | "active" | "done" | "skip">>({});
@@ -438,6 +440,9 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
     setSaveToast(true);
     setTimeout(() => setSaveToast(false), 2000);
     setWorkoutDone(true);
+
+    confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: [GREEN, "#ffffff", "#6366f1"], scalar: 1.2 });
+    setTimeout(() => confetti({ particleCount: 80, spread: 120, origin: { y: 0.5 }, colors: [GREEN, "#ffffff"] }), 300);
   }
 
   if (!plan) {
@@ -455,26 +460,26 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
     const heavySets = Object.values(setLogs).flat().filter((s) => s.done && s.effort === "כבד").length;
     return (
       <div style={{ background: BG, minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 32 }} dir="rtl">
-        <div style={{ background: "linear-gradient(135deg,#1E3A8A,#2563EB)", borderRadius: 24, padding: 32, textAlign: "center", maxWidth: 300, width: "100%" }}>
-          <div style={{ fontSize: 52, marginBottom: 12 }}>🏆</div>
+        <div style={{ background: "#1c1c2e", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 24, padding: 32, textAlign: "center", maxWidth: 300, width: "100%" }}>
+          <Trophy size={48} color={GREEN} style={{ marginBottom: 12 }} />
           <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>כל הכבוד!</div>
           <div style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", marginBottom: 20 }}>סיימת את האימון</div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
             {[
               { label: "תרגילים", value: `${doneCount}/${exercises.length}` },
               { label: "סטים הושלמו", value: String(totalSets) },
-              { label: 'סטים כבד 🔥', value: String(heavySets) },
+              { label: "סטים כבד", value: String(heavySets) },
               { label: "עצימות", value: heavySets > totalSets / 2 ? "גבוהה" : "בינונית" },
             ].map((s) => (
-              <div key={s.label} style={{ background: "rgba(255,255,255,0.1)", borderRadius: 12, padding: "10px 0" }}>
-                <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>{s.value}</div>
+              <div key={s.label} style={{ background: "rgba(255,255,255,0.06)", borderRadius: 12, padding: "10px 0" }}>
+                <div style={{ fontSize: 18, fontWeight: 800, color: GREEN }}>{s.value}</div>
                 <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>{s.label}</div>
               </div>
             ))}
           </div>
           <button onClick={() => { setExStatus({}); setWorkoutDone(false); setSetLogs({}); }} style={{
             padding: "12px 32px", borderRadius: 99, border: "none",
-            background: "rgba(255,255,255,0.15)", color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer",
+            background: GREEN, color: "#08120a", fontSize: 13, fontWeight: 800, cursor: "pointer",
           }}>אימון חדש</button>
         </div>
 
@@ -588,6 +593,20 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
                         {ex.sets ?? 3} סטים × {ex.reps ?? 12} חזרות
                         {isActive && sets.length > 0 && ` · ${doneSets}/${sets.length} הושלמו`}
                       </div>
+                      {(() => {
+                        const hist = exerciseHistory[ex.exerciseId];
+                        if (!hist) return null;
+                        return (
+                          <div style={{ display: "flex", gap: 10, marginTop: 4, flexWrap: "wrap" }}>
+                            {hist.pr > 0 && (
+                              <span style={{ fontSize: 11, color: GREEN, fontWeight: 700 }}>🏆 שיא: {hist.pr} ק״ג</span>
+                            )}
+                            {hist.lastLabel && (
+                              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>↩︎ בפעם שעברה: {hist.lastLabel}</span>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
                     {/* Info button */}
                     <button onClick={() => setInfoFor({ ex, displayName })} style={{
@@ -697,13 +716,25 @@ export function WorkoutLoggingClient({ plan, userId }: { plan: any; userId: stri
       )}
 
         {doneCount > 0 && (
-          <button onClick={finishWorkout} disabled={finishingWorkout} style={{
-            width: "100%", marginTop: 20, padding: "16px 0", borderRadius: 18, border: "none", cursor: finishingWorkout ? "default" : "pointer",
-            background: "linear-gradient(135deg,#1E3A8A,#2563EB)", color: "#fff", fontSize: 15, fontWeight: 800,
-            opacity: finishingWorkout ? 0.7 : 1,
-          }}>
-            {finishingWorkout ? "שומר..." : `🏆 סיים אימון (${doneCount}/${exercises.length})`}
-          </button>
+          <motion.button
+            onClick={finishWorkout}
+            disabled={finishingWorkout}
+            animate={finishingWorkout ? {} : {
+              boxShadow: [
+                "0 0 0 0 rgba(168,255,62,0.4)",
+                "0 0 0 12px rgba(168,255,62,0)",
+                "0 0 0 0 rgba(168,255,62,0)",
+              ],
+            }}
+            transition={{ duration: 2, repeat: Infinity }}
+            style={{
+              width: "100%", marginTop: 20, padding: "16px 0", borderRadius: 18, border: "none", cursor: finishingWorkout ? "default" : "pointer",
+              background: GREEN, color: "#08120a", fontSize: 15, fontWeight: 900,
+              opacity: finishingWorkout ? 0.7 : 1,
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+            }}>
+            {finishingWorkout ? "שומר..." : <><Trophy size={18} /> סיים אימון ({doneCount}/{exercises.length})</>}
+          </motion.button>
         )}
 
         {saveToast && (
