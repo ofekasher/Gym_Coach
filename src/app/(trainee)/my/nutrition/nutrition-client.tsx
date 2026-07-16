@@ -1,11 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Droplet, Camera } from "lucide-react";
+import { Camera } from "lucide-react";
 import { AnimatedNumber } from "@/components/shared/AnimatedNumber";
 
 const GREEN = "#a8ff3e";
-const WATER_GOAL = 2500;
+const WATER_ACCENT = "#3b9eff";
 const OPTION_LABELS = ["אופציה א", "אופציה ב", "אופציה ג", "אופציה ד"];
 
 // Emoji (not line icons) per Lior Fit.dc.html's mealGroups: { emoji: '☀️'|'🍗'|'🌙', ... }
@@ -38,8 +38,9 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
   const [actualGrams, setActualGrams] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState<Record<string, boolean>>({});
 
-  const [waterTotal, setWaterTotal] = useState(0);
-  const [waterLoading, setWaterLoading] = useState(false);
+  const [waterMl, setWaterMl] = useState(750);
+  const [waterGoalMl] = useState(2500);
+  const [waterStep, setWaterStep] = useState(250);
 
   const [extraItems, setExtraItems] = useState<Record<string, any[]>>({});
   const [mealPhotos, setMealPhotos] = useState<Record<string, string>>({});
@@ -72,11 +73,6 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
         setActualGrams((prev) => ({ ...nextGrams, ...prev }));
       })
       .catch((err) => console.error("Failed to load nutrition logs", err));
-
-    fetch("/api/trainee/water-log")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => { if (data?.total != null) setWaterTotal(data.total); })
-      .catch((err) => console.error("Failed to load water log", err));
   }, []);
 
   const activePlan = propPlan;
@@ -166,50 +162,12 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
     setMealPhotos((prev) => ({ ...prev, [mealId]: URL.createObjectURL(file) }));
   };
 
-  const addWater = async (amount: number) => {
-    setWaterLoading(true);
-    try {
-      const res = await fetch("/api/trainee/water-log", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data?.total != null) setWaterTotal(data.total);
-        else setWaterTotal((t) => t + amount);
-      } else {
-        setWaterTotal((t) => t + amount); // optimistic fallback (e.g. demo mode with no DB)
-      }
-    } catch (err) {
-      console.error("Failed to add water", err);
-      setWaterTotal((t) => t + amount);
-    } finally {
-      setWaterLoading(false);
-    }
-  };
+  const incWaterStep = () => setWaterStep((s) => Math.min(500, s + 50));
+  const decWaterStep = () => setWaterStep((s) => Math.max(50, s - 50));
+  const addWater = () => setWaterMl((ml) => Math.min(waterGoalMl, ml + waterStep));
 
-  const undoWater = async () => {
-    setWaterLoading(true);
-    try {
-      const res = await fetch("/api/trainee/water-log", { method: "DELETE" });
-      if (res.ok) {
-        const data = await res.json();
-        if (data?.total != null) setWaterTotal(data.total);
-        else setWaterTotal((t) => Math.max(0, t - 50));
-      } else {
-        setWaterTotal((t) => Math.max(0, t - 50));
-      }
-    } catch (err) {
-      console.error("Failed to undo water", err);
-      setWaterTotal((t) => Math.max(0, t - 50));
-    } finally {
-      setWaterLoading(false);
-    }
-  };
-
-  const waterPct = Math.min((waterTotal / WATER_GOAL) * 100, 100);
-  const cups = Math.floor(waterTotal / 250);
+  const waterPct = Math.min((waterMl / waterGoalMl) * 100, 100);
+  const formatLiters = (ml: number) => (ml / 1000).toFixed(2).replace(/0+$/, "").replace(/\.$/, "");
 
   // Debounced food search: Open Food Facts first (better Israeli packaged products),
   // fall back to USDA FoodData Central (better generic/fresh foods) when OFF has no match.
@@ -456,6 +414,60 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
           </div>
         </button>
 
+        {/* Water tracker card — WATER_ACCENT #3b9eff, local stepper (50ml jumps, 50-500 range) */}
+        <div style={{ background: "#1c1c2e", borderRadius: 20, padding: 18, marginBottom: 24 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <span style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>💧 שתיית מים</span>
+            <span style={{ fontSize: 14 }}>
+              <span style={{ color: WATER_ACCENT, fontWeight: 700 }}>{formatLiters(waterMl)} ל׳</span>
+              <span style={{ color: "rgba(255,255,255,0.4)" }}> / {(waterGoalMl / 1000).toFixed(1)} ל׳</span>
+            </span>
+          </div>
+
+          <div style={{ height: 8, borderRadius: 99, background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
+            <div style={{ height: "100%", borderRadius: 99, width: `${waterPct}%`, background: WATER_ACCENT, transition: "width .35s ease" }} />
+          </div>
+
+          <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 16 }}>
+            <button
+              onClick={decWaterStep}
+              disabled={waterStep <= 50}
+              style={{
+                width: 44, height: 44, borderRadius: 14, flexShrink: 0, cursor: waterStep <= 50 ? "default" : "pointer",
+                background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+                color: waterStep <= 50 ? "rgba(255,255,255,0.25)" : "#fff", fontSize: 20, fontWeight: 700,
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}
+            >−</button>
+
+            <div style={{ flex: 1, textAlign: "center" }}>
+              <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", fontVariantNumeric: "tabular-nums" }}>{waterStep}</div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>כמות להוספה · קפיצות של 50</div>
+            </div>
+
+            <button
+              onClick={incWaterStep}
+              style={{
+                width: 44, height: 44, borderRadius: 14, flexShrink: 0, cursor: "pointer",
+                background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)",
+                color: "#fff", fontSize: 20, fontWeight: 700,
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}
+            >+</button>
+          </div>
+
+          <button
+            onClick={addWater}
+            style={{
+              width: "100%", height: 44, borderRadius: 14, marginTop: 14, cursor: "pointer",
+              background: "rgba(59,158,255,0.15)", border: "1px solid rgba(59,158,255,0.4)",
+              color: "#7cc0ff", fontWeight: 800, fontSize: 14,
+            }}
+          >
+            💧 הוסף {waterStep} מ״ל
+          </button>
+        </div>
+
         {/* Section 2 — meal groups: coach-defined options, trainee picks one and photographs it */}
         <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 14 }}>
           🍽️ התפריט שהמאמן שלך בנה · בחר מה אכלת וצלם
@@ -558,30 +570,6 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
           );
         })}
 
-        {/* Section 3 — water tracker */}
-        <div style={{ background: "#1c1c2e", borderRadius: 16, padding: 16, marginBottom: 16 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <span style={{ fontSize: 14, fontWeight: 700, color: "#fff", display: "flex", alignItems: "center", gap: 6 }}><Droplet size={15} /> שתייה יומית</span>
-            <span style={{ fontSize: 14, fontWeight: 700, color: GREEN }}>{waterTotal.toLocaleString()} מ״ל</span>
-          </div>
-          <div style={{ height: 8, borderRadius: 99, background: "rgba(255,255,255,0.1)" }}>
-            <div style={{ height: "100%", borderRadius: 99, width: `${waterPct}%`, background: GREEN, transition: "width 0.3s" }} />
-          </div>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 6 }}>{cups} כוסות</div>
-
-          <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
-            <button onClick={undoWater} disabled={waterLoading} style={{
-              flex: 1, padding: "8px 0", borderRadius: 10, border: "none", cursor: "pointer",
-              background: "rgba(127,29,29,0.3)", color: "#f87171", fontSize: 12, fontWeight: 700,
-            }}>-50</button>
-            {[50, 100, 250].map((amt) => (
-              <button key={amt} onClick={() => addWater(amt)} disabled={waterLoading} style={{
-                flex: 1, padding: "8px 0", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer",
-                background: "#080810", color: GREEN, fontSize: 12, fontWeight: 700,
-              }}>+{amt} מ״ל</button>
-            ))}
-          </div>
-        </div>
       </div>
 
       {showAddModal && (
