@@ -385,6 +385,9 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
     <div style={{ background: "#12121f", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px 0" }}>
 
+        {/* Page title — was missing entirely; matches Lior Fit.dc.html exactly */}
+        <div style={{ fontSize: 26, fontWeight: 900, letterSpacing: "-0.02em", marginBottom: 20, color: "#fff" }}>תזונה</div>
+
         {/* Section 1 — macro donut card */}
         <div style={{ background: "#1c1c2e", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 24, padding: "24px 20px", marginBottom: 20 }}>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
