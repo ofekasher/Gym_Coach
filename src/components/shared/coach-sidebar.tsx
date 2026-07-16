@@ -3,24 +3,25 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { LayoutDashboard, Users, Dumbbell, Mail, LogOut, Menu, X, MessageCircle, CreditCard, Settings, CalendarDays } from "lucide-react";
+import { LayoutDashboard, Users, Dumbbell, Mail, LogOut, Menu, X, MessageCircle, CreditCard, Settings, CalendarDays, Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// Matches Lior Fit Dashboard Design (Claude Design project 95e68d96) exactly — order: בית / ספריית
+// תרגילים / מתאמנים / לוח שנה / הודעות / תשלומים / הגדרות (no separate "צוות מאמנים" route yet).
 const navItems = [
-  { href: "/dashboard",  label: "דשבורד",          icon: LayoutDashboard },
-  { href: "/trainees",   label: "מתאמנים",          icon: Users },
-  { href: "/schedule",   label: "לוח זמנים",        icon: CalendarDays },
-  { href: "/chat",       label: "צ'אט",             icon: MessageCircle },
-  { href: "/payments",   label: "תשלומים",          icon: CreditCard },
+  { href: "/dashboard",  label: "בית",              icon: LayoutDashboard },
   { href: "/exercises",  label: "ספריית תרגילים",   icon: Dumbbell },
-  { href: "/invite",     label: "הזמן מתאמן/ת",     icon: Mail },
+  { href: "/trainees",   label: "מתאמנים",          icon: Users },
+  { href: "/schedule",   label: "לוח שנה",          icon: CalendarDays },
+  { href: "/chat",       label: "הודעות",           icon: MessageCircle },
+  { href: "/payments",   label: "תשלומים",          icon: CreditCard },
   { href: "/settings",   label: "הגדרות",           icon: Settings },
 ];
 
-const GREEN = "#a8ff3e";
-const GREEN_DIM = "rgba(168,255,62,0.1)";
-const SIDEBAR_BG = "#0f0f1a";
-const BORDER = "rgba(255,255,255,0.08)";
+const GREEN = "#b6ff4a";
+const GREEN_DIM = "rgba(182,255,74,0.1)";
+const SIDEBAR_BG = "#0d0d0d";
+const BORDER = "#1a1a1a";
 const TEXT_MUTED = "rgba(255,255,255,0.5)";
 
 interface Props {
@@ -33,24 +34,19 @@ export function CoachSidebar({ user }: Props) {
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full" style={{ background: SIDEBAR_BG }}>
-      {/* Logo */}
-      <div className="px-4 pt-2 pb-5">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0"
-            style={{ background: GREEN, boxShadow: `0 4px 20px ${GREEN}55` }}>
-            <Dumbbell className="w-5 h-5 text-black" />
+      {/* Logo — "LF" square badge, matches Lior Fit Dashboard Design exactly */}
+      <div className="px-2 pt-2 pb-5">
+        <div className="flex items-center gap-3 px-2">
+          <div className="w-[38px] h-[38px] rounded-[11px] flex items-center justify-center flex-shrink-0"
+            style={{ background: GREEN }}>
+            <span className="font-black text-[15px]" style={{ color: "#0a0a0a", letterSpacing: "-0.5px" }}>LF</span>
           </div>
-          <div>
-            <div className="font-extrabold text-[18px] text-white tracking-tight">Lior Fit</div>
-            <div className="text-[11px]" style={{ color: TEXT_MUTED }}>המאמן האישי שלך</div>
-          </div>
+          <span className="font-black text-[19px] text-white" style={{ letterSpacing: "-0.5px" }}>Lior Fit</span>
         </div>
       </div>
 
-      <div style={{ borderTop: `1px solid ${BORDER}`, margin: "0 8px" }} />
-
       {/* Nav */}
-      <nav className="flex-1 px-4 pt-4 space-y-0.5">
+      <nav className="flex-1 px-2 space-y-0.5">
         {navItems.map((item) => {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
@@ -71,6 +67,16 @@ export function CoachSidebar({ user }: Props) {
             </Link>
           );
         })}
+
+        <Link
+          href="/invite"
+          onClick={() => setMobileOpen(false)}
+          className="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-[15px] font-extrabold mt-3"
+          style={{ background: GREEN, color: "#0a0a0a" }}
+        >
+          <Plus size={18} className="flex-shrink-0" strokeWidth={2.4} />
+          הוסף מתאמן
+        </Link>
       </nav>
 
       {/* Bottom profile */}
@@ -104,7 +110,7 @@ export function CoachSidebar({ user }: Props) {
   return (
     <>
       {/* Desktop */}
-      <aside className="hidden lg:flex flex-col fixed right-0 top-0 h-screen w-[220px] z-40"
+      <aside className="hidden lg:flex flex-col fixed right-0 top-0 h-screen w-[204px] z-40"
         style={{ background: SIDEBAR_BG, borderLeft: `1px solid ${BORDER}` }}>
         <SidebarContent />
       </aside>

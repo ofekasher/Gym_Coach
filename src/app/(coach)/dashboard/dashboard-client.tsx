@@ -30,8 +30,9 @@ interface Props {
   stats: { total: number; activeThisWeek: number; checkedInThisWeek: number; unreadAlerts: number };
 }
 
-const GREEN = "#a8ff3e";
+const GREEN = "#b6ff4a";
 const PURPLE = "#6366f1";
+const CARD = "bg-[#111] border border-[#1e1e1e] rounded-[20px]";
 
 function getTraineeStatus(t: TraineeWithData): "green" | "yellow" | "red" {
   const weekAgo = subDays(new Date(), 7);
@@ -58,7 +59,7 @@ const alertTypeLabels: Record<string, string> = {
 
 const avatarColors = [GREEN, "#8B5CF6", "#3B82F6", "#F59E0B", "#F87171"];
 
-const glassCard = "backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] rounded-2xl hover:bg-white/[0.07] transition-all duration-200";
+const glassCard = "bg-[#111] border border-[#1e1e1e] rounded-[18px] hover:border-[#333] transition-all duration-200";
 
 function progressForTrainee(t: TraineeWithData): number {
   const total = t.workoutPlans?.[0] ? t.workoutLogs.length : 0;
@@ -82,17 +83,14 @@ export function DashboardClient({ trainees, alerts, stats }: Props) {
 
   return (
     <div className="flex" dir="rtl">
-      {/* Ambient orbs */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] rounded-full blur-[120px]" style={{ background: "rgba(168,255,62,0.03)" }} />
-        <div className="absolute bottom-[-20%] left-[-10%] w-[400px] h-[400px] rounded-full blur-[100px]" style={{ background: "rgba(99,102,241,0.05)" }} />
-      </div>
-
       {/* Main content */}
       <div className="flex-1 space-y-6 relative">
-        <div>
-          <h1 className="text-2xl font-extrabold text-white" style={{ fontFamily: "Assistant, sans-serif" }}>דשבורד ראשי</h1>
-          <p className="text-sm mt-0.5" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "Assistant, sans-serif" }}>סקירה כללית של כל המתאמנים שלך</p>
+        {/* Top bar — title/subtitle right, coach identity chip left, matches Lior Fit Dashboard Design */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <h1 className="text-[26px] font-black text-white" style={{ letterSpacing: "-0.8px" }}>דשבורד ראשי</h1>
+            <p className="text-[12.5px] mt-1 font-medium" style={{ color: "#888" }}>סקירה כללית של כל המתאמנים שלך</p>
+          </div>
         </div>
 
         {/* KPI cards */}
@@ -103,16 +101,20 @@ export function DashboardClient({ trainees, alerts, stats }: Props) {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.06, duration: 0.4 }}
-              className={`${glassCard} p-5`}
+              className={`${CARD} p-4`}
             >
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: s.bg }}>
-                  <s.icon size={16} style={{ color: s.color }} />
+              <div className="flex items-center gap-2.5 mb-[18px]">
+                <div className="w-[34px] h-[34px] rounded-[10px] flex items-center justify-center flex-shrink-0" style={{ background: s.bg }}>
+                  <s.icon size={17} style={{ color: s.color }} />
                 </div>
-                <span className="font-extrabold text-3xl" style={{ color: s.color === "#f87171" ? s.color : "#fff", fontFamily: "Inter, sans-serif" }}>{s.value}</span>
+                <span className="text-sm font-extrabold" style={{ color: "#e8e8e8" }}>{s.label}</span>
               </div>
-              <p className="text-sm font-semibold text-white/90" style={{ fontFamily: "Assistant, sans-serif" }}>{s.label}</p>
-              <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "Assistant, sans-serif" }}>{s.sub}</p>
+              <div className="flex items-end justify-between">
+                <div>
+                  <span className="font-black text-[30px]" style={{ letterSpacing: "-1px", color: s.color === "#f87171" ? s.color : "#fff" }}>{s.value}</span>
+                  <span className="text-[13px] font-bold mr-1.5" style={{ color: "#888" }}>{s.sub}</span>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
