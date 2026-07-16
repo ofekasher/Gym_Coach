@@ -276,19 +276,23 @@ model WorkoutSession {
 }
 
 model Exercise {
-  id             String   @id @default(cuid())
-  name           String
-  muscleGroup    String
-  description    String?  @db.Text
-  howTo          String?  @db.Text
-  tips           String[]
-  commonMistakes String[]
-  equipment      String?
-  difficulty     String?
-  videoUrl       String?
-  imageUrl       String?
-  isCustom       Boolean  @default(false)
-  coachId        String?
+  id               String   @id @default(cuid())
+  name             String
+  nameEn           String?
+  muscleGroup      String
+  secondaryMuscles String[]
+  description      String?  @db.Text
+  howTo            String?  @db.Text
+  tips             String[]
+  commonMistakes   String[]
+  equipment        String?
+  difficulty       String?
+  videoUrl         String?
+  imageUrl         String?
+  defaultSets      Int?
+  defaultReps      String?
+  isCustom         Boolean  @default(false)
+  coachId          String?
 
   coach            User?             @relation(fields: [coachId], references: [id])
   sessionExercises SessionExercise[]

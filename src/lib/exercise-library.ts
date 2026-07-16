@@ -2,7 +2,9 @@
 export interface ExerciseEntry {
   id: string;
   name: string;
+  nameEn: string;
   muscleGroup: string;
+  secondaryMuscles: string[];
   equipment: string;
   difficulty: "קל" | "בינוני" | "מתקדם";
   description: string;
@@ -10,10 +12,16 @@ export interface ExerciseEntry {
   tips: string[];
   commonMistakes: string[];
   videoUrl: string | null;
-  imageUrl: null;
+  imageUrl: string | null;
+  defaultSets: number;
+  defaultReps: string;
   isCustom: boolean;
   coachId: null;
 }
+
+// Fallback photo used whenever an exercise has no verified Free Exercise DB image yet —
+// same asset getMuscleGymPhoto() falls back to, never an invented/guessed FEDB URL.
+const FALLBACK_IMAGE = "/images/gym/dumbbell-curl.jpg";
 
 const ex = (
   id: string,
@@ -27,13 +35,66 @@ const ex = (
   mistakes: string[],
   ytId: string | null,
 ): ExerciseEntry => ({
-  id, name, muscleGroup, equipment, difficulty, description,
+  id, name, nameEn: "", muscleGroup, secondaryMuscles: [], equipment, difficulty, description,
   howTo, tips, commonMistakes: mistakes,
   videoUrl: ytId ? `https://www.youtube.com/watch?v=${ytId}` : null,
-  imageUrl: null, isCustom: false, coachId: null,
+  imageUrl: FALLBACK_IMAGE, defaultSets: 3, defaultReps: "10-12", isCustom: false, coachId: null,
 });
 
-export const EXERCISE_LIBRARY: ExerciseEntry[] = [
+// Verified Free Exercise DB entries (raw.githubusercontent.com/yuhonas/free-exercise-db) —
+// confirmed to exist (HTTP 200) before use; entries without a confirmed match keep FALLBACK_IMAGE
+// rather than guessing a slug. Filled one muscle group at a time, starting with חזה (chest).
+const CHEST_DETAILS: Record<string, Partial<ExerciseEntry>> = {
+  "ex-chest-01": {
+    nameEn: "Barbell Bench Press", secondaryMuscles: ["כתף קדמית", "טרייספס"],
+    imageUrl: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Bench_Press_-_Medium_Grip/0.jpg",
+    defaultSets: 4, defaultReps: "8-12",
+  },
+  "ex-chest-02": {
+    nameEn: "Incline Dumbbell Press", secondaryMuscles: ["כתף קדמית", "טרייספס"],
+    imageUrl: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Incline_Dumbbell_Press/0.jpg",
+    defaultSets: 4, defaultReps: "8-12",
+  },
+  "ex-chest-03": {
+    nameEn: "Smith Machine Bench Press", secondaryMuscles: ["כתף קדמית", "טרייספס"],
+    defaultSets: 3, defaultReps: "10-12",
+  },
+  "ex-chest-04": {
+    nameEn: "Dumbbell Floor Press", secondaryMuscles: ["טרייספס"],
+    imageUrl: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dumbbell_Floor_Press/0.jpg",
+    defaultSets: 3, defaultReps: "10-12",
+  },
+  "ex-chest-05": {
+    nameEn: "Dumbbell Pullover", secondaryMuscles: ["גב רחב", "טרייספס"],
+    imageUrl: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Bent-Arm_Dumbbell_Pullover/0.jpg",
+    defaultSets: 3, defaultReps: "12-15",
+  },
+  "ex-chest-06": {
+    nameEn: "Push-Up", secondaryMuscles: ["כתף קדמית", "טרייספס", "בטן"],
+    defaultSets: 3, defaultReps: "עד כשל",
+  },
+  "ex-chest-07": {
+    nameEn: "Close-Grip Push-Up", secondaryMuscles: ["טרייספס"],
+    defaultSets: 3, defaultReps: "עד כשל",
+  },
+  "ex-chest-08": {
+    nameEn: "Cable Crossover", secondaryMuscles: ["כתף קדמית"],
+    imageUrl: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Cable_Crossover/0.jpg",
+    defaultSets: 3, defaultReps: "12-15",
+  },
+  "ex-chest-09": {
+    nameEn: "Decline Barbell Bench Press", secondaryMuscles: ["טרייספס"],
+    imageUrl: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Decline_Barbell_Bench_Press/0.jpg",
+    defaultSets: 4, defaultReps: "8-10",
+  },
+  "ex-chest-10": {
+    nameEn: "Chest Dips", secondaryMuscles: ["טרייספס", "כתף קדמית"],
+    imageUrl: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Dips_-_Chest_Version/0.jpg",
+    defaultSets: 3, defaultReps: "8-12",
+  },
+};
+
+const RAW_LIBRARY: ExerciseEntry[] = [
 
   // ─── חזה ──────────────────────────────────────────────────────────────────
   ex("ex-chest-01", "לחיצת חזה עם מוט", "חזה", "מוט + ספסל", "בינוני",
@@ -899,5 +960,9 @@ export const EXERCISE_LIBRARY: ExerciseEntry[] = [
     ["ברך נוגעת ברצפה"],
     "QOVaHwm-Q6U"),
 ];
+
+export const EXERCISE_LIBRARY: ExerciseEntry[] = RAW_LIBRARY.map((e) =>
+  CHEST_DETAILS[e.id] ? { ...e, ...CHEST_DETAILS[e.id] } : e
+);
 
 export default EXERCISE_LIBRARY;

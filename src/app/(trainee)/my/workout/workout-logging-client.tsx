@@ -240,12 +240,21 @@ function ExerciseSheet({
       >
         <div style={{ width: 40, height: 5, borderRadius: 99, background: "rgba(255,255,255,0.2)", margin: "6px auto 14px" }} />
 
+        {/* Media — video if the exercise library has a confirmed one, otherwise the exercise image/fallback */}
         <div style={{ position: "relative", height: 190, borderRadius: 20, overflow: "hidden", background: "#000", marginBottom: 6 }}>
-          <div style={{
-            position: "absolute", inset: 0,
-            backgroundImage: `url(${getMuscleGymPhoto(ex.exercise?.muscleGroup)})`,
-            backgroundSize: "cover", backgroundPosition: "center",
-          }} />
+          {ex.exercise?.videoUrl ? (
+            <video
+              src={ex.exercise.videoUrl}
+              muted loop autoPlay playsInline
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          ) : (
+            <div style={{
+              position: "absolute", inset: 0,
+              backgroundImage: `url(${ex.exercise?.imageUrl || getMuscleGymPhoto(ex.exercise?.muscleGroup)})`,
+              backgroundSize: "cover", backgroundPosition: "center",
+            }} />
+          )}
           <div style={{
             position: "absolute", top: 10, right: 10, background: "rgba(0,0,0,0.6)", color: GREEN,
             fontSize: 11, fontWeight: 800, padding: "5px 10px", borderRadius: 99,
@@ -255,15 +264,57 @@ function ExerciseSheet({
           לולאת הדגמה — תנוחת התחלה וסיום
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-          <div style={{ fontSize: 22, fontWeight: 900, color: "#fff" }}>{displayName}</div>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 10 }}>
+          <div>
+            <div style={{ fontSize: 22, fontWeight: 900, color: "#fff" }}>{displayName}</div>
+            {ex.exercise?.nameEn && (
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 600, marginTop: 2 }} dir="ltr">{ex.exercise.nameEn}</div>
+            )}
+          </div>
           <button onClick={onClose} style={{
             width: 34, height: 34, borderRadius: 11, background: "rgba(255,255,255,0.08)", border: "none",
-            display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0,
           }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.4" strokeLinecap="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
           </button>
         </div>
+
+        {/* Tags — muscle group, equipment, level */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 16 }}>
+          {[ex.exercise?.muscleGroup, ex.exercise?.equipment, ex.exercise?.difficulty].filter(Boolean).map((tag: string, i: number) => (
+            <span key={i} style={{ fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.7)", background: "rgba(255,255,255,0.06)", padding: "4px 11px", borderRadius: 99 }}>{tag}</span>
+          ))}
+        </div>
+
+        {/* Cues — critical technique tips, from the exercise library's tips[] */}
+        {ex.exercise?.tips?.length > 0 && (
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#fff", marginBottom: 8 }}>💡 דגשים</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {ex.exercise.tips.map((cue: string, i: number) => (
+                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                  <span style={{ color: GREEN, fontSize: 14, lineHeight: "20px", flexShrink: 0 }}>●</span>
+                  <span style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", lineHeight: 1.5 }}>{cue}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Instructions — numbered steps, from the exercise library's howTo (stored "1. ...\n2. ..." style) */}
+        {ex.exercise?.howTo && (
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#fff", marginBottom: 8 }}>איך מבצעים</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {ex.exercise.howTo.split("\n").map((step: string, i: number) => (
+                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                  <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, fontWeight: 800, flexShrink: 0 }}>{i + 1}.</span>
+                  <span style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", lineHeight: 1.5 }}>{step.replace(/^\d+\.\s*/, "")}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
