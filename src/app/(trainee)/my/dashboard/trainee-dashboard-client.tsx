@@ -57,6 +57,9 @@ export function TraineeDashboardClient({ user }: { user: any }) {
   });
 
   const totalWorkouts = user?.workoutLogs?.filter((l: any) => l.status === "COMPLETED").length ?? 0;
+  const caloriesEaten = (user?.nutritionLogs ?? []).reduce((s: number, l: any) => s + (l.calories ?? 0), 0);
+  const calorieGoal = user?.traineeProfile?.dailyCalories ?? 2700;
+  const caloriePct = calorieGoal > 0 ? Math.min(100, Math.round((caloriesEaten / calorieGoal) * 100)) : 0;
   const currentWeight = lastCheckIn?.weight ?? user?.traineeProfile?.currentWeight ?? null;
   const sessions = plan?.sessions ?? [];
   const totalExercises = sessions.reduce((s: number, sess: any) => s + (sess.exercises?.length ?? 0), 0);
@@ -170,28 +173,26 @@ export function TraineeDashboardClient({ user }: { user: any }) {
           ))}
         </div>
 
-        {/* Weekly progress card */}
-        {plan && (
-          <div style={{ ...CARD, padding: 22, marginBottom: 16, minHeight: 144, display: "flex", alignItems: "center", gap: 20 }}>
-            <ProgressRing pct={planProgressPct} />
+        {/* Daily calorie goal card */}
+        <div style={{ ...CARD, padding: 22, marginBottom: 16, minHeight: 144, display: "flex", alignItems: "center", gap: 20 }}>
+            <ProgressRing pct={caloriePct} />
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: "-0.01em", marginBottom: 4, color: "#fff" }}>{plan.name}</div>
-              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.55)", marginBottom: 12 }}>
-                ביצעת {planSessionsDone} מתוך {planSessionsTotal || totalWorkouts} אימונים
+              <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: "-0.01em", marginBottom: 4, color: "#fff" }}>היעד היומי</div>
+              <div style={{ fontSize: 14, color: "rgba(255,255,255,0.55)", marginBottom: 14 }}>
+                {caloriesEaten.toLocaleString()} מתוך {calorieGoal.toLocaleString()} קק״ל
               </div>
               <div style={{ display: "flex", gap: 16 }}>
-                <div>
-                  <div style={{ fontSize: 18, fontWeight: 900, color: GREEN }}>🔥 {streak}</div>
-                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>רצף ימים</div>
-                </div>
                 <div>
                   <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>{totalWorkouts}</div>
                   <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>אימונים</div>
                 </div>
+                <div>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: GREEN }}>{streak} 🔥</div>
+                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>רצף ימים</div>
+                </div>
               </div>
             </div>
           </div>
-        )}
 
         {/* Hero Card - subdued dark card, green used as accent */}
         <div style={{ ...CARD, padding: "20px 20px 16px", marginBottom: 16 }}>
