@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Sunrise, Cloud, Moon, Apple, Utensils, Droplet, Camera, type LucideIcon } from "lucide-react";
+import { AnimatedNumber } from "@/components/shared/AnimatedNumber";
 
 const GREEN = "#a8ff3e";
 const WATER_GOAL = 2500;
@@ -404,7 +405,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                 )}
               </svg>
               <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ fontSize: 32, fontWeight: 900, letterSpacing: "-0.02em", color: "#fff" }}>{eatenCalories.toLocaleString()}</span>
+                <span style={{ fontSize: 32, fontWeight: 900, letterSpacing: "-0.02em", color: "#fff" }}><AnimatedNumber value={eatenCalories} /></span>
                 <span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>קק״ל</span>
               </div>
             </div>
@@ -412,17 +413,17 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
           <div style={{ display: "flex", justifyContent: "space-around", textAlign: "center" }}>
             <div>
               <div style={{ width: 12, height: 12, borderRadius: 4, background: GREEN, margin: "0 auto 6px" }} />
-              <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>{eatenProtein}<span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>ג׳</span></div>
+              <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}><AnimatedNumber value={eatenProtein} /><span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>ג׳</span></div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>חלבון</div>
             </div>
             <div>
               <div style={{ width: 12, height: 12, borderRadius: 4, background: "#6366f1", margin: "0 auto 6px" }} />
-              <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>{eatenCarbs}<span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>ג׳</span></div>
+              <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}><AnimatedNumber value={eatenCarbs} /><span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>ג׳</span></div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>פחמימה</div>
             </div>
             <div>
               <div style={{ width: 12, height: 12, borderRadius: 4, background: "#f59e0b", margin: "0 auto 6px" }} />
-              <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>{eatenFat}<span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>ג׳</span></div>
+              <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}><AnimatedNumber value={eatenFat} /><span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>ג׳</span></div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>שומן</div>
             </div>
           </div>

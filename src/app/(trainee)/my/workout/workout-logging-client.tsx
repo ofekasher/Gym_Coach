@@ -6,6 +6,7 @@ import { Dumbbell, Trophy } from "lucide-react";
 import { getAlternatives, type AlternativeExercise } from "@/lib/exercise-alternatives";
 import { getMuscleGymPhoto } from "@/lib/gym-photos";
 import { ExerciseGifCard } from "@/components/shared/ExerciseGifCard";
+import { useRestTimer } from "@/hooks/use-rest-timer";
 
 function SwapModal({ exerciseName, muscleGroup, onSwap, onClose }: {
   exerciseName: string;
@@ -131,31 +132,31 @@ type Effort = "קל" | "בינוני" | "כבד";
 
 interface SetLog { weight: string; reps: string; effort: Effort; done: boolean }
 
-function RestTimer({ seconds, onDone }: { seconds: number; onDone: () => void }) {
-  const [left, setLeft] = useState(seconds);
-  const ref = useRef<NodeJS.Timeout | null>(null);
-  useEffect(() => {
-    ref.current = setInterval(() => {
-      setLeft((l) => { if (l <= 1) { clearInterval(ref.current!); onDone(); return 0; } return l - 1; });
-    }, 1000);
-    return () => clearInterval(ref.current!);
-  }, []);
-  const pct = (left / seconds) * 100;
-  const r = 38, cx = 44, cy = 44, stroke = 6, circum = 2 * Math.PI * r;
+// Matches Lior Fit.dc.html's rest timer bar exactly (⏱️ מנוחה בין סטים / +15 שניות / דלג ⏭),
+// driven by the useRestTimer hook from code/useRestTimer.ts.
+function RestTimerBar({ label, progress, onAdd, onSkip }: { label: string; progress: number; onAdd: () => void; onSkip: () => void }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "16px 0" }}>
-      <svg width="88" height="88" viewBox="0 0 88 88">
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth={stroke}/>
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke={GREEN} strokeWidth={stroke}
-          strokeLinecap="round" strokeDasharray={`${(pct / 100) * circum} ${circum}`}
-          transform={`rotate(-90 ${cx} ${cy})`}/>
-        <text x={cx} y={cy + 6} textAnchor="middle" fontSize="18" fontWeight="800" fill="#fff">{left}s</text>
-      </svg>
-      <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 6 }}>מנוחה</div>
-      <button onClick={onDone} style={{
-        marginTop: 10, padding: "6px 20px", borderRadius: 99, border: "none", cursor: "pointer",
-        background: "rgba(168,255,62,0.2)", color: GREEN, fontSize: 12, fontWeight: 700,
-      }}>דלג</button>
+    <div style={{ background: "rgba(168,255,62,0.1)", border: "1px solid rgba(168,255,62,0.35)", borderRadius: 16, padding: "14px 16px", marginBottom: 20 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 15 }}>⏱️</span>
+          <span style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>מנוחה בין סטים</span>
+        </div>
+        <span style={{ fontSize: 22, fontWeight: 900, color: GREEN, fontVariantNumeric: "tabular-nums" }}>{label}</span>
+      </div>
+      <div style={{ height: 6, borderRadius: 99, background: "rgba(255,255,255,0.1)", overflow: "hidden", marginBottom: 12 }}>
+        <div style={{ height: "100%", width: `${progress}%`, background: GREEN, transition: "width 1s linear" }} />
+      </div>
+      <div style={{ display: "flex", gap: 10 }}>
+        <button onClick={onAdd} style={{
+          flex: 1, background: "rgba(255,255,255,0.08)", borderRadius: 11, height: 40, border: "none",
+          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 800, color: "#fff", cursor: "pointer",
+        }}>+15 שניות</button>
+        <button onClick={onSkip} style={{
+          flex: 1, background: GREEN, color: "#08120a", borderRadius: 11, height: 40, border: "none",
+          display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 900, cursor: "pointer",
+        }}>דלג ⏭</button>
+      </div>
     </div>
   );
 }
@@ -214,14 +215,15 @@ function SheetSetRow({
 }
 
 function ExerciseSheet({
-  ex, displayName, sets, prValue, lastLabel, resting, restSeconds, doneCount,
-  onClose, onPRChange, onSetChange, onSetDone, onAddSet, onComplete, onRestDone,
+  ex, displayName, sets, prValue, lastLabel, resting, restLabel, restProgress, doneCount,
+  onClose, onPRChange, onSetChange, onSetDone, onAddSet, onComplete, onRestAdd, onRestSkip,
 }: {
   ex: any; displayName: string; sets: SetLog[]; prValue: number; lastLabel: string;
-  resting: boolean; restSeconds: number; doneCount: number;
+  resting: boolean; restLabel: string; restProgress: number; doneCount: number;
   onClose: () => void; onPRChange: (val: string) => void;
   onSetChange: (idx: number, field: keyof SetLog, val: any) => void;
-  onSetDone: (idx: number) => void; onAddSet: () => void; onComplete: () => void; onRestDone: () => void;
+  onSetDone: (idx: number) => void; onAddSet: () => void; onComplete: () => void;
+  onRestAdd: () => void; onRestSkip: () => void;
 }) {
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 200, display: "flex", flexDirection: "column", justifyContent: "flex-end" }}>
@@ -298,9 +300,7 @@ function ExerciseSheet({
         )}
 
         {resting && (
-          <div style={{ ...CARD, marginBottom: 20 }}>
-            <RestTimer seconds={restSeconds} onDone={onRestDone} />
-          </div>
+          <RestTimerBar label={restLabel} progress={restProgress} onAdd={onRestAdd} onSkip={onRestSkip} />
         )}
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
@@ -346,7 +346,8 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
   const [sessionIdx, setSessionIdx] = useState(0);
   const [exStatus, setExStatus] = useState<Record<string, "pending" | "active" | "done" | "skip">>({});
   const [setLogs, setSetLogs] = useState<Record<string, SetLog[]>>({});
-  const [restingFor, setRestingFor] = useState<string | null>(null);
+  const [restForExId, setRestForExId] = useState<string | null>(null);
+  const restTimer = useRestTimer(90);
   const [workoutDone, setWorkoutDone] = useState(false);
   const [swapFor, setSwapFor] = useState<{ exId: string; name: string; muscleGroup: string } | null>(null);
   const [swappedNames, setSwappedNames] = useState<Record<string, string>>({});
@@ -381,8 +382,8 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
 
   function doneSet(exId: string, setIdx: number, restSeconds: number, weight?: string) {
     updateSet(exId, setIdx, "done", true);
-    setRestingFor(`${exId}-${setIdx}`);
-    setTimeout(() => setRestingFor(null), (restSeconds || 90) * 1000);
+    setRestForExId(exId);
+    restTimer.start(restSeconds || 90);
     const w = parseFloat(weight ?? "");
     if (!isNaN(w)) {
       setPrByEx((prev) => ({ ...prev, [exId]: Math.max(prev[exId] ?? 0, w) }));
@@ -404,7 +405,7 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
 
   function completeExercise(exId: string) {
     setExStatus((s) => ({ ...s, [exId]: "done" }));
-    setRestingFor(null);
+    restTimer.skip();
   }
 
   function skipExercise(exId: string) {
@@ -580,13 +581,6 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
           </div>
         </div>
 
-        {/* Rest timer */}
-        {restingFor && (
-          <div style={{ ...CARD, marginBottom: 16 }}>
-            <RestTimer seconds={60} onDone={() => setRestingFor(null)}/>
-          </div>
-        )}
-
         {/* Exercises */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {exercises.map((ex: any, idx: number) => {
@@ -718,8 +712,9 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
             sets={sets}
             prValue={getPr(ex)}
             lastLabel={hist?.lastLabel ?? ""}
-            resting={restingFor?.startsWith(`${ex.id}-`) ?? false}
-            restSeconds={ex.restSeconds ?? 90}
+            resting={restForExId === ex.id && restTimer.rest.active}
+            restLabel={restTimer.label}
+            restProgress={restTimer.progress}
             doneCount={sets.filter((s) => s.done).length}
             onClose={() => setSheetForId(null)}
             onPRChange={(val) => setPrByEx((prev) => ({ ...prev, [ex.id]: Number(val) || 0 }))}
@@ -727,7 +722,8 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
             onSetDone={(idx) => doneSet(ex.id, idx, ex.restSeconds ?? 90, sets[idx]?.weight)}
             onAddSet={() => addSet(ex.id, ex)}
             onComplete={() => { completeExercise(ex.id); setSheetForId(null); }}
-            onRestDone={() => setRestingFor(null)}
+            onRestAdd={() => restTimer.add(15)}
+            onRestSkip={() => restTimer.skip()}
           />
         );
       })()}

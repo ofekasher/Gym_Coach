@@ -4,6 +4,7 @@ import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { BackHeader } from "@/components/shared/back-header";
 import { Bell, LogOut, Ruler, CreditCard, ShieldCheck, HelpCircle, ChevronLeft } from "lucide-react";
+import { AnimatedNumber } from "@/components/shared/AnimatedNumber";
 
 const GREEN = "#a8ff3e";
 const CARD = "bg-[#1c1c2e] rounded-2xl mx-4 p-4 mt-4";
@@ -286,14 +287,16 @@ export function ProfileClient({ user }: { user: any }) {
         <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 10 }}>סטטיסטיקות</div>
         <div style={{ display: "flex", gap: 10 }}>
           {[
-            { emoji: "🔥", label: "רצף", value: String(streak) },
-            { emoji: "💪", label: "אימונים", value: String(completedCount) },
-            { emoji: "⚡", label: "שיא אישי", value: prLabel },
-            { emoji: "📅", label: "שבועות", value: String(weeksInProgram) },
+            { emoji: "🔥", label: "רצף", value: streak as number | string },
+            { emoji: "💪", label: "אימונים", value: completedCount as number | string },
+            { emoji: "⚡", label: "שיא אישי", value: prLabel as number | string },
+            { emoji: "📅", label: "שבועות", value: weeksInProgram as number | string },
           ].map((s) => (
             <div key={s.label} style={{ background: "#12121f", borderRadius: 12, padding: 12, flex: 1, textAlign: "center" }}>
               <div style={{ fontSize: 20 }}>{s.emoji}</div>
-              <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginTop: 4 }}>{s.value}</div>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginTop: 4 }}>
+                {typeof s.value === "number" ? <AnimatedNumber value={s.value} /> : s.value}
+              </div>
               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{s.label}</div>
             </div>
           ))}

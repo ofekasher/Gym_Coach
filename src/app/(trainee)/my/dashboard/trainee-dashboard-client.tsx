@@ -4,6 +4,7 @@ import { format, subDays, isToday } from "date-fns";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { getMuscleGymPhoto } from "@/lib/gym-photos";
+import { AnimatedNumber } from "@/components/shared/AnimatedNumber";
 
 const BG = "transparent";
 const CARD = { background: "#161B22", borderRadius: 28, border: "1px solid rgba(255,255,255,0.06)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" };
@@ -25,7 +26,7 @@ function ProgressRing({ pct }: { pct: number }) {
         />
       </svg>
       <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 26, color: "#fff" }}>
-        {pct}%
+        <AnimatedNumber value={pct} />%
       </div>
     </div>
   );
@@ -124,15 +125,15 @@ export function TraineeDashboardClient({ user }: { user: any }) {
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: "-0.01em", marginBottom: 4, color: "#fff" }}>היעד היומי</div>
               <div style={{ fontSize: 14, color: "rgba(255,255,255,0.55)", marginBottom: 14 }}>
-                {caloriesEaten.toLocaleString()} מתוך {calorieGoal.toLocaleString()} קק״ל
+                <AnimatedNumber value={caloriesEaten} /> מתוך {calorieGoal.toLocaleString()} קק״ל
               </div>
               <div style={{ display: "flex", gap: 16 }}>
                 <div>
-                  <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>{totalWorkouts}</div>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}><AnimatedNumber value={totalWorkouts} /></div>
                   <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>אימונים</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: 18, fontWeight: 900, color: GREEN }}>{streak} 🔥</div>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: GREEN }}><AnimatedNumber value={streak} /> 🔥</div>
                   <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>רצף ימים</div>
                 </div>
               </div>
