@@ -5,21 +5,11 @@ import { Sunrise, Cloud, Moon, Apple, Utensils, Droplet, Camera, type LucideIcon
 
 const GREEN = "#a8ff3e";
 const WATER_GOAL = 2500;
+const OPTION_LABELS = ["אופציה א", "אופציה ב", "אופציה ג", "אופציה ד"];
 
 const MEAL_ICONS: Record<string, LucideIcon> = {
   "ארוחת בוקר": Sunrise, "ארוחת צהריים": Cloud, "ארוחת ערב": Moon, "חטיף": Apple,
 };
-
-const MEAL_PHOTOS: Record<string, string> = {
-  "ארוחת בוקר": "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=200&q=65&auto=format&fit=crop",
-  "ארוחת צהריים": "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=200&q=65&auto=format&fit=crop",
-  "ארוחת ערב": "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=200&q=65&auto=format&fit=crop",
-  "חטיף": "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=200&q=65&auto=format&fit=crop",
-};
-function getMealPhoto(name: string): string {
-  for (const key of Object.keys(MEAL_PHOTOS)) if (name?.includes(key)) return MEAL_PHOTOS[key];
-  return MEAL_PHOTOS["ארוחת צהריים"];
-}
 
 const DEFAULT_MEALS = [
   { id: "1", name: "ארוחת בוקר", foodItems: [
@@ -49,6 +39,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
   const [waterLoading, setWaterLoading] = useState(false);
 
   const [extraItems, setExtraItems] = useState<Record<string, any[]>>({});
+  const [mealPhotos, setMealPhotos] = useState<Record<string, string>>({});
   const [showAddModal, setShowAddModal] = useState(false);
   const [modalClosing, setModalClosing] = useState(false);
   const [activeMealForModal, setActiveMealForModal] = useState<string>("");
@@ -150,9 +141,25 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
     }
   };
 
-  const updateGrams = (meal: any, food: any, grams: number) => {
+  // Single-choice selection per meal: coach offers options (אופציה א/ב), trainee picks the one they ate.
+  // Re-tapping the chosen option deselects it. Reuses toggleFood so the same nutrition-log API call applies.
+  const selectOption = async (meal: any, food: any) => {
     const key = `${meal.name}::${food.name}`;
-    setActualGrams((prev) => ({ ...prev, [key]: grams }));
+    const alreadyChosen = !!checkedItems[key];
+    if (!alreadyChosen) {
+      const allOptions = [...(meal.foodItems ?? []), ...(extraItems[meal.name] ?? [])];
+      const otherKeys = allOptions.map((f: any) => `${meal.name}::${f.name}`).filter((k) => k !== key);
+      setCheckedItems((prev) => {
+        const next = { ...prev };
+        for (const k of otherKeys) next[k] = false;
+        return next;
+      });
+    }
+    await toggleFood(meal, food);
+  };
+
+  const handleMealPhoto = (mealId: string, file: File) => {
+    setMealPhotos((prev) => ({ ...prev, [mealId]: URL.createObjectURL(file) }));
   };
 
   const addWater = async (amount: number) => {
@@ -442,92 +449,105 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
           </div>
         </button>
 
-        {/* Section 2 — meal sections */}
-        {meals.map((meal: any) => (
-          <div key={meal.id} style={{ marginBottom: 24 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-              <span style={{ fontSize: 15, fontWeight: 600, color: "#fff" }}>{meal.name}</span>
-              {(() => { const Icon = MEAL_ICONS[meal.name] ?? Utensils; return <Icon size={17} color="#fff" />; })()}
-            </div>
+        {/* Section 2 — meal groups: coach-defined options, trainee picks one and photographs it */}
+        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginBottom: 14 }}>
+          🍽️ התפריט שהמאמן שלך בנה · בחר מה אכלת וצלם
+        </div>
+        {meals.map((meal: any) => {
+          const options = [...(meal.foodItems ?? []), ...(extraItems[meal.name] ?? [])];
+          const chosenOption = options.find((f: any) => checkedItems[`${meal.name}::${f.name}`]);
+          return (
+            <div key={meal.id} style={{ marginBottom: 24 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <span style={{ fontSize: 15, fontWeight: 700, color: "#fff", display: "flex", alignItems: "center", gap: 6 }}>
+                  {meal.name} {(() => { const Icon = MEAL_ICONS[meal.name] ?? Utensils; return <Icon size={15} color="#fff" />; })()}
+                </span>
+                <span style={{ fontSize: 12, fontWeight: 700, color: chosenOption ? GREEN : "rgba(255,255,255,0.4)" }}>
+                  {chosenOption ? "נאכל ✓" : "בחר מה אכלת"}
+                </span>
+              </div>
 
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              {[...(meal.foodItems ?? []), ...(extraItems[meal.name] ?? [])].map((food: any, fi: number) => {
-                const key = `${meal.name}::${food.name}`;
-                const checked = !!checkedItems[key];
-                const grams = actualGrams[key] ?? food.quantity ?? 0;
-                const loading = !!isLoading[key];
-                return (
-                  <div key={food.id ?? fi} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 0", gap: 8 }}>
-                    <div style={{
-                      width: 56, height: 56, borderRadius: 12, flexShrink: 0, position: "relative",
-                      backgroundImage: `url(${getMealPhoto(meal.name)})`, backgroundSize: "cover", backgroundPosition: "center",
-                    }}>
-                      <span style={{
-                        position: "absolute", top: -4, right: -4, width: 20, height: 20, borderRadius: "50%",
-                        background: GREEN, color: "#0a0a0a", fontSize: 13, fontWeight: 800,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                      }}>+</span>
-                    </div>
-
-                    <button style={{
-                      width: 32, height: 32, borderRadius: "50%", flexShrink: 0,
-                      background: "#1c1c2e", border: "1px solid rgba(255,255,255,0.1)",
-                      color: GREEN, fontSize: 15, cursor: "pointer",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>⇄</button>
-
-                    <div style={{ flex: 1, display: "flex", alignItems: "center", gap: 6, justifyContent: "flex-end", flexWrap: "wrap" }}>
-                      {checked && (
-                        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                          <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>גרם</span>
-                          <input
-                            type="number"
-                            value={grams}
-                            onChange={(e) => updateGrams(meal, food, Number(e.target.value))}
-                            style={{
-                              width: 48, fontSize: 12, color: "#fff", background: "rgba(255,255,255,0.06)",
-                              border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, padding: "3px 4px",
-                              textAlign: "center",
-                            }}
-                          />
-                        </div>
-                      )}
-                      <span style={{ fontSize: 14, color: "#fff", textAlign: "right" }}>{food.name}</span>
-                    </div>
-
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {options.map((food: any, fi: number) => {
+                  const key = `${meal.name}::${food.name}`;
+                  const checked = !!checkedItems[key];
+                  const loading = !!isLoading[key];
+                  const tag = OPTION_LABELS[fi] ?? `אופציה ${fi + 1}`;
+                  return (
                     <button
-                      onClick={() => toggleFood(meal, food)}
+                      key={food.id ?? fi}
+                      onClick={() => selectOption(meal, food)}
                       disabled={loading}
                       style={{
-                        width: 24, height: 24, borderRadius: "50%", flexShrink: 0, cursor: loading ? "default" : "pointer",
-                        background: checked ? GREEN : "transparent",
-                        border: checked ? "none" : "1px solid rgba(255,255,255,0.25)",
-                        display: "flex", alignItems: "center", justifyContent: "center",
+                        width: "100%", textAlign: "right", cursor: loading ? "default" : "pointer",
+                        borderRadius: 16, padding: "14px 16px",
+                        background: checked ? "rgba(168,255,62,0.08)" : "#1c1c2e",
+                        border: checked ? `1.5px solid ${GREEN}` : "1px solid rgba(255,255,255,0.07)",
                       }}
                     >
-                      {loading ? (
-                        <div style={{ width: 10, height: 10, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff" }} />
-                      ) : checked ? (
-                        <svg width="12" height="12" fill="none" stroke="#0a0a0a" strokeWidth="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                      ) : null}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                        <div>
+                          <span style={{
+                            fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.5)",
+                            background: "rgba(255,255,255,0.08)", padding: "2px 8px", borderRadius: 99,
+                          }}>{tag}</span>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", marginTop: 8 }}>{food.name}</div>
+                          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", marginTop: 4 }}>{Math.round(food.calories ?? 0)} קק״ל</div>
+                        </div>
+                        <div style={{
+                          width: 22, height: 22, borderRadius: "50%", flexShrink: 0, marginTop: 2,
+                          background: checked ? GREEN : "transparent",
+                          border: checked ? "none" : "1.5px solid rgba(255,255,255,0.25)",
+                          display: "flex", alignItems: "center", justifyContent: "center",
+                        }}>
+                          {loading ? (
+                            <div style={{ width: 9, height: 9, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff" }} />
+                          ) : checked ? (
+                            <svg width="11" height="11" fill="none" stroke="#0a0a0a" strokeWidth="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                          ) : null}
+                        </div>
+                      </div>
                     </button>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
 
-            <button
-              onClick={() => openAddModal(meal.name)}
-              style={{
-                width: "100%", border: "1px dashed rgba(255,255,255,0.2)", borderRadius: 12,
-                padding: "8px 0", color: "#9ca3af", fontSize: 13, textAlign: "center",
-                marginTop: 8, background: "transparent", cursor: "pointer",
-              }}
-            >
-              + הוסף מזון שלא בתפריט
-            </button>
-          </div>
-        ))}
+              {/* Photo slot — revealed once an option is chosen */}
+              {chosenOption && (
+                <label style={{
+                  display: "flex", alignItems: "center", gap: 10, marginTop: 10, cursor: "pointer",
+                  border: "1.5px dashed rgba(168,255,62,0.3)", borderRadius: 14, padding: "10px 14px",
+                }}>
+                  {mealPhotos[meal.id] ? (
+                    <img src={mealPhotos[meal.id]} alt="" style={{ width: 40, height: 40, borderRadius: 10, objectFit: "cover", flexShrink: 0 }} />
+                  ) : (
+                    <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(168,255,62,0.13)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Camera size={18} color={GREEN} />
+                    </div>
+                  )}
+                  <span style={{ fontSize: 13, color: GREEN, fontWeight: 700 }}>
+                    {mealPhotos[meal.id] ? "תמונה הועלתה ✓" : "צלם את הארוחה שלך"}
+                  </span>
+                  <input
+                    type="file" accept="image/*" capture="environment" style={{ display: "none" }}
+                    onChange={(e) => e.target.files?.[0] && handleMealPhoto(meal.id, e.target.files[0])}
+                  />
+                </label>
+              )}
+
+              <button
+                onClick={() => openAddModal(meal.name)}
+                style={{
+                  width: "100%", border: "1px dashed rgba(255,255,255,0.2)", borderRadius: 12,
+                  padding: "8px 0", color: "#9ca3af", fontSize: 13, textAlign: "center",
+                  marginTop: 10, background: "transparent", cursor: "pointer",
+                }}
+              >
+                + הוסף מזון שלא בתפריט
+              </button>
+            </div>
+          );
+        })}
 
         {/* Section 3 — water tracker */}
         <div style={{ background: "#1c1c2e", borderRadius: 16, padding: 16, marginBottom: 16 }}>
