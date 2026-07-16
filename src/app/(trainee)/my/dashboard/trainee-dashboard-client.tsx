@@ -194,6 +194,62 @@ export function TraineeDashboardClient({ user }: { user: any }) {
             </div>
           </div>
 
+        {/* Section 2 — Weekly workouts, matches design doc's "האימונים שלך השבוע" list right after the calorie ring */}
+        {plan && (
+          <>
+            <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 12 }}>האימונים שלך השבוע:</div>
+            <div style={{ marginBottom: 20 }}>
+              {sessions.length === 0 ? (
+                <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, padding: "16px 0" }}>המאמן שלך יוסיף תוכנית בקרוב</div>
+              ) : sessions.slice(0, 3).map((session: any, idx: number) => {
+                const done = idx < planSessionsDone;
+                const isNext = idx === planSessionsDone;
+                const muscles = Array.from(new Set(session.exercises?.map((e: any) => e.exercise?.muscleGroup).filter(Boolean) ?? [])).join(", ");
+                return (
+                  <motion.div
+                    key={session.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.1 }}
+                  >
+                    <Link href="/my/workout" style={{ textDecoration: "none" }}>
+                      <div style={{
+                        position: "relative", height: 176, borderRadius: 22, overflow: "hidden", marginBottom: 14,
+                        backgroundImage: `url(${getMuscleGymPhoto(session.exercises?.[0]?.exercise?.muscleGroup)})`,
+                        backgroundSize: "cover", backgroundPosition: "center",
+                      }}>
+                        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.28) 45%, rgba(0,0,0,0) 100%)" }} />
+                        <span style={{
+                          position: "absolute", top: 12, right: 12, width: 12, height: 12, borderRadius: "50%",
+                          background: done ? GREEN : "rgba(255,255,255,0.4)", boxShadow: done ? `0 0 8px ${GREEN}` : "none",
+                        }} />
+                        {isNext && (
+                          <div style={{
+                            position: "absolute", top: 12, left: 12,
+                            background: GREEN, color: "#08120a", fontSize: 12, fontWeight: 800,
+                            padding: "5px 12px", borderRadius: 99,
+                          }}>האימון הבא</div>
+                        )}
+                        <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: 16 }}>
+                          {session.dayLabel && (
+                            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.65)", fontWeight: 600, textShadow: "0 2px 8px rgba(0,0,0,0.7)" }}>{session.dayLabel}</div>
+                          )}
+                          <div style={{ fontSize: 24, fontWeight: 900, letterSpacing: "-0.01em", color: "#fff", textShadow: "0 2px 12px rgba(0,0,0,0.8)" }}>
+                            {session.name}
+                          </div>
+                          {muscles && (
+                            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", marginTop: 2, textShadow: "0 2px 8px rgba(0,0,0,0.7)" }}>{muscles}</div>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </>
+        )}
+
         {/* Hero Card - subdued dark card, green used as accent */}
         <div style={{ ...CARD, padding: "20px 20px 16px", marginBottom: 16 }}>
           <div style={{ fontSize: 15, fontWeight: 700, color: "rgba(255,255,255,0.5)", marginBottom: 14 }}>
@@ -271,62 +327,6 @@ export function TraineeDashboardClient({ user }: { user: any }) {
 
         {/* Readiness check-in */}
         <ReadinessWidget />
-
-        {/* Section 2 — Weekly workouts, FitBuddy style */}
-        {plan && (
-          <>
-            <div style={{ fontSize: 18, fontWeight: 700, color: "#fff", marginBottom: 12 }}>האימונים שלך השבוע:</div>
-            <div style={{ marginBottom: 20 }}>
-              {sessions.length === 0 ? (
-                <div style={{ color: "rgba(255,255,255,0.3)", fontSize: 13, padding: "16px 0" }}>המאמן שלך יוסיף תוכנית בקרוב</div>
-              ) : sessions.slice(0, 3).map((session: any, idx: number) => {
-                const done = idx < planSessionsDone;
-                const isNext = idx === planSessionsDone;
-                const muscles = Array.from(new Set(session.exercises?.map((e: any) => e.exercise?.muscleGroup).filter(Boolean) ?? [])).join(", ");
-                return (
-                  <motion.div
-                    key={session.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                  >
-                    <Link href="/my/workout" style={{ textDecoration: "none" }}>
-                      <div style={{
-                        position: "relative", height: 176, borderRadius: 22, overflow: "hidden", marginBottom: 14,
-                        backgroundImage: `url(${getMuscleGymPhoto(session.exercises?.[0]?.exercise?.muscleGroup)})`,
-                        backgroundSize: "cover", backgroundPosition: "center",
-                      }}>
-                        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.28) 45%, rgba(0,0,0,0) 100%)" }} />
-                        <span style={{
-                          position: "absolute", top: 12, right: 12, width: 12, height: 12, borderRadius: "50%",
-                          background: done ? GREEN : "rgba(255,255,255,0.4)", boxShadow: done ? `0 0 8px ${GREEN}` : "none",
-                        }} />
-                        {isNext && (
-                          <div style={{
-                            position: "absolute", top: 12, left: 12,
-                            background: GREEN, color: "#08120a", fontSize: 12, fontWeight: 800,
-                            padding: "5px 12px", borderRadius: 99,
-                          }}>האימון הבא</div>
-                        )}
-                        <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: 16 }}>
-                          {session.dayLabel && (
-                            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.65)", fontWeight: 600, textShadow: "0 2px 8px rgba(0,0,0,0.7)" }}>{session.dayLabel}</div>
-                          )}
-                          <div style={{ fontSize: 24, fontWeight: 900, letterSpacing: "-0.01em", color: "#fff", textShadow: "0 2px 12px rgba(0,0,0,0.8)" }}>
-                            {session.name}
-                          </div>
-                          {muscles && (
-                            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.75)", marginTop: 2, textShadow: "0 2px 8px rgba(0,0,0,0.7)" }}>{muscles}</div>
-                          )}
-                        </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </>
-        )}
 
         {/* Quick links */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
