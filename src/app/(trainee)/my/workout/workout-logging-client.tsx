@@ -500,33 +500,9 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
     <div style={{ background: BG, minHeight: "100vh", paddingBottom: 120 }} dir="rtl">
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px 0" }}>
 
-        {/* FitBuddy-style hero header */}
-        {session && (
-          <div style={{
-            position: "relative", height: 160, borderRadius: 20, overflow: "hidden", marginBottom: 20,
-            backgroundImage: `url(${getMuscleGymPhoto(exercises[0]?.exercise?.muscleGroup)})`,
-            backgroundSize: "cover", backgroundPosition: "center",
-          }}>
-            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.5)" }} />
-            <div style={{ position: "relative", zIndex: 1, height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 14 }}>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.6)", textAlign: "right" }}>{session.dayLabel ?? ""}</div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: "#fff", textAlign: "center" }}>{session.name}</div>
-              <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
-                {muscleGroups.map((m) => (
-                  <span key={m as string} style={{ background: "rgba(255,255,255,0.1)", color: "#fff", fontSize: 11, padding: "4px 12px", borderRadius: 99 }}>{m as string}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>אימון</div>
-          <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>{plan.name}</div>
-        </div>
-
-        {sessions.length > 1 && (
-          <div style={{ display: "flex", gap: 8, marginBottom: 16, overflowX: "auto", paddingBottom: 4 }}>
+        {/* Split tabs — matches design doc top nav (Pull / Push / Lower A / Upper A) */}
+        {sessions.length > 1 ? (
+          <div style={{ display: "flex", gap: 8, marginBottom: 20, overflowX: "auto", paddingBottom: 4 }}>
             {sessions.map((s: any, i: number) => (
               <button key={s.id} onClick={() => { setSessionIdx(i); setExStatus({}); setSetLogs({}); }} style={{
                 flexShrink: 0, padding: "8px 16px", borderRadius: 99, border: "none", cursor: "pointer", fontWeight: 700, fontSize: 12,
@@ -535,18 +511,22 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
               }}>{s.name}</button>
             ))}
           </div>
+        ) : (
+          <div style={{ marginBottom: 20 }}>
+            <div style={{ fontSize: 20, fontWeight: 800, color: "#fff" }}>{session?.name ?? "אימון"}</div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>{plan.name}</div>
+          </div>
         )}
 
-        {/* Progress */}
-        <div style={{ ...CARD, padding: "14px 16px", marginBottom: 16 }}>
+        {/* Progress — matches design doc's "2/4 · התקדמות אימון" bar */}
+        <div style={{ marginBottom: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>{session?.name}</span>
-            <span style={{ fontSize: 12, color: GREEN, fontWeight: 700 }}>{totalPct}%</span>
+            <span style={{ fontSize: 13, fontWeight: 800, color: "#fff" }}>{doneCount}/{exercises.length}</span>
+            <span style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>התקדמות אימון</span>
           </div>
           <div style={{ height: 6, borderRadius: 99, background: "rgba(255,255,255,0.07)" }}>
             <div style={{ height: "100%", borderRadius: 99, width: `${totalPct}%`, background: `linear-gradient(to left,${GREEN},#5ecc00)`, transition: "width 0.4s ease" }}/>
           </div>
-          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)", marginTop: 6 }}>{doneCount} / {exercises.length} תרגילים</div>
         </div>
 
         {/* Rest timer */}
