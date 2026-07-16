@@ -535,7 +535,7 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
             backgroundSize: "cover", backgroundPosition: "center",
           }} />
           <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #080810 2%, rgba(8,8,16,0.4) 45%, rgba(8,8,16,0.2) 100%)" }} />
-          <div style={{ position: "absolute", top: 20, right: 20, left: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ position: "absolute", top: 60, right: 20, left: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span style={{ fontSize: 13, color: "rgba(255,255,255,0.8)", fontWeight: 600, textShadow: "0 2px 8px rgba(0,0,0,0.7)" }}>{session?.dayLabel ?? ""}</span>
             <div style={{ display: "flex", gap: 5 }}>
               {sessions.slice(0, 3).map((_s: any, i: number) => (
@@ -543,41 +543,41 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
               ))}
             </div>
           </div>
-          <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "0 20px 18px", textAlign: "center" }}>
-            <div style={{ fontSize: 46, fontWeight: 900, textTransform: "uppercase", letterSpacing: "-0.01em", lineHeight: 1, color: "#fff", textShadow: "0 3px 16px rgba(0,0,0,0.8)" }}>
+          <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "0 20px 16px" }}>
+            <div style={{ fontSize: 40, fontWeight: 900, textTransform: "uppercase", letterSpacing: "-0.01em", lineHeight: 1, color: "#fff", textShadow: "0 3px 16px rgba(0,0,0,0.8)" }}>
               {session?.name ?? ""}
             </div>
-            <div style={{ display: "flex", gap: 7, marginTop: 12, flexWrap: "wrap", justifyContent: "center" }}>
+            <div style={{ display: "flex", gap: 7, marginTop: 12, flexWrap: "wrap" }}>
               {muscleGroups.map((m) => (
-                <span key={m as string} style={{ background: "#1e1e1e", color: "#fff", fontSize: 13, fontWeight: 600, padding: "6px 16px", borderRadius: 99 }}>{m as string}</span>
+                <span key={m as string} style={{ background: "rgba(255,255,255,0.14)", backdropFilter: "blur(8px)", color: "#fff", fontSize: 12, fontWeight: 600, padding: "5px 12px", borderRadius: 99 }}>{m as string}</span>
               ))}
             </div>
           </div>
         </div>
 
-      <div style={{ padding: "16px 16px 0" }}>
+      <div style={{ padding: "16px 20px 14px" }}>
 
-        {/* Session pills — matches design doc's Pull / Push / Lower A / Upper A tabs */}
+        {/* Session pills — matches Lior Fit.dc.html exactly: height 38, 0 18px, active=ACCENT/dark, inactive=rgba(255,255,255,0.08) */}
         {sessions.length > 1 && (
-          <div style={{ display: "flex", gap: 8, marginBottom: 20, overflowX: "auto", paddingBottom: 4 }}>
+          <div style={{ display: "flex", gap: 8, marginBottom: 18, overflowX: "auto" }}>
             {sessions.map((s: any, i: number) => (
               <button key={s.id} onClick={() => { setSessionIdx(i); setExStatus({}); setSetLogs({}); }} style={{
-                flexShrink: 0, padding: "8px 16px", borderRadius: 99, border: "none", cursor: "pointer", fontWeight: 700, fontSize: 12,
-                background: i === sessionIdx ? GREEN : "#1A1A1F",
-                color: i === sessionIdx ? "#0a0a0a" : "rgba(255,255,255,0.4)",
+                flexShrink: 0, height: 38, padding: "0 18px", borderRadius: 999, border: "none", cursor: "pointer", fontWeight: 800, fontSize: 14,
+                background: i === sessionIdx ? GREEN : "rgba(255,255,255,0.08)",
+                color: i === sessionIdx ? "#08120a" : "rgba(255,255,255,0.6)",
               }}>{s.name}</button>
             ))}
           </div>
         )}
 
-        {/* Progress — matches design doc's "2/4 · התקדמות אימון" bar */}
-        <div style={{ marginBottom: 16 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-            <span style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>התקדמות אימון</span>
-            <span style={{ fontSize: 13, fontWeight: 800, color: "#fff" }}>{doneCount}/{exercises.length}</span>
+        {/* Progress — matches Lior Fit.dc.html exactly: label first (right), count second in ACCENT (left) */}
+        <div style={{ marginBottom: 22 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+            <span style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>התקדמות אימון</span>
+            <span style={{ fontSize: 14, fontWeight: 800, color: GREEN }}>{doneCount}/{exercises.length}</span>
           </div>
-          <div style={{ height: 6, borderRadius: 99, background: "rgba(255,255,255,0.07)" }}>
-            <div style={{ height: "100%", borderRadius: 99, width: `${totalPct}%`, background: `linear-gradient(to left,${GREEN},#5ecc00)`, transition: "width 0.4s ease" }}/>
+          <div style={{ height: 8, borderRadius: 99, background: "rgba(255,255,255,0.08)", overflow: "hidden" }}>
+            <div style={{ height: "100%", borderRadius: 99, width: `${totalPct}%`, background: GREEN, transition: "width 0.4s ease" }}/>
           </div>
         </div>
 
@@ -592,15 +592,19 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
             const doneSets = sets.filter((s) => s.done).length;
             const displayName = swappedNames[ex.id] ?? ex.exercise?.name ?? `תרגיל ${idx + 1}`;
 
+            const hist = exerciseHistory[ex.exerciseId];
+            const prValueForCard = hist?.pr && hist.pr > 0 ? hist.pr : (prByEx[ex.id] ?? 0);
+            const prLabel = prValueForCard > 0 ? `${prValueForCard} ק״ג` : "משקל גוף";
+            const lastLabel = hist?.lastLabel || "—";
+
             return (
               <div key={ex.id} style={{
-                borderRadius: 26, overflow: "hidden",
-                border: isDone ? "1px solid rgba(16,185,129,0.3)" : isActive ? "1px solid rgba(168,255,62,0.4)" : "1px solid rgba(255,255,255,0.05)",
-                background: "#161B22",
-                boxShadow: "0 8px 24px rgba(0,0,0,0.35)",
+                background: "#1c1c2e", borderRadius: 20, padding: 14,
+                borderLeft: `4px solid ${isDone ? GREEN : "transparent"}`,
+                transition: "border-color .15s",
               }}>
                 {/* Card header — thumbnail first in DOM so it renders on the right in RTL, matching Lior Fit.dc.html exactly */}
-                <div style={{ padding: 12, display: "flex", alignItems: "flex-start", gap: 13 }}>
+                <div style={{ display: "flex", alignItems: "flex-start", gap: 13 }}>
                   {/* Thumbnail — 78x78, radius 16, matches Lior Fit.dc.html exactly */}
                   <div
                     onClick={() => setInfoFor({ ex, displayName })}
@@ -612,70 +616,54 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                   />
 
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ fontSize: 12, fontWeight: 900, color: "#08120a", background: GREEN, width: 22, height: 22, borderRadius: 7, flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{idx + 1}</span>
-                      <div style={{ fontSize: 15, fontWeight: 800, color: isDone ? "rgba(255,255,255,0.55)" : "#fff" }}>{displayName}</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
+                      <span style={{ width: 22, height: 22, borderRadius: 7, background: "rgba(168,255,62,0.14)", color: GREEN, fontSize: 12, fontWeight: 800, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>{idx + 1}</span>
+                      <span style={{ fontSize: 16, fontWeight: 800, color: isDone ? "rgba(255,255,255,0.55)" : "#fff" }}>{displayName}</span>
                       {swappedNames[ex.id] && (
                         <span style={{ fontSize: 9, fontWeight: 700, color: GREEN, background: "rgba(168,255,62,0.2)", padding: "2px 6px", borderRadius: 99 }}>הוחלף</span>
                       )}
                     </div>
                     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.55)" }}>
                       {ex.sets ?? 3} סטים × {ex.reps ?? 12} חזרות
-                      {isActive && sets.length > 0 && ` · ${doneSets}/${sets.length} הושלמו`}
                     </div>
-                    {(() => {
-                      const hist = exerciseHistory[ex.exerciseId];
-                      if (!hist) return null;
-                      return (
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 4 }}>
-                          {hist.pr > 0 && (
-                            <span style={{ fontSize: 12, color: GREEN, fontWeight: 700 }}>🏆 שיא: {hist.pr} ק״ג</span>
-                          )}
-                          {hist.lastLabel && (
-                            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>↩︎ בפעם שעברה: {hist.lastLabel}</span>
-                          )}
-                        </div>
-                      );
-                    })()}
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 4 }}>
+                      <span style={{ fontSize: 12, color: GREEN, fontWeight: 700 }}>🏆 שיא: {prLabel}</span>
+                      <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>↩︎ בפעם שעברה: {lastLabel}</span>
+                    </div>
+
+                    {/* onOpen / החלף row — matches Lior Fit.dc.html exactly: both content-sized, side by side, start button first (right) */}
+                    <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+                      <button
+                        onClick={() => { if (isDone) return; initSets(ex); setSheetForId(ex.id); }}
+                        style={{
+                          height: 38, padding: "0 16px", borderRadius: 12, border: "none", cursor: "pointer",
+                          display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 800,
+                          background: isDone ? "rgba(168,255,62,0.14)" : GREEN,
+                          color: isDone ? GREEN : "#08120a",
+                        }}
+                      >
+                        {isDone ? (
+                          <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg> הושלם</>
+                        ) : (
+                          <><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z" /></svg> התחל תרגיל</>
+                        )}
+                      </button>
+                      <button
+                        disabled={isDone || isSkip}
+                        onClick={() => setSwapFor({ exId: ex.id, name: displayName, muscleGroup: ex.exercise?.muscleGroup ?? "" })}
+                        style={{
+                          height: 38, padding: "0 16px", borderRadius: 12, cursor: isDone || isSkip ? "default" : "pointer",
+                          border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)",
+                          color: "rgba(255,255,255,0.7)", fontSize: 13, fontWeight: 700,
+                          opacity: isDone || isSkip ? 0.4 : 1,
+                        }}
+                      >החלף</button>
+                    </div>
                   </div>
                 </div>
 
-                {/* החלף / הושלם action row — main green CTA full width on top, dark swap button below, matches design doc */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: "0 14px 14px" }}>
-                  <button
-                    onClick={() => { if (isDone) return; initSets(ex); setSheetForId(ex.id); }}
-                    style={{
-                      width: "100%", padding: "12px 0", borderRadius: 13, border: "none", cursor: "pointer",
-                      background: isDone ? "rgba(16,185,129,0.15)" : GREEN,
-                      color: isDone ? "#10B981" : "#08120a", fontSize: 14, fontWeight: 800,
-                      display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
-                    }}
-                  >
-                    {isDone ? (
-                      <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg> הושלם</>
-                    ) : (
-                      <><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z" /></svg> {isActive ? "המשך תרגיל" : "התחל תרגיל"}</>
-                    )}
-                  </button>
-                  <button
-                    disabled={isDone || isSkip}
-                    onClick={() => setSwapFor({ exId: ex.id, name: displayName, muscleGroup: ex.exercise?.muscleGroup ?? "" })}
-                    style={{
-                      width: "33%", alignSelf: "center", padding: "9px 0", borderRadius: 13, cursor: isDone || isSkip ? "default" : "pointer",
-                      border: "none", background: "#2a2a2a",
-                      color: "rgba(255,255,255,0.7)", fontSize: 12.5, fontWeight: 700,
-                      opacity: isDone || isSkip ? 0.4 : 1,
-                    }}
-                  >החלף</button>
-                </div>
-
-                {isDone && (
-                  <div style={{ padding: "8px 14px", fontSize: 11, color: "#10B981" }}>
-                    ✓ {doneSets} סטים הושלמו · {sets.filter(s=>s.effort==="כבד").length > 0 ? `${sets.filter(s=>s.effort==="כבד").length} כבד 🔥` : ""}
-                  </div>
-                )}
                 {isSkip && (
-                  <div style={{ padding: "8px 14px", fontSize: 11, color: "rgba(255,255,255,0.3)" }}>⏭ דולג</div>
+                  <div style={{ padding: "8px 0 0", fontSize: 11, color: "rgba(255,255,255,0.3)" }}>⏭ דולג</div>
                 )}
               </div>
             );

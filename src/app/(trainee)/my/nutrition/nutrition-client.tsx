@@ -382,7 +382,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
   };
 
   return (
-    <div style={{ background: "#12121f", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
+    <div style={{ background: "#080810", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px 0" }}>
 
         {/* Page title — was missing entirely; matches Lior Fit.dc.html exactly */}
@@ -572,7 +572,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
             {[50, 100, 250].map((amt) => (
               <button key={amt} onClick={() => addWater(amt)} disabled={waterLoading} style={{
                 flex: 1, padding: "8px 0", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", cursor: "pointer",
-                background: "#12121f", color: GREEN, fontSize: 12, fontWeight: 700,
+                background: "#080810", color: GREEN, fontSize: 12, fontWeight: 700,
               }}>+{amt} מ״ל</button>
             ))}
           </div>

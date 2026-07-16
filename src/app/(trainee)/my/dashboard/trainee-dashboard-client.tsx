@@ -161,7 +161,7 @@ export function TraineeDashboardClient({ user }: { user: any }) {
                   >
                     <Link href="/my/workout" style={{ textDecoration: "none" }}>
                       <div style={{
-                        position: "relative", height: 192, borderRadius: 22, overflow: "hidden", marginBottom: 14,
+                        position: "relative", height: 176, borderRadius: 22, overflow: "hidden", marginBottom: 14,
                         backgroundImage: `url(${getMuscleGymPhoto(session.exercises?.[0]?.exercise?.muscleGroup)})`,
                         backgroundSize: "cover", backgroundPosition: "center",
                       }}>
