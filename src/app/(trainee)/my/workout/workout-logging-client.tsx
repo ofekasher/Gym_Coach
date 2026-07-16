@@ -100,7 +100,7 @@ function InfoModal({ ex, displayName, onClose }: { ex: any; displayName: string;
         <div style={{ width: 36, height: 4, borderRadius: 99, background: "rgba(255,255,255,0.15)", margin: "0 auto 14px" }} />
         <div style={{ fontSize: 16, fontWeight: 800, color: "#fff", textAlign: "center", marginBottom: 14 }}>{displayName}</div>
         <img
-          src={getMuscleGymPhoto(ex.exercise?.muscleGroup)}
+          src={ex.exercise?.imageUrl || getMuscleGymPhoto(ex.exercise?.muscleGroup)}
           alt={displayName}
           style={{ width: "100%", height: 160, objectFit: "cover", borderRadius: 16, marginBottom: 14 }}
         />
@@ -661,7 +661,7 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                     onClick={() => setInfoFor({ ex, displayName })}
                     style={{
                       width: 78, height: 78, borderRadius: 16, flexShrink: 0, cursor: "pointer", overflow: "hidden",
-                      backgroundImage: `url(${getMusclePhoto(ex.exercise?.muscleGroup, idx)})`,
+                      backgroundImage: `url(${ex.exercise?.imageUrl || getMusclePhoto(ex.exercise?.muscleGroup, idx)})`,
                       backgroundSize: "cover", backgroundPosition: "center",
                     }}
                   />

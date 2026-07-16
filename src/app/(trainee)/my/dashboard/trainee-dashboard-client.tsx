@@ -107,8 +107,8 @@ export function TraineeDashboardClient({ user }: { user: any }) {
             <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
               <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>{d.label}</span>
               <div style={{
-                width: 32, height: 32, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 13, fontWeight: d.today ? 900 : 600,
+                width: 40, height: 40, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 16, fontWeight: d.today ? 900 : 700,
                 background: d.today ? GREEN : d.done ? "rgba(255,255,255,0.18)" : "transparent",
                 color: d.today ? "#08120a" : d.done ? "#fff" : "rgba(255,255,255,0.4)",
                 border: d.today || d.done ? "none" : "1px solid rgba(255,255,255,0.2)",

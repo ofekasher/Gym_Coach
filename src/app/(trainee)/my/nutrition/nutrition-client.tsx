@@ -516,27 +516,29 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                 })}
               </div>
 
-              {/* Photo slot — revealed once an option is chosen */}
+              {/* Photo slot — revealed once an option is chosen; matches Lior Fit.dc.html exactly:
+                  66x66 preview box + separate dashed camera slot, both height 66, gap 10 */}
               {chosenOption && (
-                <label style={{
-                  display: "flex", alignItems: "center", gap: 10, marginTop: 10, cursor: "pointer",
-                  border: "1.5px dashed rgba(168,255,62,0.3)", borderRadius: 14, padding: "10px 14px",
-                }}>
-                  {mealPhotos[meal.id] ? (
-                    <img src={mealPhotos[meal.id]} alt="" style={{ width: 40, height: 40, borderRadius: 10, objectFit: "cover", flexShrink: 0 }} />
-                  ) : (
-                    <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(168,255,62,0.13)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <Camera size={18} color={GREEN} />
-                    </div>
-                  )}
-                  <span style={{ fontSize: 13, color: GREEN, fontWeight: 700 }}>
-                    {mealPhotos[meal.id] ? "תמונה הועלתה ✓" : "צלם את הארוחה שלך"}
-                  </span>
-                  <input
-                    type="file" accept="image/*" capture="environment" style={{ display: "none" }}
-                    onChange={(e) => e.target.files?.[0] && handleMealPhoto(meal.id, e.target.files[0])}
-                  />
-                </label>
+                <div style={{ display: "flex", gap: 10, marginTop: 14, height: 66 }}>
+                  <div style={{ width: 66, height: 66, borderRadius: 14, overflow: "hidden", flexShrink: 0, border: "1px solid rgba(255,255,255,0.1)" }}>
+                    {mealPhotos[meal.id] && (
+                      <img src={mealPhotos[meal.id]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    )}
+                  </div>
+                  <label style={{
+                    flex: 1, border: "1.5px dashed rgba(168,255,62,0.4)", borderRadius: 14, cursor: "pointer",
+                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 5, color: GREEN,
+                  }}>
+                    <Camera size={18} />
+                    <span style={{ fontSize: 12, fontWeight: 700 }}>
+                      {mealPhotos[meal.id] ? "תמונה הועלתה ✓" : "צלם את הארוחה שלך"}
+                    </span>
+                    <input
+                      type="file" accept="image/*" capture="environment" style={{ display: "none" }}
+                      onChange={(e) => e.target.files?.[0] && handleMealPhoto(meal.id, e.target.files[0])}
+                    />
+                  </label>
+                </div>
               )}
 
               <button
