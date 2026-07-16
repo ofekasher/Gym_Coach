@@ -138,6 +138,7 @@ model User {
   coachSettings   CoachSettings?
   nutritionLogs   NutritionLog[]
   waterLogs       WaterLog[]
+  planTemplates   WorkoutPlanTemplate[]
 }
 
 model PushSubscription {
@@ -208,6 +209,7 @@ model InviteToken {
   token     String   @unique @default(cuid())
   email     String
   coachId   String
+  role      Role     @default(TRAINEE)
   used      Boolean  @default(false)
   expiresAt DateTime
   createdAt DateTime @default(now())
@@ -453,4 +455,19 @@ model WaterLog {
   createdAt DateTime @default(now())
 
   trainee User @relation(fields: [traineeId], references: [id], onDelete: Cascade)
+}
+
+// Reusable workout-plan template a coach builds once and assigns to any trainee —
+// matches the "Templates Gallery" + "Template Builder" screens in the Lior Fit
+// Dashboard Design. days is a JSON snapshot of { day, exercises: [{ name, sets, reps }] }[]
+// so assigning doesn't require touching the Exercise library relations.
+model WorkoutPlanTemplate {
+  id        String          @id @default(cuid())
+  coachId   String
+  name      String
+  category  WorkoutTemplate @default(CUSTOM)
+  days      Json
+  createdAt DateTime        @default(now())
+
+  coach User @relation(fields: [coachId], references: [id], onDelete: Cascade)
 }

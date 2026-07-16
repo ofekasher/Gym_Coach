@@ -3,18 +3,20 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { LayoutDashboard, Users, Dumbbell, Mail, LogOut, Menu, X, MessageCircle, CreditCard, Settings, CalendarDays, Plus } from "lucide-react";
+import { LayoutDashboard, Users, Dumbbell, Mail, LogOut, Menu, X, MessageCircle, CreditCard, Settings, CalendarDays, Plus, LayoutTemplate, UsersRound } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-// Matches Lior Fit Dashboard Design (Claude Design project 95e68d96) exactly — order: בית / ספריית
-// תרגילים / מתאמנים / לוח שנה / הודעות / תשלומים / הגדרות (no separate "צוות מאמנים" route yet).
+// Matches Lior Fit Dashboard Design (Claude Design project 95e68d96) — order: בית / ספריית
+// תרגילים / תבניות אימון / מתאמנים / לוח שנה / הודעות / תשלומים / צוות מאמנים / הגדרות.
 const navItems = [
   { href: "/dashboard",  label: "בית",              icon: LayoutDashboard },
   { href: "/exercises",  label: "ספריית תרגילים",   icon: Dumbbell },
+  { href: "/templates",  label: "תבניות אימון",     icon: LayoutTemplate },
   { href: "/trainees",   label: "מתאמנים",          icon: Users },
   { href: "/schedule",   label: "לוח שנה",          icon: CalendarDays },
   { href: "/chat",       label: "הודעות",           icon: MessageCircle },
   { href: "/payments",   label: "תשלומים",          icon: CreditCard },
+  { href: "/team",       label: "צוות מאמנים",      icon: UsersRound },
   { href: "/settings",   label: "הגדרות",           icon: Settings },
 ];
 
