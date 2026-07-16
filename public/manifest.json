@@ -1,0 +1,20 @@
+{
+  "name": "Lior Fit — מאמן כושר Pro",
+  "short_name": "Lior Fit",
+  "description": "אפליקציית ניהול מתאמנים למאמני כושר",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070707",
+  "theme_color": "#070707",
+  "dir": "rtl",
+  "lang": "he",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "600x336",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
