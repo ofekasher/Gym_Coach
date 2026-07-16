@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { BackHeader } from "@/components/shared/back-header";
-import { Flame, Dumbbell, Trophy, Bell, LogOut, type LucideIcon } from "lucide-react";
+import { Flame, Dumbbell, Trophy, Bell, LogOut, CalendarDays, type LucideIcon } from "lucide-react";
+import { getMuscleGymPhoto } from "@/lib/gym-photos";
 
 const GREEN = "#a8ff3e";
 const CARD = "bg-[#1c1c2e] rounded-2xl mx-4 p-4 mt-4";
@@ -177,6 +178,20 @@ export function ProfileClient({ user }: { user: any }) {
     prLabel = `${top.exercise?.name ?? "תרגיל"} ${top.weight} ק"ג`;
   }
 
+  const programStart = user?.workoutPlans?.[0]?.createdAt ?? user?.createdAt;
+  const weeksInProgram = programStart
+    ? Math.max(1, Math.ceil((Date.now() - new Date(programStart).getTime()) / (7 * 24 * 60 * 60 * 1000)))
+    : 8;
+
+  // Weekly activity: which of the last 7 days had a completed workout
+  const WEEK_LABELS = ["א", "ב", "ג", "ד", "ה", "ו", "ש"];
+  const activityDays = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    const done = days.has(d.toDateString());
+    return { label: WEEK_LABELS[d.getDay()], done };
+  });
+
   const statFields = [
     { key: "height", label: "גובה (ס״מ)" },
     { key: "currentWeight", label: "משקל נוכחי" },
@@ -188,20 +203,23 @@ export function ProfileClient({ user }: { user: any }) {
     <div style={{ background: "#12121f", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
       <BackHeader title="פרופיל" />
 
-      {/* Section 1 — header */}
-      <div className={CARD} style={{ marginTop: 8 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+      {/* Section 1 — photo hero header */}
+      <div style={{
+        position: "relative", height: 196, overflow: "hidden",
+        backgroundImage: `url(${getMuscleGymPhoto(undefined)})`, backgroundSize: "cover", backgroundPosition: "center",
+      }}>
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #12121f 4%, rgba(18,18,31,0.55) 60%, rgba(18,18,31,0.35) 100%)" }} />
+        <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "column", alignItems: "center", paddingBottom: 14 }}>
           <div style={{
-            width: 56, height: 56, borderRadius: "50%", background: GREEN,
+            width: 84, height: 84, borderRadius: "50%", background: GREEN,
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 22, fontWeight: 800, color: "#0a0a0a", flexShrink: 0,
+            fontSize: 30, fontWeight: 900, color: "#08120a",
+            border: "3px solid " + GREEN, boxShadow: "0 0 0 4px rgba(168,255,62,0.15)",
           }}>
             {user?.name?.[0] ?? "מ"}
           </div>
-          <div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>{user?.name}</div>
-            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{user?.email}</div>
-          </div>
+          <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", marginTop: 10, textShadow: "0 2px 10px rgba(0,0,0,0.7)" }}>{user?.name}</div>
+          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.65)", textShadow: "0 2px 8px rgba(0,0,0,0.7)" }}>{user?.email}</div>
         </div>
       </div>
 
@@ -248,6 +266,22 @@ export function ProfileClient({ user }: { user: any }) {
         )}
       </div>
 
+      {/* Section 2b — weekly activity */}
+      <div className={CARD}>
+        <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 16 }}>פעילות השבוע</div>
+        <div style={{ display: "flex", gap: 6, justifyContent: "space-between" }}>
+          {activityDays.map((d, i) => (
+            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+              <div style={{
+                width: 26, height: 56, borderRadius: 8, background: "rgba(255,255,255,0.06)",
+                boxShadow: d.done ? `inset 0 -56px 0 ${GREEN}` : "none",
+              }} />
+              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>{d.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Section 3 — weight graph */}
       <div className={CARD}>
         <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 10 }}>היסטוריית משקל</div>
@@ -259,6 +293,7 @@ export function ProfileClient({ user }: { user: any }) {
         <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 10 }}>סטטיסטיקות</div>
         <div style={{ display: "flex", gap: 10 }}>
           {[
+            { icon: CalendarDays, label: "שבועות", value: String(weeksInProgram) },
             { icon: Flame, label: "רצף", value: `${streak} ימים` },
             { icon: Dumbbell, label: "אימונים", value: `${completedCount} הושלמו` },
             { icon: Trophy, label: "שיא אישי", value: prLabel },
