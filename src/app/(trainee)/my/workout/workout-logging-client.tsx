@@ -554,71 +554,84 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                 background: "#161B22",
                 boxShadow: "0 8px 24px rgba(0,0,0,0.35)",
               }}>
-                {/* Photo header */}
-                <div style={{
-                  height: 78, position: "relative",
-                  backgroundImage: `url(${getMusclePhoto(ex.exercise?.muscleGroup, idx)})`,
-                  backgroundSize: "cover", backgroundPosition: "center",
-                }}>
-                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right,rgba(10,14,20,0.88),rgba(10,14,20,0.25))" }}/>
-                  <div style={{ position: "relative", zIndex: 1, padding: "12px 14px", height: "100%", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <div style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>{displayName}</div>
-                        {swappedNames[ex.id] && (
-                          <span style={{ fontSize: 9, fontWeight: 700, color: GREEN, background: "rgba(168,255,62,0.2)", padding: "2px 6px", borderRadius: 99 }}>הוחלף</span>
-                        )}
-                      </div>
-                      <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>
-                        {ex.sets ?? 3} סטים × {ex.reps ?? 12} חזרות
-                        {isActive && sets.length > 0 && ` · ${doneSets}/${sets.length} הושלמו`}
-                      </div>
-                      {(() => {
-                        const hist = exerciseHistory[ex.exerciseId];
-                        if (!hist) return null;
-                        return (
-                          <div style={{ display: "flex", gap: 10, marginTop: 4, flexWrap: "wrap" }}>
-                            {hist.pr > 0 && (
-                              <span style={{ fontSize: 11, color: GREEN, fontWeight: 700 }}>🏆 שיא: {hist.pr} ק״ג</span>
-                            )}
-                            {hist.lastLabel && (
-                              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>↩︎ בפעם שעברה: {hist.lastLabel}</span>
-                            )}
-                          </div>
-                        );
-                      })()}
+                {/* Card header — small thumbnail, matches design doc screenshot 06 (no full-width photo banner) */}
+                <div style={{ padding: "14px 14px 12px", display: "flex", alignItems: "flex-start", gap: 10 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>{displayName}</div>
+                      <span style={{ fontSize: 10, fontWeight: 800, color: "#0a0a0a", background: GREEN, width: 18, height: 18, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{idx + 1}</span>
+                      {swappedNames[ex.id] && (
+                        <span style={{ fontSize: 9, fontWeight: 700, color: GREEN, background: "rgba(168,255,62,0.2)", padding: "2px 6px", borderRadius: 99 }}>הוחלף</span>
+                      )}
                     </div>
-                    {/* Info button */}
-                    <button onClick={() => setInfoFor({ ex, displayName })} style={{
-                      width: 32, height: 32, borderRadius: 10, border: "1px solid rgba(255,255,255,0.15)",
-                      background: "rgba(255,255,255,0.08)", cursor: "pointer", flexShrink: 0, marginLeft: 6,
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      color: "rgba(255,255,255,0.7)", fontSize: 13, fontWeight: 800,
-                    }} title="מידע על התרגיל">?</button>
-                    {/* Swap button */}
-                    {!isDone && !isSkip && (
-                      <button onClick={() => setSwapFor({ exId: ex.id, name: displayName, muscleGroup: ex.exercise?.muscleGroup ?? "" })} style={{
-                        width: 32, height: 32, borderRadius: 10, border: "1px solid rgba(255,255,255,0.15)",
-                        background: "rgba(255,255,255,0.08)", cursor: "pointer", flexShrink: 0, marginLeft: 6,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                      }} title="החלף תרגיל">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.2" strokeLinecap="round">
-                          <path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/>
-                        </svg>
-                      </button>
-                    )}
-                    <div style={{ marginRight: 8,
-                      width: 32, height: 32, borderRadius: "50%",
-                      background: isDone ? "#10B981" : isSkip ? "rgba(255,255,255,0.1)" : isActive ? GREEN : "rgba(255,255,255,0.12)",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                    }}>
-                      {isDone && <svg width="14" height="14" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>}
-                      {isSkip && <svg width="14" height="14" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>}
-                      {isActive && <span style={{ fontSize: 10, fontWeight: 800, color: "#0a0a0a" }}>{doneSets}/{sets.length}</span>}
-                      {status === "pending" && <span style={{ fontSize: 12, fontWeight: 800, color: "rgba(255,255,255,0.4)" }}>{idx + 1}</span>}
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", marginTop: 4 }}>
+                      {ex.sets ?? 3} סטים × {ex.reps ?? 12} חזרות
+                      {isActive && sets.length > 0 && ` · ${doneSets}/${sets.length} הושלמו`}
                     </div>
+                    {(() => {
+                      const hist = exerciseHistory[ex.exerciseId];
+                      if (!hist) return null;
+                      return (
+                        <div style={{ display: "flex", flexDirection: "column", gap: 2, marginTop: 4 }}>
+                          {hist.pr > 0 && (
+                            <span style={{ fontSize: 12, color: GREEN, fontWeight: 700 }}>שיא: {hist.pr} ק״ג 🏆</span>
+                          )}
+                          {hist.lastLabel && (
+                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>בפעם שעברה: {hist.lastLabel} ↩︎</span>
+                          )}
+                        </div>
+                      );
+                    })()}
+                  </div>
+
+                  {/* Small square thumbnail */}
+                  <div
+                    onClick={() => setInfoFor({ ex, displayName })}
+                    style={{
+                      width: 52, height: 52, borderRadius: 13, flexShrink: 0, cursor: "pointer",
+                      backgroundImage: `url(${getMusclePhoto(ex.exercise?.muscleGroup, idx)})`,
+                      backgroundSize: "cover", backgroundPosition: "center",
+                    }}
+                  />
+
+                  {/* Status badge */}
+                  <div style={{
+                    width: 26, height: 26, borderRadius: "50%", flexShrink: 0,
+                    background: isDone ? "#10B981" : isSkip ? "rgba(255,255,255,0.1)" : isActive ? GREEN : "rgba(255,255,255,0.12)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                  }}>
+                    {isDone && <svg width="12" height="12" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>}
+                    {isSkip && <svg width="12" height="12" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>}
+                    {isActive && <span style={{ fontSize: 9, fontWeight: 800, color: "#0a0a0a" }}>{doneSets}/{sets.length}</span>}
                   </div>
                 </div>
+
+                {/* החלף / הושלם action row — matches design doc */}
+                {!isActive && (
+                  <div style={{ display: "flex", gap: 8, padding: "0 14px 14px" }}>
+                    <button
+                      disabled={isDone || isSkip}
+                      onClick={() => setSwapFor({ exId: ex.id, name: displayName, muscleGroup: ex.exercise?.muscleGroup ?? "" })}
+                      style={{
+                        flex: 1, padding: "10px 0", borderRadius: 13, cursor: isDone || isSkip ? "default" : "pointer",
+                        border: "1px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.05)",
+                        color: "rgba(255,255,255,0.7)", fontSize: 13, fontWeight: 700,
+                        opacity: isDone || isSkip ? 0.4 : 1,
+                      }}
+                    >החלף</button>
+                    <button
+                      onClick={() => (isDone ? undefined : initSets(ex))}
+                      style={{
+                        flex: 2, padding: "10px 0", borderRadius: 13, border: "none", cursor: "pointer",
+                        background: isDone ? "rgba(16,185,129,0.15)" : GREEN,
+                        color: isDone ? "#10B981" : "#08120a", fontSize: 13, fontWeight: 800,
+                        display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+                      }}
+                    >
+                      {isDone ? <>הושלם <svg width="13" height="13" fill="none" stroke="#10B981" strokeWidth="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></> : "התחל תרגיל"}
+                    </button>
+                  </div>
+                )}
 
                 {/* Active: per-set rows */}
                 {isActive && (
@@ -657,13 +670,6 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                       }}>דלג</button>
                     </div>
                   </div>
-                )}
-
-                {status === "pending" && (
-                  <button onClick={() => initSets(ex)} style={{
-                    width: "100%", padding: "12px 16px", border: "none", cursor: "pointer",
-                    background: "transparent", textAlign: "right", fontSize: 12, color: GREEN, fontWeight: 700,
-                  }}>התחל תרגיל →</button>
                 )}
 
                 {isDone && (

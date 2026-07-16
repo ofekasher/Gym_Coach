@@ -202,19 +202,18 @@ export function ProfileClient({ user }: { user: any }) {
     <div style={{ background: "#12121f", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
       <BackHeader title="פרופיל" />
 
-      {/* Section 1 — flat header row (avatar + name/email), matches design doc exactly */}
-      <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "20px 16px 4px" }}>
+      {/* Section 1 — centered hero header (avatar with lime ring, name, email), matches design doc screenshot exactly */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "24px 16px 4px" }}>
         <div style={{
-          width: 60, height: 60, borderRadius: "50%", background: GREEN, flexShrink: 0,
+          width: 80, height: 80, borderRadius: "50%", background: "#22223a", flexShrink: 0,
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 22, fontWeight: 900, color: "#08120a",
+          fontSize: 28, fontWeight: 900, color: GREEN,
+          border: `3px solid ${GREEN}`,
         }}>
           {user?.name?.[0] ?? "מ"}
         </div>
-        <div>
-          <div style={{ fontSize: 19, fontWeight: 900, color: "#fff" }}>{user?.name}</div>
-          <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)" }}>{user?.email}</div>
-        </div>
+        <div style={{ fontSize: 20, fontWeight: 900, color: "#fff", marginTop: 12 }}>{user?.name}</div>
+        <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>{user?.email}</div>
       </div>
 
       {/* Section 2 — editable personal stats */}
@@ -288,12 +287,12 @@ export function ProfileClient({ user }: { user: any }) {
         <div style={{ display: "flex", gap: 10 }}>
           {[
             { icon: CalendarDays, label: "שבועות", value: String(weeksInProgram) },
-            { icon: Dumbbell, label: "משקל", value: stats.currentWeight ? `${stats.currentWeight} ק״ג` : "—" },
-            { icon: Trophy, label: "אימונים", value: String(completedCount) },
+            { icon: Trophy, label: "שיא אישי", value: prLabel },
+            { icon: Dumbbell, label: "אימונים", value: String(completedCount) },
             { icon: Flame, label: "רצף", value: String(streak) },
           ].map((s) => (
             <div key={s.label} style={{ background: "#12121f", borderRadius: 12, padding: 12, flex: 1, textAlign: "center" }}>
-              <div style={{ display: "flex", justifyContent: "center" }}><s.icon size={20} color="#fff" /></div>
+              <div style={{ display: "flex", justifyContent: "center" }}><s.icon size={20} color={GREEN} /></div>
               <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginTop: 4 }}>{s.value}</div>
               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{s.label}</div>
             </div>
