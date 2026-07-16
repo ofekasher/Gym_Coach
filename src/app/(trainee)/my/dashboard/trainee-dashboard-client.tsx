@@ -7,7 +7,7 @@ import { getMuscleGymPhoto } from "@/lib/gym-photos";
 import { AnimatedNumber } from "@/components/shared/AnimatedNumber";
 
 const BG = "transparent";
-const CARD = { background: "#161B22", borderRadius: 28, border: "1px solid rgba(255,255,255,0.06)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" };
+const CARD = { background: "#1c1c2e", borderRadius: 24 };
 const GREEN = "#a8ff3e";
 
 function ProgressRing({ pct }: { pct: number }) {
@@ -81,7 +81,7 @@ export function TraineeDashboardClient({ user }: { user: any }) {
 
   return (
     <div style={{ background: BG, minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
-      <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px 0" }}>
+      <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 20px 0" }}>
 
         {/* Header — matches Lior Fit.dc.html exactly: greeting+name right, avatar square left, nothing else */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 22 }}>
@@ -93,9 +93,9 @@ export function TraineeDashboardClient({ user }: { user: any }) {
           </div>
           <div style={{
             width: 48, height: 48, borderRadius: 16, flexShrink: 0, overflow: "hidden",
-            border: "1px solid rgba(255,255,255,0.12)", background: GREEN,
+            border: "1px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.06)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 18, fontWeight: 900, color: "#08120a",
+            fontSize: 18, fontWeight: 900, color: GREEN,
           }}>
             {firstName.charAt(0)}
           </div>
@@ -123,18 +123,18 @@ export function TraineeDashboardClient({ user }: { user: any }) {
         <div style={{ ...CARD, padding: 22, marginBottom: 16, minHeight: 144, display: "flex", alignItems: "center", gap: 20 }}>
             <ProgressRing pct={caloriePct} />
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: "-0.01em", marginBottom: 4, color: "#fff" }}>היעד היומי</div>
+              <div style={{ fontSize: 22, fontWeight: 900, letterSpacing: "-0.01em", marginBottom: 4, color: "#fff" }}>היעד היומי</div>
               <div style={{ fontSize: 14, color: "rgba(255,255,255,0.55)", marginBottom: 14 }}>
                 <AnimatedNumber value={caloriesEaten} /> מתוך {calorieGoal.toLocaleString()} קק״ל
               </div>
               <div style={{ display: "flex", gap: 16 }}>
                 <div>
-                  <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}><AnimatedNumber value={totalWorkouts} /></div>
-                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>אימונים</div>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: GREEN }}>🔥 <AnimatedNumber value={streak} /></div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>רצף ימים</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: 18, fontWeight: 900, color: GREEN }}><AnimatedNumber value={streak} suffix=" 🔥" /></div>
-                  <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>רצף ימים</div>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: "#fff" }}><AnimatedNumber value={totalWorkouts} /></div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>אימונים</div>
                 </div>
               </div>
             </div>
@@ -161,7 +161,7 @@ export function TraineeDashboardClient({ user }: { user: any }) {
                   >
                     <Link href="/my/workout" style={{ textDecoration: "none" }}>
                       <div style={{
-                        position: "relative", height: 176, borderRadius: 22, overflow: "hidden", marginBottom: 14,
+                        position: "relative", height: 192, borderRadius: 22, overflow: "hidden", marginBottom: 14,
                         backgroundImage: `url(${getMuscleGymPhoto(session.exercises?.[0]?.exercise?.muscleGroup)})`,
                         backgroundSize: "cover", backgroundPosition: "center",
                       }}>

@@ -543,13 +543,13 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
               ))}
             </div>
           </div>
-          <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "0 20px 16px" }}>
-            <div style={{ fontSize: 40, fontWeight: 900, textTransform: "uppercase", letterSpacing: "-0.01em", lineHeight: 1, color: "#fff", textShadow: "0 3px 16px rgba(0,0,0,0.8)" }}>
+          <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "0 20px 18px", textAlign: "center" }}>
+            <div style={{ fontSize: 46, fontWeight: 900, textTransform: "uppercase", letterSpacing: "-0.01em", lineHeight: 1, color: "#fff", textShadow: "0 3px 16px rgba(0,0,0,0.8)" }}>
               {session?.name ?? ""}
             </div>
-            <div style={{ display: "flex", gap: 7, marginTop: 12, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", gap: 7, marginTop: 12, flexWrap: "wrap", justifyContent: "center" }}>
               {muscleGroups.map((m) => (
-                <span key={m as string} style={{ background: "rgba(255,255,255,0.14)", backdropFilter: "blur(8px)", color: "#fff", fontSize: 12, fontWeight: 600, padding: "5px 12px", borderRadius: 99 }}>{m as string}</span>
+                <span key={m as string} style={{ background: "#1e1e1e", color: "#fff", fontSize: 13, fontWeight: 600, padding: "6px 16px", borderRadius: 99 }}>{m as string}</span>
               ))}
             </div>
           </div>
@@ -573,8 +573,8 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
         {/* Progress — matches design doc's "2/4 · התקדמות אימון" bar */}
         <div style={{ marginBottom: 16 }}>
           <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 800, color: "#fff" }}>{doneCount}/{exercises.length}</span>
             <span style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>התקדמות אימון</span>
+            <span style={{ fontSize: 13, fontWeight: 800, color: "#fff" }}>{doneCount}/{exercises.length}</span>
           </div>
           <div style={{ height: 6, borderRadius: 99, background: "rgba(255,255,255,0.07)" }}>
             <div style={{ height: "100%", borderRadius: 99, width: `${totalPct}%`, background: `linear-gradient(to left,${GREEN},#5ecc00)`, transition: "width 0.4s ease" }}/>
@@ -599,12 +599,22 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                 background: "#161B22",
                 boxShadow: "0 8px 24px rgba(0,0,0,0.35)",
               }}>
-                {/* Card header — badge sits inline next to the name (screenshot 06), trophy/arrow icons trail the text */}
-                <div style={{ padding: 12, display: "flex", alignItems: "center", gap: 12 }}>
+                {/* Card header — thumbnail first in DOM so it renders on the right in RTL, matching Lior Fit.dc.html exactly */}
+                <div style={{ padding: 12, display: "flex", alignItems: "flex-start", gap: 13 }}>
+                  {/* Thumbnail — 78x78, radius 16, matches Lior Fit.dc.html exactly */}
+                  <div
+                    onClick={() => setInfoFor({ ex, displayName })}
+                    style={{
+                      width: 78, height: 78, borderRadius: 16, flexShrink: 0, cursor: "pointer", overflow: "hidden",
+                      backgroundImage: `url(${getMusclePhoto(ex.exercise?.muscleGroup, idx)})`,
+                      backgroundSize: "cover", backgroundPosition: "center",
+                    }}
+                  />
+
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <div style={{ fontSize: 15, fontWeight: 800, color: isDone ? "rgba(255,255,255,0.55)" : "#fff" }}>{displayName}</div>
                       <span style={{ fontSize: 12, fontWeight: 900, color: "#08120a", background: GREEN, width: 22, height: 22, borderRadius: 7, flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{idx + 1}</span>
+                      <div style={{ fontSize: 15, fontWeight: 800, color: isDone ? "rgba(255,255,255,0.55)" : "#fff" }}>{displayName}</div>
                       {swappedNames[ex.id] && (
                         <span style={{ fontSize: 9, fontWeight: 700, color: GREEN, background: "rgba(168,255,62,0.2)", padding: "2px 6px", borderRadius: 99 }}>הוחלף</span>
                       )}
@@ -619,46 +629,25 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                       return (
                         <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 4 }}>
                           {hist.pr > 0 && (
-                            <span style={{ fontSize: 12, color: GREEN, fontWeight: 700 }}>שיא: {hist.pr} ק״ג 🏆</span>
+                            <span style={{ fontSize: 12, color: GREEN, fontWeight: 700 }}>🏆 שיא: {hist.pr} ק״ג</span>
                           )}
                           {hist.lastLabel && (
-                            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>בפעם שעברה: {hist.lastLabel} ↩︎</span>
+                            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>↩︎ בפעם שעברה: {hist.lastLabel}</span>
                           )}
                         </div>
                       );
                     })()}
                   </div>
-
-                  {/* Thumbnail — 52x52, radius 13, matches code/ExerciseCard.tsx exactly */}
-                  <div
-                    onClick={() => setInfoFor({ ex, displayName })}
-                    style={{
-                      width: 52, height: 52, borderRadius: 13, flexShrink: 0, cursor: "pointer",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      backgroundImage: `url(${getMusclePhoto(ex.exercise?.muscleGroup, idx)})`,
-                      backgroundSize: "cover", backgroundPosition: "center",
-                    }}
-                  />
                 </div>
 
-                {/* החלף / הושלם action row — matches design doc; tapping the green button opens the exercise sheet */}
-                <div style={{ display: "flex", gap: 8, padding: "0 14px 14px" }}>
-                  <button
-                    disabled={isDone || isSkip}
-                    onClick={() => setSwapFor({ exId: ex.id, name: displayName, muscleGroup: ex.exercise?.muscleGroup ?? "" })}
-                    style={{
-                      flex: 1, padding: "10px 0", borderRadius: 13, cursor: isDone || isSkip ? "default" : "pointer",
-                      border: "1px solid rgba(255,255,255,0.12)", background: "rgba(255,255,255,0.05)",
-                      color: "rgba(255,255,255,0.7)", fontSize: 13, fontWeight: 700,
-                      opacity: isDone || isSkip ? 0.4 : 1,
-                    }}
-                  >החלף</button>
+                {/* החלף / הושלם action row — main green CTA full width on top, dark swap button below, matches design doc */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 8, padding: "0 14px 14px" }}>
                   <button
                     onClick={() => { if (isDone) return; initSets(ex); setSheetForId(ex.id); }}
                     style={{
-                      flex: 2, padding: "10px 0", borderRadius: 13, border: "none", cursor: "pointer",
+                      width: "100%", padding: "12px 0", borderRadius: 13, border: "none", cursor: "pointer",
                       background: isDone ? "rgba(16,185,129,0.15)" : GREEN,
-                      color: isDone ? "#10B981" : "#08120a", fontSize: 13, fontWeight: 800,
+                      color: isDone ? "#10B981" : "#08120a", fontSize: 14, fontWeight: 800,
                       display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
                     }}
                   >
@@ -668,6 +657,16 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                       <><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z" /></svg> {isActive ? "המשך תרגיל" : "התחל תרגיל"}</>
                     )}
                   </button>
+                  <button
+                    disabled={isDone || isSkip}
+                    onClick={() => setSwapFor({ exId: ex.id, name: displayName, muscleGroup: ex.exercise?.muscleGroup ?? "" })}
+                    style={{
+                      width: "33%", alignSelf: "center", padding: "9px 0", borderRadius: 13, cursor: isDone || isSkip ? "default" : "pointer",
+                      border: "none", background: "#2a2a2a",
+                      color: "rgba(255,255,255,0.7)", fontSize: 12.5, fontWeight: 700,
+                      opacity: isDone || isSkip ? 0.4 : 1,
+                    }}
+                  >החלף</button>
                 </div>
 
                 {isDone && (
