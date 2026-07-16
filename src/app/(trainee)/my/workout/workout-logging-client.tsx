@@ -610,7 +610,7 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                       <div style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>{displayName}</div>
-                      <span style={{ fontSize: 10, fontWeight: 800, color: "#0a0a0a", background: GREEN, width: 18, height: 18, borderRadius: "50%", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{idx + 1}</span>
+                      <span style={{ fontSize: 12, fontWeight: 800, color: GREEN, background: "rgba(168,255,62,0.14)", width: 22, height: 22, borderRadius: 7, flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{idx + 1}</span>
                       {swappedNames[ex.id] && (
                         <span style={{ fontSize: 9, fontWeight: 700, color: GREEN, background: "rgba(168,255,62,0.2)", padding: "2px 6px", borderRadius: 99 }}>הוחלף</span>
                       )}
@@ -635,26 +635,16 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                     })()}
                   </div>
 
-                  {/* Small square thumbnail */}
+                  {/* Thumbnail — 78x78, radius 16, exact size from Lior Fit.dc.html */}
                   <div
                     onClick={() => setInfoFor({ ex, displayName })}
                     style={{
-                      width: 52, height: 52, borderRadius: 13, flexShrink: 0, cursor: "pointer",
+                      width: 78, height: 78, borderRadius: 16, flexShrink: 0, cursor: "pointer",
                       backgroundImage: `url(${getMusclePhoto(ex.exercise?.muscleGroup, idx)})`,
                       backgroundSize: "cover", backgroundPosition: "center",
                     }}
                   />
 
-                  {/* Status badge */}
-                  <div style={{
-                    width: 26, height: 26, borderRadius: "50%", flexShrink: 0,
-                    background: isDone ? "#10B981" : isSkip ? "rgba(255,255,255,0.1)" : isActive ? GREEN : "rgba(255,255,255,0.12)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                  }}>
-                    {isDone && <svg width="12" height="12" fill="none" stroke="#fff" strokeWidth="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>}
-                    {isSkip && <svg width="12" height="12" fill="none" stroke="rgba(255,255,255,0.3)" strokeWidth="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>}
-                    {isActive && <span style={{ fontSize: 9, fontWeight: 800, color: "#0a0a0a" }}>{doneSets}/{sets.length}</span>}
-                  </div>
                 </div>
 
                 {/* החלף / הושלם action row — matches design doc; tapping the green button opens the exercise sheet */}
@@ -678,9 +668,11 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                       display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
                     }}
                   >
-                    {isDone
-                      ? <>הושלם <svg width="13" height="13" fill="none" stroke="#10B981" strokeWidth="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></>
-                      : isActive ? "המשך תרגיל" : "התחל תרגיל"}
+                    {isDone ? (
+                      <><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg> הושלם</>
+                    ) : (
+                      <><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l14 8-14 8z" /></svg> {isActive ? "המשך תרגיל" : "התחל תרגיל"}</>
+                    )}
                   </button>
                 </div>
 

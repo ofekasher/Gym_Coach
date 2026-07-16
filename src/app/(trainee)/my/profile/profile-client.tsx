@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { BackHeader } from "@/components/shared/back-header";
-import { Flame, Dumbbell, Trophy, Bell, LogOut, CalendarDays, Ruler, CreditCard, ShieldCheck, HelpCircle, ChevronLeft, type LucideIcon } from "lucide-react";
+import { Bell, LogOut, Ruler, CreditCard, ShieldCheck, HelpCircle, ChevronLeft } from "lucide-react";
 
 const GREEN = "#a8ff3e";
 const CARD = "bg-[#1c1c2e] rounded-2xl mx-4 p-4 mt-4";
@@ -281,18 +281,18 @@ export function ProfileClient({ user }: { user: any }) {
         <WeightGraph />
       </div>
 
-      {/* Section 4 — training stats (order matches design: weeks / weight / workouts / streak) */}
+      {/* Section 4 — training stats, exact order + emoji from Lior Fit.dc.html: רצף / אימונים / שיא אישי / שבועות */}
       <div className={CARD}>
         <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 10 }}>סטטיסטיקות</div>
         <div style={{ display: "flex", gap: 10 }}>
           {[
-            { icon: CalendarDays, label: "שבועות", value: String(weeksInProgram) },
-            { icon: Trophy, label: "שיא אישי", value: prLabel },
-            { icon: Dumbbell, label: "אימונים", value: String(completedCount) },
-            { icon: Flame, label: "רצף", value: String(streak) },
+            { emoji: "🔥", label: "רצף", value: String(streak) },
+            { emoji: "💪", label: "אימונים", value: String(completedCount) },
+            { emoji: "⚡", label: "שיא אישי", value: prLabel },
+            { emoji: "📅", label: "שבועות", value: String(weeksInProgram) },
           ].map((s) => (
             <div key={s.label} style={{ background: "#12121f", borderRadius: 12, padding: 12, flex: 1, textAlign: "center" }}>
-              <div style={{ display: "flex", justifyContent: "center" }}><s.icon size={20} color={GREEN} /></div>
+              <div style={{ fontSize: 20 }}>{s.emoji}</div>
               <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginTop: 4 }}>{s.value}</div>
               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{s.label}</div>
             </div>
