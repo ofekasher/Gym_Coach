@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Search, ChevronLeft } from "lucide-react";
 import { subDays } from "date-fns";
 
@@ -55,7 +56,8 @@ const FILTERS: { key: "ALL" | StatusKey; label: string }[] = [
 ];
 
 export function TraineesClient({ trainees }: { trainees: Trainee[] }) {
-  const [search, setSearch] = useState("");
+  const searchParams = useSearchParams();
+  const [search, setSearch] = useState(searchParams.get("q") ?? "");
   const [statusFilter, setStatusFilter] = useState<"ALL" | StatusKey>("ALL");
 
   const filtered = trainees.filter((t) => {
