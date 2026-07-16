@@ -70,7 +70,7 @@ export function DashboardClient({ trainees, alerts, stats }: Props) {
   const [filter, setFilter] = useState<"ALL" | "green" | "red">("ALL");
 
   const statCards = [
-    { label: "מתאמנים", sub: "סה\"כ", value: stats.total, icon: Users, color: GREEN, bg: "rgba(168,255,62,0.12)" },
+    { label: "מתאמנים", sub: "סה\"כ", value: stats.total, icon: Users, color: GREEN, bg: "rgba(182,255,74,0.12)" },
     { label: "פעילים", sub: "השבוע", value: stats.activeThisWeek, icon: TrendingUp, color: PURPLE, bg: "rgba(99,102,241,0.15)" },
     { label: "צ׳ק-אין", sub: "השבוע", value: stats.checkedInThisWeek, icon: CheckCircle2, color: "#3B82F6", bg: "rgba(59,130,246,0.12)" },
     { label: "התראות", sub: "פתוחות", value: stats.unreadAlerts, icon: Bell, color: stats.unreadAlerts > 0 ? "#f87171" : GREEN, bg: "rgba(248,113,113,0.12)" },
@@ -133,7 +133,7 @@ export function DashboardClient({ trainees, alerts, stats }: Props) {
                 onClick={() => setFilter(f.key)}
                 className="rounded-full px-3 py-1 text-sm border transition-colors"
                 style={filter === f.key
-                  ? { background: "rgba(168,255,62,0.1)", borderColor: "rgba(168,255,62,0.3)", color: GREEN }
+                  ? { background: "rgba(182,255,74,0.1)", borderColor: "rgba(182,255,74,0.3)", color: GREEN }
                   : { background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.6)" }}
               >
                 {f.label}

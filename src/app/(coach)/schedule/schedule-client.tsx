@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 const DAYS_HE = ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"];
 const DAYS_LONG = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
 const MONTHS_HE = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
-const COLORS = ["#a8ff3e", "#60A5FA", "#34D399", "#F87171", "#A78BFA", "#FB923C", "#38BDF8", "#4ADE80"];
+const COLORS = ["#b6ff4a", "#60A5FA", "#34D399", "#F87171", "#A78BFA", "#FB923C", "#38BDF8", "#4ADE80"];
 
 type Appointment = { id: string; date: string; time: string; duration: number; traineeId: string; traineeName: string; type: string; notes: string; color: string };
 
@@ -20,7 +20,7 @@ function todayISO() { return new Date().toISOString().slice(0, 10); }
 const S = {
   input: { background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, color: "#fff", fontSize: 14, padding: "10px 14px", outline: "none", width: "100%" },
   label: { color: "rgba(255,255,255,0.4)", fontSize: 11, fontWeight: 700 as const, letterSpacing: "0.04em", display: "block" as const, marginBottom: 5 },
-  btnYellow: { background: "#a8ff3e", color: "#111", border: "none", borderRadius: 999, padding: "10px 22px", fontWeight: 800 as const, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 },
+  btnYellow: { background: "#b6ff4a", color: "#111", border: "none", borderRadius: 999, padding: "10px 22px", fontWeight: 800 as const, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 },
   btnGhost: { background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 999, padding: "10px 18px", fontWeight: 700 as const, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 },
 };
 
@@ -97,7 +97,7 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
   };
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20, minHeight: 600, background: "#080810" }} dir="rtl">
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20, minHeight: 600, background: "#070707" }} dir="rtl">
       {/* Calendar */}
       <div>
         {/* Month nav */}
@@ -130,11 +130,11 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
             return (
               <button key={d} onClick={() => setSelectedDate(iso)} style={{
                 aspectRatio: "1", border: "none", cursor: "pointer", borderRadius: 12,
-                background: isSelected ? "#a8ff3e" : isToday ? "rgba(168,255,62,0.1)" : "rgba(255,255,255,0.04)",
+                background: isSelected ? "#b6ff4a" : isToday ? "rgba(182,255,74,0.1)" : "rgba(255,255,255,0.04)",
                 position: "relative", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column",
                 transition: "all 0.15s"
               }}>
-                <span style={{ color: isSelected ? "#111" : isToday ? "#a8ff3e" : "#fff", fontSize: 14, fontWeight: isSelected || isToday ? 800 : 500 }}>{d}</span>
+                <span style={{ color: isSelected ? "#111" : isToday ? "#b6ff4a" : "#fff", fontSize: 14, fontWeight: isSelected || isToday ? 800 : 500 }}>{d}</span>
                 {hasAppts && (
                   <div style={{ display: "flex", gap: 2, marginTop: 2 }}>
                     {(apptByDate[iso] ?? []).slice(0, 3).map((a) => (
@@ -191,7 +191,7 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
 
         {/* Add form */}
         {showForm && (
-          <div style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(24px)", border: "1px solid rgba(168,255,62,0.15)", borderRadius: 16, padding: "16px" }}>
+          <div style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(24px)", border: "1px solid rgba(182,255,74,0.15)", borderRadius: 16, padding: "16px" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
               <h3 style={{ color: "#fff", fontWeight: 800, fontSize: 14, margin: 0 }}>אימון חדש</h3>
               <button onClick={() => setShowForm(false)} style={{ background: "none", border: "none", cursor: "pointer" }}>
@@ -222,9 +222,9 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
                   {TYPES.map(t => (
                     <button key={t} onClick={() => setForm({ ...form, type: t })} style={{
                       padding: "6px 12px", borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: "pointer",
-                      background: form.type === t ? "#a8ff3e" : "rgba(255,255,255,0.05)",
+                      background: form.type === t ? "#b6ff4a" : "rgba(255,255,255,0.05)",
                       color: form.type === t ? "#111" : "rgba(255,255,255,0.5)",
-                      border: `1px solid ${form.type === t ? "#a8ff3e" : "rgba(255,255,255,0.08)"}`,
+                      border: `1px solid ${form.type === t ? "#b6ff4a" : "rgba(255,255,255,0.08)"}`,
                     }}>{t}</button>
                   ))}
                 </div>

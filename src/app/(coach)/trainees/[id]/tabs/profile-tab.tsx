@@ -98,7 +98,7 @@ export function ProfileTab({ trainee }: { trainee: any }) {
     <form onSubmit={handleSubmit(onSubmit)} dir="rtl">
       {/* Personal */}
       <div style={S.card}>
-        <h3 style={S.sectionTitle}><User style={{ width: 16, height: 16, color: "#a8ff3e" }} />פרטים אישיים</h3>
+        <h3 style={S.sectionTitle}><User style={{ width: 16, height: 16, color: "#b6ff4a" }} />פרטים אישיים</h3>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           {[
             { label: "טלפון", name: "phone", type: "tel", placeholder: "050-0000000" },
@@ -147,9 +147,9 @@ export function ProfileTab({ trainee }: { trainee: any }) {
           {GOALS.map((g) => (
             <button key={g.value} type="button" onClick={() => toggleGoal(g.value)} style={{
               padding: "7px 14px", borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: "pointer", transition: "all 0.15s",
-              background: selectedGoals?.includes(g.value) ? "#a8ff3e" : "rgba(255,255,255,0.05)",
+              background: selectedGoals?.includes(g.value) ? "#b6ff4a" : "rgba(255,255,255,0.05)",
               color: selectedGoals?.includes(g.value) ? "#111" : "#71717A",
-              border: `1px solid ${selectedGoals?.includes(g.value) ? "#a8ff3e" : "rgba(255,255,255,0.08)"}`,
+              border: `1px solid ${selectedGoals?.includes(g.value) ? "#b6ff4a" : "rgba(255,255,255,0.08)"}`,
             }}>{g.label}</button>
           ))}
         </div>
@@ -158,9 +158,9 @@ export function ProfileTab({ trainee }: { trainee: any }) {
           {EXPERIENCE.map((e) => (
             <button key={e.value} type="button" onClick={() => setValue("experience", e.value)} style={{
               flex: 1, padding: "8px 0", borderRadius: 999, fontSize: 12, fontWeight: 700, cursor: "pointer", transition: "all 0.15s",
-              background: watch("experience") === e.value ? "#a8ff3e" : "rgba(255,255,255,0.05)",
+              background: watch("experience") === e.value ? "#b6ff4a" : "rgba(255,255,255,0.05)",
               color: watch("experience") === e.value ? "#111" : "#71717A",
-              border: `1px solid ${watch("experience") === e.value ? "#a8ff3e" : "rgba(255,255,255,0.08)"}`,
+              border: `1px solid ${watch("experience") === e.value ? "#b6ff4a" : "rgba(255,255,255,0.08)"}`,
             }}>{e.label}</button>
           ))}
         </div>
@@ -194,9 +194,9 @@ export function ProfileTab({ trainee }: { trainee: any }) {
       </div>
 
       <button type="submit" disabled={saving} style={{
-        background: "#a8ff3e", color: "#111", border: "none", borderRadius: 999, padding: "13px 28px",
+        background: "#b6ff4a", color: "#111", border: "none", borderRadius: 999, padding: "13px 28px",
         fontWeight: 900, fontSize: 15, cursor: "pointer", display: "flex", alignItems: "center", gap: 8,
-        boxShadow: "0 4px 20px rgba(168,255,62,0.3)", transition: "transform 0.15s",
+        boxShadow: "0 4px 20px rgba(182,255,74,0.3)", transition: "transform 0.15s",
       }}>
         {saving ? <Loader2 style={{ width: 16, height: 16 }} className="animate-spin" /> : <Save style={{ width: 16, height: 16 }} />}
         שמור שינויים

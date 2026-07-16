@@ -12,7 +12,7 @@ const STATUS_STYLE: Record<string, any> = {
   ACTIVE: { background: "rgba(16,185,129,0.12)", color: "#10B981", border: "1px solid rgba(16,185,129,0.2)" },
   EXPIRED: { background: "rgba(239,68,68,0.12)", color: "#F87171", border: "1px solid rgba(239,68,68,0.2)" },
   CANCELLED: { background: "rgba(239,68,68,0.12)", color: "#F87171", border: "1px solid rgba(239,68,68,0.2)" },
-  PENDING: { background: "rgba(168,255,62,0.12)", color: "#a8ff3e", border: "1px solid rgba(168,255,62,0.2)" },
+  PENDING: { background: "rgba(182,255,74,0.12)", color: "#b6ff4a", border: "1px solid rgba(182,255,74,0.2)" },
 };
 
 export default function PaymentsPage() {
@@ -106,7 +106,7 @@ export default function PaymentsPage() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 24 }}>
         <div style={{ ...CARD, padding: 18 }}>
           <div style={{ color: "#48484A", fontSize: 11, fontWeight: 700, marginBottom: 4 }}>הכנסות סה״כ</div>
-          <div style={{ fontSize: 26, fontWeight: 800, color: "#a8ff3e" }}>₪{totalRevenue.toLocaleString()}</div>
+          <div style={{ fontSize: 26, fontWeight: 800, color: "#b6ff4a" }}>₪{totalRevenue.toLocaleString()}</div>
         </div>
         <div style={{ ...CARD, padding: 18 }}>
           <div style={{ color: "#48484A", fontSize: 11, fontWeight: 700, marginBottom: 4 }}>מינויים פעילים</div>
@@ -120,7 +120,7 @@ export default function PaymentsPage() {
 
       {/* List */}
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin" style={{ color: "#a8ff3e" }} /></div>
+        <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin" style={{ color: "#b6ff4a" }} /></div>
       ) : (
         <div className="space-y-3">
           {trainees.map(t => {
@@ -130,7 +130,7 @@ export default function PaymentsPage() {
               <div key={t.id} style={CARD}>
                 <div style={{ padding: "16px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }} onClick={() => setExpanded(isOpen ? null : t.id)}>
                   <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(168,255,62,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, color: "#a8ff3e", fontSize: 14 }}>
+                    <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(182,255,74,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, color: "#b6ff4a", fontSize: 14 }}>
                       {t.name?.[0] ?? "?"}
                     </div>
                     <div>
@@ -145,7 +145,7 @@ export default function PaymentsPage() {
                       </span>
                     ) : (
                       <button onClick={e => { e.stopPropagation(); setForm({ plan: "MONTHLY", amount: "", notes: "", method: "cash" }); setModal({ type: "sub", traineeId: t.id }); }}
-                        style={{ background: "rgba(168,255,62,0.12)", border: "1px solid rgba(168,255,62,0.2)", color: "#a8ff3e", borderRadius: 999, padding: "5px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+                        style={{ background: "rgba(182,255,74,0.12)", border: "1px solid rgba(182,255,74,0.2)", color: "#b6ff4a", borderRadius: 999, padding: "5px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 4 }}>
                         <Plus style={{ width: 13, height: 13 }} /> הוסף מינוי
                       </button>
                     )}
@@ -184,7 +184,7 @@ export default function PaymentsPage() {
 
                     <div style={{ display: "flex", gap: 8 }}>
                       <button onClick={() => { setForm({ plan: sub.plan, amount: String(sub.amount), notes: "", method: "cash" }); setModal({ type: "pay", traineeId: t.id, subId: sub.id }); }}
-                        style={{ background: "#a8ff3e", color: "#111", border: "none", borderRadius: 999, padding: "8px 16px", fontSize: 12, fontWeight: 800, cursor: "pointer", flex: 1 }}>
+                        style={{ background: "#b6ff4a", color: "#111", border: "none", borderRadius: 999, padding: "8px 16px", fontSize: 12, fontWeight: 800, cursor: "pointer", flex: 1 }}>
                         + רשום תשלום
                       </button>
                       <button onClick={() => { setForm({ plan: sub.plan, amount: String(sub.amount), notes: sub.notes ?? "", method: "cash" }); setModal({ type: "sub", traineeId: t.id }); }}
@@ -247,7 +247,7 @@ export default function PaymentsPage() {
             </div>
             <div style={{ display: "flex", gap: 8 }}>
               <button onClick={modal.type === "sub" ? saveSubscription : recordPayment} disabled={saving || !form.amount}
-                style={{ flex: 1, background: "#a8ff3e", color: "#111", border: "none", borderRadius: 999, height: 44, fontWeight: 800, cursor: "pointer", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                style={{ flex: 1, background: "#b6ff4a", color: "#111", border: "none", borderRadius: 999, height: 44, fontWeight: 800, cursor: "pointer", fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center" }}>
                 {saving ? <Loader2 style={{ width: 18, height: 18, animation: "spin 1s linear infinite" }} /> : "שמור"}
               </button>
               <button onClick={() => setModal(null)} style={{ flex: 1, background: "#242428", color: "#fff", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 999, height: 44, fontWeight: 700, cursor: "pointer", fontSize: 14 }}>ביטול</button>

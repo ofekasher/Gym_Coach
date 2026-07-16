@@ -21,7 +21,7 @@ const TABS = [
   { id: "timeline", label: "ציר זמן", icon: Clock },
 ];
 
-const AVATAR_COLORS = ["#a8ff3e", "#10B981", "#3B82F6", "#8B5CF6", "#F59E0B", "#EC4899"];
+const AVATAR_COLORS = ["#b6ff4a", "#10B981", "#3B82F6", "#8B5CF6", "#F59E0B", "#EC4899"];
 
 export function TraineeDetailClient({ trainee }: { trainee: any }) {
   const [activeTab, setActiveTab] = useState("profile");
@@ -62,7 +62,7 @@ export function TraineeDetailClient({ trainee }: { trainee: any }) {
                 </div>
               )}
               {trainee.traineeProfile?.goals.slice(0, 2).map((g: string) => (
-                <span key={g} style={{ background: "rgba(168,255,62,0.08)", color: "#a8ff3e", border: "1px solid rgba(168,255,62,0.15)", borderRadius: 999, padding: "4px 12px", fontSize: 11, fontWeight: 700 }}>{g}</span>
+                <span key={g} style={{ background: "rgba(182,255,74,0.08)", color: "#b6ff4a", border: "1px solid rgba(182,255,74,0.15)", borderRadius: 999, padding: "4px 12px", fontSize: 11, fontWeight: 700 }}>{g}</span>
               ))}
             </div>
           </div>
@@ -70,7 +70,7 @@ export function TraineeDetailClient({ trainee }: { trainee: any }) {
           {/* Quick actions */}
           <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
             <Link href={`/trainees/${trainee.id}/workout/new`}>
-              <button style={{ background: "#a8ff3e", color: "#111", border: "none", borderRadius: 12, padding: "8px 14px", fontWeight: 800, fontSize: 12, cursor: "pointer", display: "flex", alignItems: "center", gap: 5 }}>
+              <button style={{ background: "#b6ff4a", color: "#111", border: "none", borderRadius: 12, padding: "8px 14px", fontWeight: 800, fontSize: 12, cursor: "pointer", display: "flex", alignItems: "center", gap: 5 }}>
                 <Plus style={{ width: 13, height: 13 }} />אימון
               </button>
             </Link>
@@ -99,7 +99,7 @@ export function TraineeDetailClient({ trainee }: { trainee: any }) {
                 onClick={() => setActiveTab(tab.id)}
                 style={{
                   display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 10, border: "none", cursor: "pointer",
-                  background: active ? "#a8ff3e" : "transparent",
+                  background: active ? "#b6ff4a" : "transparent",
                   color: active ? "#111" : "#48484A",
                   fontWeight: active ? 800 : 600, fontSize: 13, transition: "all 0.2s", whiteSpace: "nowrap" as const,
                 }}

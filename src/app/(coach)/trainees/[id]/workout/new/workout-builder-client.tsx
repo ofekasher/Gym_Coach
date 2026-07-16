@@ -318,13 +318,13 @@ export function WorkoutBuilderClient({ trainee, exercises, coachId }: {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ color: "#fff", fontWeight: 800, fontSize: 15 }}>{t.label}</div>
                     <div style={{ color: "#52525B", fontSize: 12, marginTop: 2 }}>{t.description}</div>
-                    <div style={{ color: "#a8ff3e", fontSize: 11, fontWeight: 700, marginTop: 4 }}>📅 {t.days}</div>
+                    <div style={{ color: "#b6ff4a", fontSize: 11, fontWeight: 700, marginTop: 4 }}>📅 {t.days}</div>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: 6, flexShrink: 0 }}>
                     {t.value !== "CUSTOM" && (
                       <button
                         onClick={() => handleSelectTemplate(t, true)}
-                        style={{ background: "#a8ff3e", color: "#111", border: "none", borderRadius: 10, padding: "8px 14px", fontWeight: 800, fontSize: 12, cursor: "pointer", display: "flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" as const }}>
+                        style={{ background: "#b6ff4a", color: "#111", border: "none", borderRadius: 10, padding: "8px 14px", fontWeight: 800, fontSize: 12, cursor: "pointer", display: "flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" as const }}>
                         <Zap style={{ width: 13, height: 13 }} /> עם תרגילים
                       </button>
                     )}
@@ -372,7 +372,7 @@ export function WorkoutBuilderClient({ trainee, exercises, coachId }: {
             style={{ background: "transparent", border: "none", outline: "none", color: "#fff", fontSize: 18, fontWeight: 800, minWidth: 200 }}
           />
         </div>
-        <Button onClick={savePlan} disabled={saving} style={{ background: "#a8ff3e", color: "#111", fontWeight: 800, borderRadius: 12, padding: "10px 22px" }}>
+        <Button onClick={savePlan} disabled={saving} style={{ background: "#b6ff4a", color: "#111", fontWeight: 800, borderRadius: 12, padding: "10px 22px" }}>
           {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
           שמור תוכנית
         </Button>
@@ -389,7 +389,7 @@ export function WorkoutBuilderClient({ trainee, exercises, coachId }: {
                 style={{
                   padding: "8px 16px", borderRadius: 10, border: "none", cursor: "pointer", whiteSpace: "nowrap" as const,
                   fontWeight: 700, fontSize: 13, transition: "all 0.15s",
-                  background: activeSession === i ? "#a8ff3e" : "rgba(255,255,255,0.06)",
+                  background: activeSession === i ? "#b6ff4a" : "rgba(255,255,255,0.06)",
                   color: activeSession === i ? "#111" : "#71717A",
                 }}>
                 {s.name}
@@ -443,7 +443,7 @@ export function WorkoutBuilderClient({ trainee, exercises, coachId }: {
                         <button key={star} type="button"
                           onClick={() => updateExercise(activeSession, j, "priority", ex.priority === star ? 0 : star)}
                           style={{ background: "none", border: "none", cursor: "pointer", fontSize: 16, padding: 0, lineHeight: 1 }}>
-                          <span style={{ color: (ex.priority ?? 0) >= star ? "#a8ff3e" : "#3F3F46" }}>★</span>
+                          <span style={{ color: (ex.priority ?? 0) >= star ? "#b6ff4a" : "#3F3F46" }}>★</span>
                         </button>
                       ))}
                     </div>
@@ -483,7 +483,7 @@ export function WorkoutBuilderClient({ trainee, exercises, coachId }: {
                     value={ex.coachNote ?? ""}
                     onChange={e => updateExercise(activeSession, j, "coachNote", e.target.value)}
                     placeholder="💬 דגש למתאמן (יוצג בולט)..."
-                    style={{ width: "100%", background: "rgba(168,255,62,0.04)", border: "1px solid rgba(168,255,62,0.2)", borderRadius: 8, color: "#a8ff3e", fontSize: 12, padding: "6px 10px", outline: "none", boxSizing: "border-box" }}
+                    style={{ width: "100%", background: "rgba(182,255,74,0.04)", border: "1px solid rgba(182,255,74,0.2)", borderRadius: 8, color: "#b6ff4a", fontSize: 12, padding: "6px 10px", outline: "none", boxSizing: "border-box" }}
                   />
                 </motion.div>
               ))}
@@ -537,16 +537,16 @@ export function WorkoutBuilderClient({ trainee, exercises, coachId }: {
                     disabled={added}
                     style={{
                       width: "100%", textAlign: "right", padding: "9px 12px", borderRadius: 10, cursor: added ? "default" : "pointer",
-                      background: added ? "rgba(168,255,62,0.06)" : "rgba(255,255,255,0.03)",
-                      border: `1px solid ${added ? "rgba(168,255,62,0.2)" : "rgba(255,255,255,0.06)"}`,
+                      background: added ? "rgba(182,255,74,0.06)" : "rgba(255,255,255,0.03)",
+                      border: `1px solid ${added ? "rgba(182,255,74,0.2)" : "rgba(255,255,255,0.06)"}`,
                       display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8,
                     }}>
                     <div style={{ minWidth: 0 }}>
-                      <div style={{ color: added ? "#a8ff3e" : "#E5E5E5", fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{ex.name}</div>
+                      <div style={{ color: added ? "#b6ff4a" : "#E5E5E5", fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{ex.name}</div>
                       <div style={{ color: "#52525B", fontSize: 10 }}>{ex.muscleGroup} · {ex.equipment}</div>
                     </div>
                     {added
-                      ? <span style={{ color: "#a8ff3e", fontSize: 11, fontWeight: 700, flexShrink: 0 }}>✓</span>
+                      ? <span style={{ color: "#b6ff4a", fontSize: 11, fontWeight: 700, flexShrink: 0 }}>✓</span>
                       : <Plus style={{ width: 14, height: 14, color: "#52525B", flexShrink: 0 }} />
                     }
                   </button>

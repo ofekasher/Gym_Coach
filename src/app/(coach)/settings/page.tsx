@@ -7,7 +7,7 @@ const CARD = { background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.07)"
 const SECTION = "mb-8";
 const LABEL = { color: "#71717A", fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.05em", marginBottom: 6, display: "block" };
 const INPUT_S = { background: "#2C2C2E", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, height: 44, padding: "0 14px", color: "#fff", fontSize: 14, width: "100%", outline: "none", boxSizing: "border-box" as const };
-const TOGGLE_ON = { background: "#a8ff3e", border: "none", borderRadius: 999, width: 44, height: 24, cursor: "pointer", position: "relative" as const, transition: "background 0.2s", flexShrink: 0 };
+const TOGGLE_ON = { background: "#b6ff4a", border: "none", borderRadius: 999, width: 44, height: 24, cursor: "pointer", position: "relative" as const, transition: "background 0.2s", flexShrink: 0 };
 const TOGGLE_OFF = { ...TOGGLE_ON, background: "#3A3A3C" };
 
 function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
@@ -83,7 +83,7 @@ export default function CoachSettingsPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-[60vh]">
-      <Loader2 className="w-8 h-8 animate-spin" style={{ color: "#a8ff3e" }} />
+      <Loader2 className="w-8 h-8 animate-spin" style={{ color: "#b6ff4a" }} />
     </div>
   );
 
@@ -95,7 +95,7 @@ export default function CoachSettingsPage() {
           <p style={{ color: "#71717A", fontSize: 13 }}>ניהול פרופיל ועסק</p>
         </div>
         <button onClick={save} disabled={saving}
-          style={{ background: "#a8ff3e", color: "#111", border: "none", borderRadius: 999, padding: "10px 24px", fontWeight: 800, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
+          style={{ background: "#b6ff4a", color: "#111", border: "none", borderRadius: 999, padding: "10px 24px", fontWeight: 800, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           שמור שינויים
         </button>
@@ -104,7 +104,7 @@ export default function CoachSettingsPage() {
       {/* Profile */}
       <div className={SECTION}>
         <div className="flex items-center gap-2 mb-4">
-          <User className="w-4 h-4" style={{ color: "#a8ff3e" }} />
+          <User className="w-4 h-4" style={{ color: "#b6ff4a" }} />
           <span style={{ color: "#fff", fontWeight: 700, fontSize: 15 }}>פרופיל אישי</span>
         </div>
         <div style={{ ...CARD, padding: 20 }}>
@@ -137,11 +137,11 @@ export default function CoachSettingsPage() {
       <div className={SECTION}>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Eye className="w-4 h-4" style={{ color: "#a8ff3e" }} />
+            <Eye className="w-4 h-4" style={{ color: "#b6ff4a" }} />
             <span style={{ color: "#fff", fontWeight: 700, fontSize: 15 }}>שינוי סיסמה</span>
           </div>
           <button onClick={() => setShowPassFields(!showPassFields)} type="button"
-            style={{ color: "#a8ff3e", fontSize: 13, background: "none", border: "none", cursor: "pointer" }}>
+            style={{ color: "#b6ff4a", fontSize: 13, background: "none", border: "none", cursor: "pointer" }}>
             {showPassFields ? "ביטול" : "שנה סיסמה"}
           </button>
         </div>
@@ -164,7 +164,7 @@ export default function CoachSettingsPage() {
       {/* Pricing */}
       <div className={SECTION}>
         <div className="flex items-center gap-2 mb-4">
-          <CreditCard className="w-4 h-4" style={{ color: "#a8ff3e" }} />
+          <CreditCard className="w-4 h-4" style={{ color: "#b6ff4a" }} />
           <span style={{ color: "#fff", fontWeight: 700, fontSize: 15 }}>תמחור</span>
         </div>
         <div style={{ ...CARD, padding: 20 }}>
@@ -205,7 +205,7 @@ export default function CoachSettingsPage() {
       {/* Notifications */}
       <div className={SECTION}>
         <div className="flex items-center gap-2 mb-4">
-          <Bell className="w-4 h-4" style={{ color: "#a8ff3e" }} />
+          <Bell className="w-4 h-4" style={{ color: "#b6ff4a" }} />
           <span style={{ color: "#fff", fontWeight: 700, fontSize: 15 }}>התראות</span>
         </div>
         <div style={{ ...CARD, padding: 0, overflow: "hidden" }}>

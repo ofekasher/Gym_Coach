@@ -4,9 +4,9 @@ import { Mail, Loader2, Eye, EyeOff, MessageCircle, Copy, UserPlus, Dices, Check
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 
-const GREEN = "#a8ff3e";
-const glassCard = "backdrop-blur-xl bg-white/[0.04] border border-white/[0.08] rounded-2xl p-8";
-const inputClass = "w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-white outline-none placeholder:text-white/30";
+const GREEN = "#b6ff4a";
+const glassCard = "bg-[#111] border border-[#1e1e1e] rounded-2xl p-8";
+const inputClass = "w-full bg-[#141414] border border-[#2a2a2a] rounded-xl px-4 py-3 text-white outline-none placeholder:text-white/30";
 const labelClass = "text-white/60 text-sm mb-1 block";
 
 function generatePassword(): string {
@@ -87,7 +87,7 @@ ${typeof window !== "undefined" ? window.location.origin : ""}/login
   };
 
   return (
-    <div className="min-h-screen bg-[#080810] max-w-lg mx-auto py-6" dir="rtl">
+    <div className="min-h-screen bg-[#070707] max-w-lg mx-auto py-6" dir="rtl">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">הזמן מתאמן/ת</h1>
         <p className="text-white/50 text-sm mt-1">צור חשבון מתאמן חדש עם סיסמה זמנית</p>
@@ -141,7 +141,7 @@ ${typeof window !== "undefined" ? window.location.origin : ""}/login
                   type="button"
                   onClick={() => setPassword(generatePassword())}
                   title="צור סיסמה אקראית"
-                  className="w-12 flex-shrink-0 rounded-xl bg-white/[0.04] border border-white/[0.08] text-white/70 flex items-center justify-center"
+                  className="w-12 flex-shrink-0 rounded-xl bg-[#141414] border border-[#2a2a2a] text-white/70 flex items-center justify-center"
                 >
                   <Dices className="w-4 h-4" />
                 </button>
@@ -151,7 +151,7 @@ ${typeof window !== "undefined" ? window.location.origin : ""}/login
             <button
               onClick={createTrainee}
               disabled={loading || !name || !email || !password}
-              className="w-full bg-[#a8ff3e] text-black font-bold rounded-xl py-3 flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full bg-[#b6ff4a] text-black font-bold rounded-xl py-3 flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
               שלח הזמנה
@@ -196,14 +196,14 @@ ${typeof window !== "undefined" ? window.location.origin : ""}/login
             )}
             <button
               onClick={copyDetails}
-              className="w-full bg-white/[0.04] border border-white/[0.08] text-white/80 rounded-xl py-3 flex items-center justify-center gap-2"
+              className="w-full bg-[#141414] border border-[#2a2a2a] text-white/80 rounded-xl py-3 flex items-center justify-center gap-2"
             >
               <Copy className="w-4 h-4" />
               העתק פרטים
             </button>
             <button
               onClick={resetForm}
-              className="w-full bg-white/[0.04] border border-white/[0.08] text-white/80 rounded-xl py-3"
+              className="w-full bg-[#141414] border border-[#2a2a2a] text-white/80 rounded-xl py-3"
             >
               הוסף מתאמן נוסף
             </button>
