@@ -26,7 +26,7 @@ function ProgressRing({ pct }: { pct: number }) {
         />
       </svg>
       <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 900, fontSize: 26, color: "#fff" }}>
-        <AnimatedNumber value={pct} />%
+        <AnimatedNumber value={pct} suffix="%" />
       </div>
     </div>
   );
@@ -133,7 +133,7 @@ export function TraineeDashboardClient({ user }: { user: any }) {
                   <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>אימונים</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: 18, fontWeight: 900, color: GREEN }}><AnimatedNumber value={streak} /> 🔥</div>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: GREEN }}><AnimatedNumber value={streak} suffix=" 🔥" /></div>
                   <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>רצף ימים</div>
                 </div>
               </div>

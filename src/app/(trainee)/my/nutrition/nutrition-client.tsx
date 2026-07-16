@@ -413,7 +413,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
           <div style={{ display: "flex", justifyContent: "space-around", textAlign: "center" }}>
             <div>
               <div style={{ width: 12, height: 12, borderRadius: 4, background: GREEN, margin: "0 auto 6px" }} />
-              <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}><AnimatedNumber value={eatenProtein} /><span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>ג׳</span></div>
+              <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}><AnimatedNumber value={eatenProtein} /><span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}> ג׳</span></div>
               <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>חלבון</div>
             </div>
             <div>
