@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { BackHeader } from "@/components/shared/back-header";
-import { Flame, Dumbbell, Trophy, Bell, LogOut, type LucideIcon } from "lucide-react";
+import { Bell, LogOut, Ruler, CreditCard, ShieldCheck, HelpCircle, ChevronLeft } from "lucide-react";
+import { AnimatedNumber } from "@/components/shared/AnimatedNumber";
 
 const GREEN = "#a8ff3e";
 const CARD = "bg-[#1c1c2e] rounded-2xl mx-4 p-4 mt-4";
@@ -177,6 +178,20 @@ export function ProfileClient({ user }: { user: any }) {
     prLabel = `${top.exercise?.name ?? "תרגיל"} ${top.weight} ק"ג`;
   }
 
+  const programStart = user?.workoutPlans?.[0]?.createdAt ?? user?.createdAt;
+  const weeksInProgram = programStart
+    ? Math.max(1, Math.ceil((Date.now() - new Date(programStart).getTime()) / (7 * 24 * 60 * 60 * 1000)))
+    : 8;
+
+  // Weekly activity: which of the last 7 days had a completed workout
+  const WEEK_LABELS = ["א", "ב", "ג", "ד", "ה", "ו", "ש"];
+  const activityDays = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    const done = days.has(d.toDateString());
+    return { label: WEEK_LABELS[d.getDay()], done };
+  });
+
   const statFields = [
     { key: "height", label: "גובה (ס״מ)" },
     { key: "currentWeight", label: "משקל נוכחי" },
@@ -188,21 +203,18 @@ export function ProfileClient({ user }: { user: any }) {
     <div style={{ background: "#12121f", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
       <BackHeader title="פרופיל" />
 
-      {/* Section 1 — header */}
-      <div className={CARD} style={{ marginTop: 8 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{
-            width: 56, height: 56, borderRadius: "50%", background: GREEN,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 22, fontWeight: 800, color: "#0a0a0a", flexShrink: 0,
-          }}>
-            {user?.name?.[0] ?? "מ"}
-          </div>
-          <div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>{user?.name}</div>
-            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{user?.email}</div>
-          </div>
+      {/* Section 1 — centered hero header (avatar with lime ring, name, email), matches design doc screenshot exactly */}
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "24px 16px 4px" }}>
+        <div style={{
+          width: 80, height: 80, borderRadius: "50%", background: "#22223a", flexShrink: 0,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 28, fontWeight: 900, color: GREEN,
+          border: `3px solid ${GREEN}`,
+        }}>
+          {user?.name?.[0] ?? "מ"}
         </div>
+        <div style={{ fontSize: 20, fontWeight: 900, color: "#fff", marginTop: 12 }}>{user?.name}</div>
+        <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>{user?.email}</div>
       </div>
 
       {/* Section 2 — editable personal stats */}
@@ -248,24 +260,43 @@ export function ProfileClient({ user }: { user: any }) {
         )}
       </div>
 
+      {/* Section 2b — weekly activity */}
+      <div className={CARD}>
+        <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 16 }}>פעילות השבוע</div>
+        <div style={{ display: "flex", gap: 6, justifyContent: "space-between" }}>
+          {activityDays.map((d, i) => (
+            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+              <div style={{
+                width: 26, height: 56, borderRadius: 8, background: "rgba(255,255,255,0.06)",
+                boxShadow: d.done ? `inset 0 -56px 0 ${GREEN}` : "none",
+              }} />
+              <span style={{ fontSize: 11, color: "rgba(255,255,255,0.4)" }}>{d.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Section 3 — weight graph */}
       <div className={CARD}>
         <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 10 }}>היסטוריית משקל</div>
         <WeightGraph />
       </div>
 
-      {/* Section 4 — training stats */}
+      {/* Section 4 — training stats, exact order + emoji from Lior Fit.dc.html: רצף / אימונים / שיא אישי / שבועות */}
       <div className={CARD}>
         <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 10 }}>סטטיסטיקות</div>
         <div style={{ display: "flex", gap: 10 }}>
           {[
-            { icon: Flame, label: "רצף", value: `${streak} ימים` },
-            { icon: Dumbbell, label: "אימונים", value: `${completedCount} הושלמו` },
-            { icon: Trophy, label: "שיא אישי", value: prLabel },
+            { emoji: "🔥", label: "רצף", value: streak as number | string },
+            { emoji: "💪", label: "אימונים", value: completedCount as number | string },
+            { emoji: "⚡", label: "שיא אישי", value: prLabel as number | string },
+            { emoji: "📅", label: "שבועות", value: weeksInProgram as number | string },
           ].map((s) => (
             <div key={s.label} style={{ background: "#12121f", borderRadius: 12, padding: 12, flex: 1, textAlign: "center" }}>
-              <div style={{ display: "flex", justifyContent: "center" }}><s.icon size={20} color="#fff" /></div>
-              <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginTop: 4 }}>{s.value}</div>
+              <div style={{ fontSize: 20 }}>{s.emoji}</div>
+              <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginTop: 4 }}>
+                {typeof s.value === "number" ? <AnimatedNumber value={s.value} /> : s.value}
+              </div>
               <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>{s.label}</div>
             </div>
           ))}
@@ -360,22 +391,42 @@ export function ProfileClient({ user }: { user: any }) {
         )}
       </div>
 
-      {/* Section 6 — settings */}
-      <div className={CARD} style={{ marginBottom: 8 }}>
-        <div style={{ fontSize: 15, fontWeight: 700, color: "#fff", marginBottom: 12 }}>הגדרות</div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-          <span style={{ fontSize: 14, color: "#fff", display: "flex", alignItems: "center", gap: 6 }}><Bell size={15} /> התראות</span>
+      {/* Section 6 — settings menu, matches design list (התראות/יחידות מידה/המנוי שלי/פרטיות ואבטחה/עזרה ותמיכה) */}
+      <div className={CARD} style={{ marginBottom: 8, padding: "6px 4px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          <span style={{ fontSize: 14, color: "#fff", display: "flex", alignItems: "center", gap: 8 }}><Bell size={16} color={GREEN} /> התראות</span>
           <ToggleSwitch on={notifications} onChange={toggleNotifications} />
         </div>
+        {[
+          { icon: Ruler, label: "יחידות מידה" },
+          { icon: CreditCard, label: "המנוי שלי" },
+          { icon: ShieldCheck, label: "פרטיות ואבטחה" },
+          { icon: HelpCircle, label: "עזרה ותמיכה" },
+        ].map((item, i, arr) => (
+          <button
+            key={item.label}
+            type="button"
+            style={{
+              width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center",
+              padding: "12px 14px", background: "transparent", border: "none", cursor: "pointer",
+              borderBottom: i < arr.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none",
+            }}
+          >
+            <span style={{ fontSize: 14, color: "#fff", display: "flex", alignItems: "center", gap: 8 }}>
+              <item.icon size={16} color={GREEN} /> {item.label}
+            </span>
+            <ChevronLeft size={16} color="rgba(255,255,255,0.3)" />
+          </button>
+        ))}
         <button
           onClick={() => signOut({ callbackUrl: "/login" })}
           style={{
             width: "100%", textAlign: "right", background: "transparent", border: "none",
-            padding: "12px 0 0", fontSize: 14, color: "#f87171", cursor: "pointer",
-            display: "flex", alignItems: "center", gap: 6,
+            padding: "12px 14px", fontSize: 14, color: "#f87171", cursor: "pointer",
+            display: "flex", alignItems: "center", gap: 8,
           }}
         >
-          <LogOut size={15} /> התנתקות
+          <LogOut size={16} /> התנתקות
         </button>
       </div>
     </div>

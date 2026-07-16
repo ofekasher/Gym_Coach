@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { prisma, isDatabaseConfigured } from "@/lib/prisma";
 import { TraineeDashboardClient } from "./trainee-dashboard-client";
-import { startOfDay } from "date-fns";
+import { startOfDay, subDays } from "date-fns";
 import { DEMO_TRAINEES, isDemoId } from "@/lib/demo-data";
 
 export default async function TraineeDashboardPage() {
@@ -35,8 +35,12 @@ export default async function TraineeDashboardPage() {
           take: 1,
         },
         workoutLogs: {
-          where: { date: { gte: startOfDay(new Date()) } },
+          where: { date: { gte: subDays(new Date(), 90) }, status: "COMPLETED" },
           include: { session: true },
+          orderBy: { date: "desc" },
+        },
+        nutritionLogs: {
+          where: { date: { gte: startOfDay(new Date()) } },
         },
         checkIns: { orderBy: { date: "desc" }, take: 1 },
       },

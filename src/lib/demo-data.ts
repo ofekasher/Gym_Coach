@@ -15,8 +15,14 @@ export const DEMO_TRAINEES = [
       phone: "050-1234567", gender: "male",
       dateOfBirth: new Date("1995-05-10"),
       injuries: null, medicalConditions: null, limitations: null, medications: null, notes: null,
+      dailyCalories: 2700,
       updatedAt: new Date(),
     },
+    nutritionLogs: [
+      { id: "nl1", traineeId: "demo-trainee-001", date: new Date(), mealName: "ארוחת בוקר", foodName: "חביתה מ-3 ביצים", plannedGrams: null, actualGrams: 200, calories: 320, protein: 24, carbs: 4, fat: 22, source: "plan", createdAt: new Date() },
+      { id: "nl2", traineeId: "demo-trainee-001", date: new Date(), mealName: "ארוחת צהריים", foodName: "חזה עוף + אורז מלא", plannedGrams: null, actualGrams: 350, calories: 560, protein: 55, carbs: 60, fat: 10, source: "plan", createdAt: new Date() },
+      { id: "nl3", traineeId: "demo-trainee-001", date: new Date(), mealName: "חטיף", foodName: "יוגורט + פרי", plannedGrams: null, actualGrams: 200, calories: 960, protein: 20, carbs: 100, fat: 30, source: "manual", createdAt: new Date() },
+    ],
     checkIns: [
       { id: "ci1", traineeId: "demo-trainee-001", date: new Date(Date.now() - 2 * 86400000), weight: 79, waist: null, chest: null, hip: null, arm: null, bodyFat: null, followedPlan: true, workoutsCompleted: 4, coachNotes: null, traineeNotes: null, photos: [] },
       { id: "ci2", traineeId: "demo-trainee-001", date: new Date(Date.now() - 9 * 86400000), weight: 80.5, waist: null, chest: null, hip: null, arm: null, bodyFat: null, followedPlan: true, workoutsCompleted: 3, coachNotes: null, traineeNotes: null, photos: [] },
