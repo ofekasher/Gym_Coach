@@ -39,8 +39,8 @@ export const DEMO_TRAINEES = [
           {
             id: "s1", planId: "wp1", name: "Push Day", dayLabel: "ראשון + רביעי", order: 1,
             exercises: [
-              { id: "se1", sessionId: "s1", exerciseId: "ex1", sets: 4, reps: "10", weight: 80, restTime: 90, techniqueNotes: "ירידה איטית 3 שניות", order: 1, exercise: { id: "ex1", name: "לחיצת חזה", muscleGroup: "חזה", description: null, howTo: null, tips: [], commonMistakes: [], equipment: "מוט", difficulty: "בינוני", videoUrl: null, imageUrl: null, isCustom: false, coachId: null } },
-              { id: "se2", sessionId: "s1", exerciseId: "ex2", sets: 3, reps: "12", weight: 50, restTime: 60, techniqueNotes: null, order: 2, exercise: { id: "ex2", name: "לחיצת כתפיים", muscleGroup: "כתפיים", description: null, howTo: null, tips: [], commonMistakes: [], equipment: "מוט", difficulty: "בינוני", videoUrl: null, imageUrl: null, isCustom: false, coachId: null } },
+              { id: "se1", sessionId: "s1", exerciseId: "ex1", sets: 4, reps: "10", weight: 80, restTime: 90, techniqueNotes: "ירידה איטית 3 שניות", order: 1, exercise: { id: "ex1", name: "לחיצת חזה", muscleGroup: "חזה", description: null, howTo: null, tips: [], commonMistakes: [], equipment: "מוט", difficulty: "בינוני", videoUrl: null, imageUrl: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Bench_Press_-_Medium_Grip/0.jpg", isCustom: false, coachId: null } },
+              { id: "se2", sessionId: "s1", exerciseId: "ex2", sets: 3, reps: "12", weight: 50, restTime: 60, techniqueNotes: null, order: 2, exercise: { id: "ex2", name: "לחיצת כתפיים", muscleGroup: "כתפיים", description: null, howTo: null, tips: [], commonMistakes: [], equipment: "מוט", difficulty: "בינוני", videoUrl: null, imageUrl: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Shoulder_Press/0.jpg", isCustom: false, coachId: null } },
               { id: "se3", sessionId: "s1", exerciseId: "ex3", sets: 3, reps: "15", weight: 30, restTime: 60, techniqueNotes: null, order: 3, exercise: { id: "ex3", name: "טרייספס פולי", muscleGroup: "זרועות", description: null, howTo: null, tips: [], commonMistakes: [], equipment: "פולי", difficulty: "קל", videoUrl: null, imageUrl: null, isCustom: false, coachId: null } },
             ],
           },
@@ -54,7 +54,7 @@ export const DEMO_TRAINEES = [
           {
             id: "s3", planId: "wp1", name: "Leg Day", dayLabel: "שישי", order: 3,
             exercises: [
-              { id: "se6", sessionId: "s3", exerciseId: "ex6", sets: 5, reps: "5", weight: 100, restTime: 120, techniqueNotes: "כפות הרגליים מורחבות", order: 1, exercise: { id: "ex6", name: "סקוואט", muscleGroup: "רגליים", description: null, howTo: null, tips: [], commonMistakes: [], equipment: "מוט + מסגרת", difficulty: "מתקדם", videoUrl: null, imageUrl: null, isCustom: false, coachId: null } },
+              { id: "se6", sessionId: "s3", exerciseId: "ex6", sets: 5, reps: "5", weight: 100, restTime: 120, techniqueNotes: "כפות הרגליים מורחבות", order: 1, exercise: { id: "ex6", name: "סקוואט", muscleGroup: "רגליים", description: null, howTo: null, tips: [], commonMistakes: [], equipment: "מוט + מסגרת", difficulty: "מתקדם", videoUrl: null, imageUrl: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/Barbell_Squat/0.jpg", isCustom: false, coachId: null } },
             ],
           },
         ],

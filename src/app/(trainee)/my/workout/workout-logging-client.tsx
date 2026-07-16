@@ -766,26 +766,32 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
         );
       })()}
 
+        {doneCount > 0 && <div style={{ height: 88 }} />}
         {doneCount > 0 && (
-          <motion.button
-            onClick={finishWorkout}
-            disabled={finishingWorkout}
-            animate={finishingWorkout ? {} : {
-              boxShadow: [
-                "0 0 0 0 rgba(168,255,62,0.4)",
-                "0 0 0 12px rgba(168,255,62,0)",
-                "0 0 0 0 rgba(168,255,62,0)",
-              ],
-            }}
-            transition={{ duration: 2, repeat: Infinity }}
-            style={{
-              width: "100%", marginTop: 20, padding: "16px 0", borderRadius: 18, border: "none", cursor: finishingWorkout ? "default" : "pointer",
-              background: GREEN, color: "#08120a", fontSize: 15, fontWeight: 900,
-              opacity: finishingWorkout ? 0.7 : 1,
-              display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-            }}>
-            {finishingWorkout ? "שומר..." : <><Trophy size={18} /> סיים אימון ({doneCount}/{exercises.length})</>}
-          </motion.button>
+          <div style={{
+            position: "fixed", bottom: 88, left: "50%", transform: "translateX(-50%)",
+            width: "100%", maxWidth: 480, padding: "0 20px", boxSizing: "border-box", zIndex: 60,
+          }}>
+            <motion.button
+              onClick={finishWorkout}
+              disabled={finishingWorkout}
+              animate={finishingWorkout ? {} : {
+                boxShadow: [
+                  "0 0 0 0 rgba(168,255,62,0.4)",
+                  "0 0 0 12px rgba(168,255,62,0)",
+                  "0 0 0 0 rgba(168,255,62,0)",
+                ],
+              }}
+              transition={{ duration: 2, repeat: Infinity }}
+              style={{
+                width: "100%", height: 56, borderRadius: 999, border: "none", cursor: finishingWorkout ? "default" : "pointer",
+                background: GREEN, color: "#08120a", fontSize: 17, fontWeight: 900,
+                opacity: finishingWorkout ? 0.7 : 1,
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+              }}>
+              {finishingWorkout ? "שומר..." : "סיים אימון 🏆"}
+            </motion.button>
+          </div>
         )}
 
         {saveToast && (
