@@ -599,12 +599,12 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                 background: "#161B22",
                 boxShadow: "0 8px 24px rgba(0,0,0,0.35)",
               }}>
-                {/* Card header — matches code/ExerciseCard.tsx exactly (the reference implementation, newer than the canvas prototype) */}
+                {/* Card header — badge sits inline next to the name (screenshot 06), trophy/arrow icons trail the text */}
                 <div style={{ padding: 12, display: "flex", alignItems: "center", gap: 12 }}>
-                  <span style={{ fontSize: 12, fontWeight: 900, color: "#08120a", background: GREEN, width: 24, height: 24, borderRadius: 8, flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{idx + 1}</span>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <div style={{ fontSize: 15, fontWeight: 800, color: isDone ? "rgba(255,255,255,0.55)" : "#fff" }}>{displayName}</div>
+                      <span style={{ fontSize: 12, fontWeight: 900, color: "#08120a", background: GREEN, width: 22, height: 22, borderRadius: 7, flexShrink: 0, display: "inline-flex", alignItems: "center", justifyContent: "center" }}>{idx + 1}</span>
                       {swappedNames[ex.id] && (
                         <span style={{ fontSize: 9, fontWeight: 700, color: GREEN, background: "rgba(168,255,62,0.2)", padding: "2px 6px", borderRadius: 99 }}>הוחלף</span>
                       )}
@@ -619,10 +619,10 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                       return (
                         <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 4 }}>
                           {hist.pr > 0 && (
-                            <span style={{ fontSize: 12, color: GREEN, fontWeight: 700 }}>🏆 שיא: {hist.pr} ק״ג</span>
+                            <span style={{ fontSize: 12, color: GREEN, fontWeight: 700 }}>שיא: {hist.pr} ק״ג 🏆</span>
                           )}
                           {hist.lastLabel && (
-                            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>↩︎ בפעם שעברה: {hist.lastLabel}</span>
+                            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>בפעם שעברה: {hist.lastLabel} ↩︎</span>
                           )}
                         </div>
                       );
