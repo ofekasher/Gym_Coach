@@ -83,9 +83,9 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
 
   const Chip = ({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) => (
     <button onClick={onClick} style={{
-      background: active ? "#7C3AED" : "rgba(255,255,255,0.04)",
-      color: active ? "#fff" : "#A1A1AA",
-      border: `1px solid ${active ? "#7C3AED" : "rgba(255,255,255,0.08)"}`,
+      background: active ? "#b6ff4a" : "rgba(255,255,255,0.04)",
+      color: active ? "#0a0a0a" : "#A1A1AA",
+      border: `1px solid ${active ? "#b6ff4a" : "rgba(255,255,255,0.08)"}`,
       borderRadius: 999,
       padding: "5px 13px",
       fontSize: 12,
@@ -109,8 +109,8 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
           </p>
         </div>
         <button onClick={() => setShowAdd(!showAdd)} style={{
-          background: "linear-gradient(135deg,#7C3AED,#5B21B6)",
-          color: "#fff",
+          background: "#b6ff4a",
+          color: "#0a0a0a",
           border: "none",
           borderRadius: 999,
           padding: "10px 20px",
@@ -120,7 +120,7 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
           display: "flex",
           alignItems: "center",
           gap: 8,
-          boxShadow: "0 4px 20px rgba(124,58,237,0.4)",
+          boxShadow: "0 4px 20px rgba(182,255,74,0.4)",
         }}>
           <Plus style={{ width: 16, height: 16 }} /> הוסף תרגיל
         </button>
@@ -128,7 +128,7 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
 
       {/* Add exercise form */}
       {showAdd && (
-        <div style={{ background: "#1A1A1F", border: "1px solid rgba(124,58,237,0.2)", borderRadius: 20, padding: 22, marginBottom: 20 }}>
+        <div style={{ background: "#141414", border: "1px solid rgba(182,255,74,0.2)", borderRadius: 20, padding: 22, marginBottom: 20 }}>
           <h3 style={{ color: "#fff", fontWeight: 700, fontSize: 15, marginBottom: 16 }}>תרגיל חדש</h3>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12, marginBottom: 12 }}>
             <div>
@@ -152,7 +152,7 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
             <input style={INPUT_S} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="הוראות ביצוע..." />
           </div>
           <div style={{ display: "flex", gap: 8 }}>
-            <button onClick={addExercise} disabled={saving} style={{ background: "linear-gradient(135deg,#7C3AED,#5B21B6)", color: "#fff", border: "none", borderRadius: 999, padding: "10px 20px", fontWeight: 700, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
+            <button onClick={addExercise} disabled={saving} style={{ background: "#b6ff4a", color: "#0a0a0a", border: "none", borderRadius: 999, padding: "10px 20px", fontWeight: 700, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
               {saving ? <Loader2 style={{ width: 16, height: 16 }} /> : null} שמור
             </button>
             <button onClick={() => setShowAdd(false)} style={{ background: "rgba(255,255,255,0.05)", color: "#fff", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 999, padding: "10px 20px", fontWeight: 600, fontSize: 14, cursor: "pointer" }}>ביטול</button>
@@ -161,7 +161,7 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
       )}
 
       {/* Search + Filters */}
-      <div style={{ background: "#1A1A1F", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 18, padding: "16px 18px", marginBottom: 22 }}>
+      <div style={{ background: "#141414", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 18, padding: "16px 18px", marginBottom: 22 }}>
         {/* Search bar */}
         <div style={{ position: "relative", marginBottom: 14 }}>
           <Search style={{ position: "absolute", right: 14, top: "50%", transform: "translateY(-50%)", width: 16, height: 16, color: "#52525B" }} />
@@ -248,8 +248,8 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 10 }}>
             {exs.map(ex => (
               <div key={ex.id} style={{
-                background: "#1A1A1F",
-                border: `1px solid ${expanded === ex.id ? "rgba(124,58,237,0.35)" : "rgba(255,255,255,0.06)"}`,
+                background: "#141414",
+                border: `1px solid ${expanded === ex.id ? "rgba(182,255,74,0.35)" : "rgba(255,255,255,0.06)"}`,
                 borderRadius: 16,
                 overflow: "hidden",
                 transition: "border-color 0.15s",
@@ -284,16 +284,16 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
                     )}
                     {ex.howTo && (
                       <div style={{ marginBottom: 10 }}>
-                        <div style={{ color: "#7C3AED", fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 5 }}>ביצוע</div>
+                        <div style={{ color: "#b6ff4a", fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 5 }}>ביצוע</div>
                         <p style={{ color: "#A1A1AA", fontSize: 12, lineHeight: 1.6 }}>{ex.howTo}</p>
                       </div>
                     )}
                     {ex.tips?.length > 0 && (
                       <div style={{ marginBottom: 8 }}>
-                        <div style={{ color: "#7C3AED", fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 5 }}>טיפים</div>
+                        <div style={{ color: "#b6ff4a", fontSize: 10, fontWeight: 800, textTransform: "uppercase", marginBottom: 5 }}>טיפים</div>
                         {ex.tips.map((tip: string, i: number) => (
                           <div key={i} style={{ display: "flex", gap: 6, marginBottom: 3 }}>
-                            <span style={{ color: "#7C3AED" }}>•</span>
+                            <span style={{ color: "#b6ff4a" }}>•</span>
                             <span style={{ color: "#A1A1AA", fontSize: 12 }}>{tip}</span>
                           </div>
                         ))}
