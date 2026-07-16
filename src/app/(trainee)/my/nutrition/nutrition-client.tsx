@@ -1,10 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Sunrise, Cloud, Moon, Apple, Utensils, Droplet, type LucideIcon } from "lucide-react";
+import { Sunrise, Cloud, Moon, Apple, Utensils, Droplet, Camera, type LucideIcon } from "lucide-react";
 
 const GREEN = "#a8ff3e";
-const GROCERY_PHOTO = "https://images.unsplash.com/photo-1610348725531-843dff563e2c?w=800&q=70&auto=format&fit=crop";
 const WATER_GOAL = 2500;
 
 const MEAL_ICONS: Record<string, LucideIcon> = {
@@ -89,12 +88,10 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
   const activePlan = propPlan;
   const meals = activePlan?.meals?.length ? activePlan.meals : DEFAULT_MEALS;
   const targetCalories = activePlan?.calories ?? 2000;
-  const targetProtein = activePlan?.protein ?? 153;
-  const targetCarbs = activePlan?.carbs ?? 200;
-  const targetFat = activePlan?.fat ?? 62;
 
-  // Calories eaten so far: sum over checked items, scaled by actual vs. planned grams
+  // Calories + macros eaten so far: sum over checked items, scaled by actual vs. planned grams
   let eatenCalories = 0;
+  let eatenProtein = 0, eatenCarbs = 0, eatenFat = 0;
   for (const meal of meals) {
     const allFoods = [...(meal.foodItems ?? []), ...(extraItems[meal.name] ?? [])];
     for (const food of allFoods) {
@@ -103,9 +100,18 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
       const grams = actualGrams[key] ?? food.quantity ?? 0;
       const ratio = food.quantity ? grams / food.quantity : 1;
       eatenCalories += Math.round((food.calories ?? 0) * ratio);
+      eatenProtein += Math.round((food.protein ?? 0) * ratio);
+      eatenCarbs += Math.round((food.carbs ?? 0) * ratio);
+      eatenFat += Math.round((food.fat ?? 0) * ratio);
     }
   }
   const remainingCalories = Math.max(0, targetCalories - eatenCalories);
+  // 3-arc donut geometry (protein=lime, carbs=indigo, fat=amber), proportional to calories from each macro
+  const macroCalTotal = Math.max(1, eatenProtein * 4 + eatenCarbs * 4 + eatenFat * 9);
+  const donutR = 70, donutCircum = 2 * Math.PI * donutR;
+  const proteinLen = (eatenProtein * 4 / macroCalTotal) * donutCircum;
+  const carbsLen = (eatenCarbs * 4 / macroCalTotal) * donutCircum;
+  const fatLen = (eatenFat * 9 / macroCalTotal) * donutCircum;
 
   const toggleFood = async (meal: any, food: any) => {
     const key = `${meal.name}::${food.name}`;
@@ -371,33 +377,70 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
     <div style={{ background: "#12121f", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px 0" }}>
 
-        {/* Section 1 — grocery hero card (unchanged layout, now shows "נותרו") */}
-        <div style={{
-          position: "relative", height: 192, borderRadius: 20, overflow: "hidden", marginBottom: 24,
-          backgroundImage: `url(${GROCERY_PHOTO})`, backgroundSize: "cover", backgroundPosition: "center",
-        }}>
-          <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.55)" }} />
-          <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 4 }}>
-            <div style={{ fontSize: 44, fontWeight: 800, color: "#fff", lineHeight: 1 }}>{remainingCalories}</div>
-            <div style={{ fontSize: 13, color: GREEN, fontWeight: 700 }}>נותרו קלוריות</div>
-
-            <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 14 }}>
-              {[
-                { label: "שומן", value: targetFat },
-                { label: "פחמימה", value: targetCarbs },
-                { label: "חלבון", value: targetProtein },
-              ].map((m, i) => (
-                <div key={m.label} style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                  {i > 0 && <div style={{ width: 1, height: 26, background: "rgba(255,255,255,0.2)" }} />}
-                  <div style={{ textAlign: "center" }}>
-                    <div style={{ fontSize: 16, fontWeight: 800, color: "#fff" }}>{m.value}</div>
-                    <div style={{ fontSize: 10, color: GREEN, marginTop: 2 }}>{m.label}</div>
-                  </div>
-                </div>
-              ))}
+        {/* Section 1 — macro donut card */}
+        <div style={{ background: "#1c1c2e", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 24, padding: "24px 20px", marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
+            <div style={{ position: "relative", width: 170, height: 170 }}>
+              <svg width="170" height="170" viewBox="0 0 170 170" style={{ transform: "rotate(-90deg)" }}>
+                <circle cx="85" cy="85" r={donutR} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="16" />
+                {proteinLen > 0 && (
+                  <circle cx="85" cy="85" r={donutR} fill="none" stroke={GREEN} strokeWidth="16" strokeLinecap="round"
+                    strokeDasharray={`${proteinLen} ${donutCircum}`} strokeDashoffset={0} />
+                )}
+                {carbsLen > 0 && (
+                  <circle cx="85" cy="85" r={donutR} fill="none" stroke="#6366f1" strokeWidth="16" strokeLinecap="round"
+                    strokeDasharray={`${carbsLen} ${donutCircum}`} strokeDashoffset={-proteinLen} />
+                )}
+                {fatLen > 0 && (
+                  <circle cx="85" cy="85" r={donutR} fill="none" stroke="#f59e0b" strokeWidth="16" strokeLinecap="round"
+                    strokeDasharray={`${fatLen} ${donutCircum}`} strokeDashoffset={-(proteinLen + carbsLen)} />
+                )}
+              </svg>
+              <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontSize: 32, fontWeight: 900, letterSpacing: "-0.02em", color: "#fff" }}>{eatenCalories.toLocaleString()}</span>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>קק״ל</span>
+              </div>
             </div>
           </div>
+          <div style={{ display: "flex", justifyContent: "space-around", textAlign: "center" }}>
+            <div>
+              <div style={{ width: 12, height: 12, borderRadius: 4, background: GREEN, margin: "0 auto 6px" }} />
+              <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>{eatenProtein}<span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>ג׳</span></div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>חלבון</div>
+            </div>
+            <div>
+              <div style={{ width: 12, height: 12, borderRadius: 4, background: "#6366f1", margin: "0 auto 6px" }} />
+              <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>{eatenCarbs}<span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>ג׳</span></div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>פחמימה</div>
+            </div>
+            <div>
+              <div style={{ width: 12, height: 12, borderRadius: 4, background: "#f59e0b", margin: "0 auto 6px" }} />
+              <div style={{ fontSize: 18, fontWeight: 900, color: "#fff" }}>{eatenFat}<span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", fontWeight: 600 }}>ג׳</span></div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>שומן</div>
+            </div>
+          </div>
+          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", textAlign: "center", marginTop: 14 }}>
+            {remainingCalories.toLocaleString()} קק״ל נותרו מתוך {targetCalories.toLocaleString()}
+          </div>
         </div>
+
+        {/* Camera check card */}
+        <button
+          onClick={() => { setActiveTab("photo"); openAddModal(meals[0]?.name ?? "ארוחה"); }}
+          style={{
+            width: "100%", border: "1.5px dashed rgba(255,255,255,0.18)", borderRadius: 20,
+            padding: 16, marginBottom: 24, display: "flex", alignItems: "center", gap: 14,
+            background: "transparent", cursor: "pointer", textAlign: "right",
+          }}
+        >
+          <div style={{ width: 44, height: 44, borderRadius: 13, background: "rgba(168,255,62,0.13)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <Camera size={22} color={GREEN} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>בדיקת קלוריות</div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", marginTop: 2 }}>צלם את הארוחה שלך לספירה אוטומטית</div>
+          </div>
+        </button>
 
         {/* Section 2 — meal sections */}
         {meals.map((meal: any) => (
