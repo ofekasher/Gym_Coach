@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/weigh-in-reminder",
+      "schedule": "0 4 * * 4"
+    }
+  ]
+}
