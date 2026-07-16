@@ -70,32 +70,22 @@ export const DEMO_TRAINEES = [
           {
             id: "m1", nutritionPlanId: "np1", name: "ארוחת בוקר", time: "07:30", order: 1,
             foodItems: [
-              { id: "f1", mealId: "m1", name: "שיבולת שועל", quantity: 100, unit: "גרם", calories: 370, protein: 13, carbs: 58, fat: 7, category: "פחמימות" },
-              { id: "f2", mealId: "m1", name: "חלב 3%", quantity: 250, unit: "מ\"ל", calories: 158, protein: 8, carbs: 11, fat: 8, category: "חלב" },
-              { id: "f3", mealId: "m1", name: "בננה", quantity: 1, unit: "יחידה", calories: 89, protein: 1, carbs: 23, fat: 0, category: "פירות" },
+              { id: "f1", mealId: "m1", name: "חביתה מ-3 ביצים + ירקות", quantity: 1, unit: "מנה", calories: 320, protein: 24, carbs: 8, fat: 22, category: "חלבונים" },
+              { id: "f2", mealId: "m1", name: "קוטג׳ 5% עם פרי", quantity: 1, unit: "מנה", calories: 240, protein: 20, carbs: 22, fat: 6, category: "חלב" },
             ],
           },
           {
             id: "m2", nutritionPlanId: "np1", name: "ארוחת צהריים", time: "13:00", order: 2,
             foodItems: [
-              { id: "f4", mealId: "m2", name: "חזה עוף", quantity: 200, unit: "גרם", calories: 330, protein: 62, carbs: 0, fat: 7, category: "חלבונים" },
-              { id: "f5", mealId: "m2", name: "אורז לבן מבושל", quantity: 200, unit: "גרם", calories: 260, protein: 5, carbs: 57, fat: 0, category: "פחמימות" },
-              { id: "f6", mealId: "m2", name: "ברוקולי מאודה", quantity: 150, unit: "גרם", calories: 50, protein: 4, carbs: 8, fat: 0, category: "ירקות" },
+              { id: "f4", mealId: "m2", name: "חזה עוף + אורז מלא", quantity: 1, unit: "מנה", calories: 560, protein: 45, carbs: 60, fat: 12, category: "חלבונים" },
+              { id: "f5", mealId: "m2", name: "טונה + קינואה", quantity: 1, unit: "מנה", calories: 480, protein: 40, carbs: 45, fat: 12, category: "חלבונים" },
             ],
           },
           {
-            id: "m3", nutritionPlanId: "np1", name: "חטיף לפני אימון", time: "16:30", order: 3,
+            id: "m4", nutritionPlanId: "np1", name: "ארוחת ערב", time: "20:00", order: 3,
             foodItems: [
-              { id: "f7", mealId: "m3", name: "חמאת בוטנים", quantity: 30, unit: "גרם", calories: 180, protein: 8, carbs: 6, fat: 15, category: "שומנים" },
-              { id: "f8", mealId: "m3", name: "לחם מחיטה מלאה", quantity: 2, unit: "פרוסות", calories: 160, protein: 6, carbs: 30, fat: 2, category: "פחמימות" },
-            ],
-          },
-          {
-            id: "m4", nutritionPlanId: "np1", name: "ארוחת ערב", time: "20:00", order: 4,
-            foodItems: [
-              { id: "f9", mealId: "m4", name: "סלמון אפוי", quantity: 180, unit: "גרם", calories: 370, protein: 40, carbs: 0, fat: 22, category: "חלבונים" },
-              { id: "f10", mealId: "m4", name: "בטטה", quantity: 200, unit: "גרם", calories: 172, protein: 3, carbs: 40, fat: 0, category: "פחמימות" },
-              { id: "f11", mealId: "m4", name: "סלט ירקות", quantity: 200, unit: "גרם", calories: 40, protein: 2, carbs: 8, fat: 0, category: "ירקות" },
+              { id: "f9", mealId: "m4", name: "סלמון אפוי + ירקות", quantity: 1, unit: "מנה", calories: 520, protein: 40, carbs: 15, fat: 30, category: "חלבונים" },
+              { id: "f10", mealId: "m4", name: "אומלט + סלט ירק", quantity: 1, unit: "מנה", calories: 400, protein: 28, carbs: 10, fat: 26, category: "חלבונים" },
             ],
           },
         ],

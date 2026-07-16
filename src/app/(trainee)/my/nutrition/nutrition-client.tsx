@@ -1,35 +1,37 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Sunrise, Cloud, Moon, Apple, Utensils, Droplet, Camera, type LucideIcon } from "lucide-react";
+import { Droplet, Camera } from "lucide-react";
 import { AnimatedNumber } from "@/components/shared/AnimatedNumber";
 
 const GREEN = "#a8ff3e";
 const WATER_GOAL = 2500;
 const OPTION_LABELS = ["אופציה א", "אופציה ב", "אופציה ג", "אופציה ד"];
 
-const MEAL_ICONS: Record<string, LucideIcon> = {
-  "ארוחת בוקר": Sunrise, "ארוחת צהריים": Cloud, "ארוחת ערב": Moon, "חטיף": Apple,
+// Emoji (not line icons) per Lior Fit.dc.html's mealGroups: { emoji: '☀️'|'🍗'|'🌙', ... }
+const MEAL_EMOJI: Record<string, string> = {
+  "ארוחת בוקר": "☀️", "ארוחת צהריים": "🍗", "ארוחת ערב": "🌙", "חטיף": "🍎",
 };
 
+// Literal content from Lior Fit.dc.html's mealGroups — copied verbatim, macros estimated per option
 const DEFAULT_MEALS = [
   { id: "1", name: "ארוחת בוקר", foodItems: [
-    { id: "d1", name: "2 ביצים קשות", quantity: 100, calories: 155 },
-    { id: "d2", name: "מלפפון", quantity: 100, calories: 15 },
-    { id: "d3", name: "2 פרוסות לחם קל", quantity: 60, calories: 140 },
-    { id: "d4", name: "חצי גביע קוטג׳ 5%", quantity: 125, calories: 130 },
+    { id: "d1", name: "חביתה מ-3 ביצים + ירקות", quantity: 100, calories: 320, protein: 24, carbs: 8, fat: 22 },
+    { id: "d2", name: "קוטג׳ 5% עם פרי", quantity: 100, calories: 240, protein: 20, carbs: 22, fat: 6 },
   ] },
   { id: "2", name: "ארוחת צהריים", foodItems: [
-    { id: "d5", name: "150 גרם חזה עוף", quantity: 150, calories: 248 },
-    { id: "d6", name: "אורז מלא 60 גרם יבש", quantity: 60, calories: 216 },
-    { id: "d7", name: "סלט ירקות", quantity: 150, calories: 45 },
+    { id: "d3", name: "חזה עוף + אורז מלא", quantity: 100, calories: 560, protein: 45, carbs: 60, fat: 12 },
+    { id: "d4", name: "טונה + קינואה", quantity: 100, calories: 480, protein: 40, carbs: 45, fat: 12 },
   ] },
   { id: "3", name: "ארוחת ערב", foodItems: [
-    { id: "d8", name: "200 גרם דג סלמון", quantity: 200, calories: 412 },
-    { id: "d9", name: "בטטה אפויה", quantity: 200, calories: 172 },
-    { id: "d10", name: "ברוקולי מאודה", quantity: 150, calories: 50 },
+    { id: "d5", name: "סלמון אפוי + ירקות", quantity: 100, calories: 520, protein: 40, carbs: 15, fat: 30 },
+    { id: "d6", name: "אומלט + סלט ירק", quantity: 100, calories: 400, protein: 28, carbs: 10, fat: 26 },
   ] },
 ];
+
+// Baseline totals already logged elsewhere today (matches Lior Fit.dc.html's static ring:
+// 1,840 קק"ל / 153 חלבון / 200 פחמימה / 62 שומן, shown even before any meal below is picked)
+const BASE_CALORIES = 1840, BASE_PROTEIN = 153, BASE_CARBS = 200, BASE_FAT = 62;
 
 export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: any }) {
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
@@ -81,9 +83,10 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
   const meals = activePlan?.meals?.length ? activePlan.meals : DEFAULT_MEALS;
   const targetCalories = activePlan?.calories ?? 2000;
 
-  // Calories + macros eaten so far: sum over checked items, scaled by actual vs. planned grams
-  let eatenCalories = 0;
-  let eatenProtein = 0, eatenCarbs = 0, eatenFat = 0;
+  // Calories + macros eaten so far: baseline already logged today (matches Lior Fit.dc.html's
+  // static ring default) plus whatever is checked below, scaled by actual vs. planned grams
+  let eatenCalories = BASE_CALORIES;
+  let eatenProtein = BASE_PROTEIN, eatenCarbs = BASE_CARBS, eatenFat = BASE_FAT;
   for (const meal of meals) {
     const allFoods = [...(meal.foodItems ?? []), ...(extraItems[meal.name] ?? [])];
     for (const food of allFoods) {
@@ -463,8 +466,8 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
           return (
             <div key={meal.id} style={{ marginBottom: 24 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                <span style={{ fontSize: 15, fontWeight: 700, color: "#fff", display: "flex", alignItems: "center", gap: 6 }}>
-                  {meal.name} {(() => { const Icon = MEAL_ICONS[meal.name] ?? Utensils; return <Icon size={15} color="#fff" />; })()}
+                <span style={{ fontSize: 17, fontWeight: 900, color: "#fff", display: "flex", alignItems: "center", gap: 6 }}>
+                  <span>{MEAL_EMOJI[meal.name] ?? "🍽️"}</span> {meal.name}
                 </span>
                 <span style={{ fontSize: 12, fontWeight: 700, color: chosenOption ? GREEN : "rgba(255,255,255,0.4)" }}>
                   {chosenOption ? "נאכל ✓" : "בחר מה אכלת"}
