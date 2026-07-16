@@ -41,3 +41,4 @@ netlify/
 .netlify/
 
 .vercel
+.env*
