@@ -46,9 +46,9 @@ type FormData = {
 
 const S = {
   card: { background: "#161618", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 18, padding: "18px 20px", marginBottom: 14 },
-  input: { background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 14, padding: "11px 14px", outline: "none", width: "100%", boxSizing: "border-box" as const, transition: "border-color 0.15s" },
+  input: { background: "#141414", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 14, padding: "11px 14px", outline: "none", width: "100%", boxSizing: "border-box" as const, transition: "border-color 0.15s" },
   label: { color: "#48484A", fontSize: 11, fontWeight: 700 as const, textTransform: "uppercase" as const, letterSpacing: "0.05em", display: "block" as const, marginBottom: 5 },
-  textarea: { background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 14, padding: "11px 14px", outline: "none", width: "100%", boxSizing: "border-box" as const, resize: "none" as const, minHeight: 80, fontFamily: "inherit" },
+  textarea: { background: "#141414", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, color: "#fff", fontSize: 14, padding: "11px 14px", outline: "none", width: "100%", boxSizing: "border-box" as const, resize: "none" as const, minHeight: 80, fontFamily: "inherit" },
   sectionTitle: { color: "#fff", fontSize: 14, fontWeight: 800, margin: "0 0 14px", display: "flex", alignItems: "center", gap: 8 },
 };
 

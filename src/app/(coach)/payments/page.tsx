@@ -4,8 +4,8 @@ import { CreditCard, Plus, CheckCircle2, Clock, XCircle, Loader2, ChevronDown } 
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
 
-const CARD = { background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 20 };
-const INPUT_S = { background: "#2C2C2E", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, height: 44, padding: "0 14px", color: "#fff", fontSize: 14, width: "100%", outline: "none", boxSizing: "border-box" as const };
+const CARD = { background: "#141414", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 20 };
+const INPUT_S = { background: "#1c1c1c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, height: 44, padding: "0 14px", color: "#fff", fontSize: 14, width: "100%", outline: "none", boxSizing: "border-box" as const };
 
 const PLAN_LABELS: Record<string, string> = { MONTHLY: "חודשי", QUARTERLY: "רבעוני", ANNUAL: "שנתי" };
 const STATUS_STYLE: Record<string, any> = {

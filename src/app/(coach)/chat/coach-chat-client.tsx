@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ChatWindow } from "@/components/shared/chat-window";
 import { MessageCircle } from "lucide-react";
 
-const CARD = { background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 20 };
+const CARD = { background: "#141414", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 20 };
 
 export default function CoachChatClient({ myId, trainees }: { myId: string; trainees: any[] }) {
   const [selected, setSelected] = useState<any>(trainees[0] ?? null);
@@ -38,7 +38,7 @@ export default function CoachChatClient({ myId, trainees }: { myId: string; trai
           <ChatWindow myId={myId} otherId={selected.id} otherName={selected.name ?? selected.email} />
         ) : (
           <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12 }}>
-            <MessageCircle style={{ width: 40, height: 40, color: "#3A3A3C" }} />
+            <MessageCircle style={{ width: 40, height: 40, color: "#2a2a2a" }} />
             <p style={{ color: "#52525B", fontSize: 14 }}>בחר מתאמן להתחלת שיחה</p>
           </div>
         )}

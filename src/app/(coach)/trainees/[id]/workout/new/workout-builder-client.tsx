@@ -285,18 +285,18 @@ export function WorkoutBuilderClient({ trainee, exercises, coachId }: {
           <button onClick={handleRandomPlan}
             style={{
               width: "100%", marginBottom: 16, padding: "18px 20px", borderRadius: 18, cursor: "pointer",
-              background: "linear-gradient(135deg, #7C3AED, #4F46E5)",
+              background: "#b6ff4a",
               border: "none", display: "flex", alignItems: "center", gap: 14,
-              boxShadow: "0 8px 32px rgba(124,58,237,0.35)",
+              boxShadow: "0 8px 32px rgba(182,255,74,0.35)",
             }}>
-            <div style={{ width: 46, height: 46, borderRadius: 14, background: "rgba(255,255,255,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Dices size={22} color="#fff" />
+            <div style={{ width: 46, height: 46, borderRadius: 14, background: "rgba(10,10,10,0.15)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Dices size={22} color="#0a0a0a" />
             </div>
             <div style={{ textAlign: "right", flex: 1 }}>
-              <div style={{ color: "#fff", fontWeight: 900, fontSize: 16 }}>תוכנית רנדומלית</div>
-              <div style={{ color: "rgba(255,255,255,0.6)", fontSize: 12, marginTop: 2 }}>מערכת תבחר תרגילים אוטומטית עבורך</div>
+              <div style={{ color: "#0a0a0a", fontWeight: 900, fontSize: 16 }}>תוכנית רנדומלית</div>
+              <div style={{ color: "rgba(10,10,10,0.6)", fontSize: 12, marginTop: 2 }}>מערכת תבחר תרגילים אוטומטית עבורך</div>
             </div>
-            <Shuffle style={{ width: 20, height: 20, color: "rgba(255,255,255,0.7)" }} />
+            <Shuffle style={{ width: 20, height: 20, color: "rgba(10,10,10,0.7)" }} />
           </button>
         </motion.div>
 

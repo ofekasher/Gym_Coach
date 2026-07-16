@@ -11,7 +11,7 @@ const TEMPLATE_LABELS: Record<string, string> = {
 
 const S = {
   card: { background: "#161618", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 18, overflow: "hidden" as const },
-  input: { background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, color: "#fff", fontSize: 13, padding: "7px 12px", outline: "none", width: "100%" },
+  input: { background: "#141414", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, color: "#fff", fontSize: 13, padding: "7px 12px", outline: "none", width: "100%" },
   label: { color: "#48484A", fontSize: 10, fontWeight: 700 as const, textTransform: "uppercase" as const, letterSpacing: "0.05em", display: "block" as const, marginBottom: 4 },
   btnYellow: { background: "#b6ff4a", color: "#111", border: "none", borderRadius: 999, padding: "8px 18px", fontWeight: 800 as const, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 },
   btnGhost: { background: "rgba(255,255,255,0.05)", color: "#71717A", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 999, padding: "8px 16px", fontWeight: 700 as const, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 },
@@ -321,7 +321,7 @@ export function WorkoutTab({ trainee }: { trainee: any }) {
           <p style={{ color: "#71717A", fontSize: 11, fontWeight: 700, marginBottom: 10 }}>אימונים שהושלמו לאחרונה</p>
           <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             {workoutLogs.slice(0, 5).map((log: any) => (
-              <div key={log.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "#1C1C1E", borderRadius: 10 }}>
+              <div key={log.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "8px 12px", background: "#141414", borderRadius: 10 }}>
                 <div>
                   <span style={{ color: "#fff", fontSize: 13, fontWeight: 600 }}>{log.sessionName || log.planName}</span>
                   <span style={{ color: "#52525B", fontSize: 11, marginRight: 8 }}>{log.exercisesCompleted}/{log.totalExercises} תרגילים · {log.totalSets} סטים</span>

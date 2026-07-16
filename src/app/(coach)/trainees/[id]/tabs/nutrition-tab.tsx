@@ -10,7 +10,7 @@ const PREF_LABELS: Record<string, string> = {
 };
 
 const S = {
-  input: { background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, color: "#fff", fontSize: 13, padding: "7px 12px", outline: "none", width: "100%" },
+  input: { background: "#141414", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, color: "#fff", fontSize: 13, padding: "7px 12px", outline: "none", width: "100%" },
   label: { color: "#48484A", fontSize: 10, fontWeight: 700 as const, textTransform: "uppercase" as const, letterSpacing: "0.05em", display: "block" as const, marginBottom: 4 },
   btnYellow: { background: "#b6ff4a", color: "#111", border: "none", borderRadius: 999, padding: "8px 18px", fontWeight: 800 as const, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 },
   btnGhost: { background: "rgba(255,255,255,0.05)", color: "#71717A", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 999, padding: "8px 16px", fontWeight: 700 as const, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 },

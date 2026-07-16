@@ -3,12 +3,12 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, User, Bell, CreditCard, Building2, Save, Eye, EyeOff } from "lucide-react";
 
-const CARD = { background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 20 };
+const CARD = { background: "#141414", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 20 };
 const SECTION = "mb-8";
 const LABEL = { color: "#71717A", fontSize: 11, fontWeight: 700, textTransform: "uppercase" as const, letterSpacing: "0.05em", marginBottom: 6, display: "block" };
-const INPUT_S = { background: "#2C2C2E", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, height: 44, padding: "0 14px", color: "#fff", fontSize: 14, width: "100%", outline: "none", boxSizing: "border-box" as const };
+const INPUT_S = { background: "#1c1c1c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, height: 44, padding: "0 14px", color: "#fff", fontSize: 14, width: "100%", outline: "none", boxSizing: "border-box" as const };
 const TOGGLE_ON = { background: "#b6ff4a", border: "none", borderRadius: 999, width: 44, height: 24, cursor: "pointer", position: "relative" as const, transition: "background 0.2s", flexShrink: 0 };
-const TOGGLE_OFF = { ...TOGGLE_ON, background: "#3A3A3C" };
+const TOGGLE_OFF = { ...TOGGLE_ON, background: "#2a2a2a" };
 
 function Toggle({ value, onChange }: { value: boolean; onChange: (v: boolean) => void }) {
   return (

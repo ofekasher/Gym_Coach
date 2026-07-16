@@ -18,7 +18,7 @@ function isoDate(y: number, m: number, d: number) { return `${y}-${String(m + 1)
 function todayISO() { return new Date().toISOString().slice(0, 10); }
 
 const S = {
-  input: { background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, color: "#fff", fontSize: 14, padding: "10px 14px", outline: "none", width: "100%" },
+  input: { background: "#141414", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 10, color: "#fff", fontSize: 14, padding: "10px 14px", outline: "none", width: "100%" },
   label: { color: "rgba(255,255,255,0.4)", fontSize: 11, fontWeight: 700 as const, letterSpacing: "0.04em", display: "block" as const, marginBottom: 5 },
   btnYellow: { background: "#b6ff4a", color: "#111", border: "none", borderRadius: 999, padding: "10px 22px", fontWeight: 800 as const, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 },
   btnGhost: { background: "rgba(255,255,255,0.05)", color: "rgba(255,255,255,0.5)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 999, padding: "10px 18px", fontWeight: 700 as const, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 },
