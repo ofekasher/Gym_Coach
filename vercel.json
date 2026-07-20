@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/cron/weekly-broadcast",
-      "schedule": "0 * * * *"
+      "schedule": "0 15 * * *"
     }
   ]
 }

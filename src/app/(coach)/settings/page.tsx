@@ -264,7 +264,8 @@ export default function CoachSettingsPage() {
         </div>
         <div style={{ ...CARD, padding: 20 }}>
           <p style={{ color: "#71717A", fontSize: 12, marginBottom: 16, lineHeight: 1.6 }}>
-            הודעת Push שנשלחת אוטומטית לכל המתאמנים שלך, בכל שבוע, ביום ובשעה שתבחר.
+            הודעת Push שנשלחת אוטומטית לכל המתאמנים שלך, בכל שבוע, ביום שתבחר. <br />
+            <span style={{ color: "#A78BFA" }}>שים לב:</span> בתוכנית האחסון הנוכחית ההודעה נשלחת פעם ביום בסביבות 17:00-18:00 — בחירת שעה מדויקת תהיה זמינה לאחר שדרוג תוכנית.
           </p>
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div>
@@ -274,7 +275,7 @@ export default function CoachSettingsPage() {
               </select>
             </div>
             <div>
-              <label style={LABEL}>שעה (שעון ישראל)</label>
+              <label style={LABEL}>שעה מועדפת (לעתיד)</label>
               <select style={{ ...INPUT_S, cursor: "pointer" }} value={broadcast.hour} onChange={e => setBroadcastField("hour", Number(e.target.value))}>
                 {Array.from({ length: 24 }, (_, h) => <option key={h} value={h}>{String(h).padStart(2, "0")}:00</option>)}
               </select>
