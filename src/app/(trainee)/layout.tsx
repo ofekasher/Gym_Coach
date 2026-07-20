@@ -8,7 +8,7 @@ export default async function TraineeLayout({ children }: { children: React.Reac
   // Lior Fit v2: radial green mesh over #0a1a0a, matching Lior Fit v2.dc.html exactly
   const bgStyle: React.CSSProperties = {
     background:
-      "radial-gradient(120% 90% at 70% 0%, rgba(88,196,72,0.32) 0%, rgba(8,11,7,0) 62%), #0a1a0a",
+      "radial-gradient(120% 90% at 70% 0%, rgba(88,196,72,0.32) 0%, rgba(10,26,10,0) 62%), #0a1a0a",
   };
 
   if (!isDatabaseConfigured) {

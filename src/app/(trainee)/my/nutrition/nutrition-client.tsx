@@ -411,7 +411,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
             background: "transparent", cursor: "pointer", textAlign: "right",
           }}
         >
-          <div style={{ width: 44, height: 44, borderRadius: 13, background: "rgba(198,245,60,0.13)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <div style={{ width: 44, height: 44, borderRadius: 13, background: "rgba(168,255,62,0.13)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <Camera size={22} color={GREEN} />
           </div>
           <div style={{ flex: 1 }}>
@@ -506,7 +506,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                       style={{
                         width: "100%", textAlign: "right", cursor: loading ? "default" : "pointer",
                         borderRadius: 16, padding: "14px 16px",
-                        background: checked ? "rgba(198,245,60,0.08)" : "#0f1f0f",
+                        background: checked ? "rgba(168,255,62,0.08)" : "#0f1f0f",
                         border: checked ? `1.5px solid ${GREEN}` : "1px solid rgba(255,255,255,0.07)",
                       }}
                     >
@@ -547,7 +547,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                     )}
                   </div>
                   <label style={{
-                    flex: 1, border: "1.5px dashed rgba(198,245,60,0.4)", borderRadius: 14, cursor: "pointer",
+                    flex: 1, border: "1.5px dashed rgba(168,255,62,0.4)", borderRadius: 14, cursor: "pointer",
                     display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 5, color: GREEN,
                   }}>
                     <Camera size={18} />

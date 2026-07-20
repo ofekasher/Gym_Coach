@@ -41,7 +41,7 @@ function SwapModal({ exerciseName, muscleGroup, onSwap, onClose }: {
               display: "flex", alignItems: "center", justifyContent: "space-between",
               transition: "border-color 0.15s",
             }}
-            onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(198,245,60,0.4)"}
+            onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(168,255,62,0.4)"}
             onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.07)"}
             >
               <span style={{ fontSize: 14, fontWeight: 600, color: "#fff" }}>{alt.name}</span>
@@ -108,7 +108,7 @@ function InfoModal({ ex, displayName, onClose }: { ex: any; displayName: string;
         <div style={{ fontSize: 13, fontWeight: 700, color: GREEN, marginBottom: 10 }}>
           {ex.sets ?? 3} סטים × {ex.reps ?? 12} חזרות
         </div>
-        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", background: "rgba(198,245,60,0.08)", borderRadius: 12, padding: "10px 12px", marginBottom: 16 }}>
+        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", background: "rgba(168,255,62,0.08)", borderRadius: 12, padding: "10px 12px", marginBottom: 16 }}>
           💡 טיפ: {tip}
         </div>
         <div style={{ marginBottom: 16 }}>
@@ -136,7 +136,7 @@ interface SetLog { weight: string; reps: string; effort: Effort; done: boolean }
 // driven by the useRestTimer hook from code/useRestTimer.ts.
 function RestTimerBar({ label, progress, onAdd, onSkip }: { label: string; progress: number; onAdd: () => void; onSkip: () => void }) {
   return (
-    <div style={{ background: "rgba(198,245,60,0.1)", border: "1px solid rgba(198,245,60,0.35)", borderRadius: 16, padding: "14px 16px", marginBottom: 20 }}>
+    <div style={{ background: "rgba(168,255,62,0.1)", border: "1px solid rgba(168,255,62,0.35)", borderRadius: 16, padding: "14px 16px", marginBottom: 20 }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <span style={{ fontSize: 15 }}>⏱️</span>
@@ -318,7 +318,7 @@ function ExerciseSheet({
 
         <div style={{
           display: "flex", alignItems: "center", justifyContent: "space-between",
-          background: "rgba(198,245,60,0.08)", border: "1px solid rgba(198,245,60,0.25)",
+          background: "rgba(168,255,62,0.08)", border: "1px solid rgba(168,255,62,0.25)",
           borderRadius: 16, padding: "14px 16px", marginBottom: 14,
         }}>
           <div>
@@ -672,10 +672,10 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
 
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 5 }}>
-                      <span style={{ width: 22, height: 22, borderRadius: 7, background: "rgba(198,245,60,0.14)", color: GREEN, fontSize: 12, fontWeight: 800, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>{idx + 1}</span>
+                      <span style={{ width: 22, height: 22, borderRadius: 7, background: "rgba(168,255,62,0.14)", color: GREEN, fontSize: 12, fontWeight: 800, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>{idx + 1}</span>
                       <span style={{ fontSize: 16, fontWeight: 800, color: isDone ? "rgba(255,255,255,0.55)" : "#fff" }}>{displayName}</span>
                       {swappedNames[ex.id] && (
-                        <span style={{ fontSize: 9, fontWeight: 700, color: GREEN, background: "rgba(198,245,60,0.2)", padding: "2px 6px", borderRadius: 99 }}>הוחלף</span>
+                        <span style={{ fontSize: 9, fontWeight: 700, color: GREEN, background: "rgba(168,255,62,0.2)", padding: "2px 6px", borderRadius: 99 }}>הוחלף</span>
                       )}
                     </div>
                     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.55)" }}>
@@ -693,7 +693,7 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
                         style={{
                           height: 38, padding: "0 16px", borderRadius: 12, border: "none", cursor: "pointer",
                           display: "flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 800,
-                          background: isDone ? "rgba(198,245,60,0.14)" : GREEN,
+                          background: isDone ? "rgba(168,255,62,0.14)" : GREEN,
                           color: isDone ? GREEN : "#0a1004",
                         }}
                       >
@@ -781,9 +781,9 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
               disabled={finishingWorkout}
               animate={finishingWorkout ? {} : {
                 boxShadow: [
-                  "0 0 0 0 rgba(198,245,60,0.4)",
-                  "0 0 0 12px rgba(198,245,60,0)",
-                  "0 0 0 0 rgba(198,245,60,0)",
+                  "0 0 0 0 rgba(168,255,62,0.4)",
+                  "0 0 0 12px rgba(168,255,62,0)",
+                  "0 0 0 0 rgba(168,255,62,0)",
                 ],
               }}
               transition={{ duration: 2, repeat: Infinity }}

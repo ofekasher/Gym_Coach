@@ -35,7 +35,7 @@ export function WorkoutPreviewClient({ session, coachName }: { session: any; coa
         {/* Hero */}
         <div style={{ position: "relative", height: 380 }}>
           <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${heroImg})`, backgroundSize: "cover", backgroundPosition: "center" }} />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #0a1a0a 4%, rgba(8,11,7,0.15) 40%, rgba(8,11,7,0.35) 100%)" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #0a1a0a 4%, rgba(10,26,10,0.15) 40%, rgba(10,26,10,0.35) 100%)" }} />
           <div style={{ position: "absolute", top: 56, right: 18, left: 18, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <Link href="/my/dashboard" style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(10,16,4,0.5)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <ChevronLeft size={18} color="#fff" />
@@ -92,14 +92,14 @@ export function WorkoutPreviewClient({ session, coachName }: { session: any; coa
           <div style={{ fontSize: 17, fontWeight: 800, marginBottom: 12 }}>פרטי המאמן</div>
           <Link href="/my/chat" style={{ textDecoration: "none" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 12, background: "#0f1f0f", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 18, padding: 12, marginBottom: 22 }}>
-              <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(198,245,60,0.14)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 18, fontWeight: 900, color: LIME }}>
+              <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(168,255,62,0.14)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 18, fontWeight: 900, color: LIME }}>
                 {coachName.charAt(0)}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>{coachName}</div>
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", marginTop: 2 }}>המאמן שלך</div>
               </div>
-              <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(198,245,60,0.14)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ width: 38, height: 38, borderRadius: "50%", background: "rgba(168,255,62,0.14)", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <MessageCircle size={17} color={LIME} />
               </div>
             </div>

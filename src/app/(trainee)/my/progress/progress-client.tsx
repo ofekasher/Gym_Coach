@@ -41,7 +41,7 @@ export function ProgressClient({ checkIns, targetWeight, waterMl, todayCalories 
     <div dir="rtl" style={{ position: "relative", minHeight: "100vh", paddingBottom: 100 }}>
       <div style={{
         position: "absolute", top: 0, left: 0, right: 0, height: 220,
-        background: "radial-gradient(120% 90% at 50% 0%, rgba(88,196,72,0.28) 0%, rgba(8,11,7,0) 60%)",
+        background: "radial-gradient(120% 90% at 50% 0%, rgba(88,196,72,0.28) 0%, rgba(10,26,10,0) 60%)",
         pointerEvents: "none",
       }} />
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 20px 12px", position: "relative" }}>
@@ -79,7 +79,7 @@ export function ProgressClient({ checkIns, targetWeight, waterMl, todayCalories 
         {/* Target weight — icon right, value center, gradient button left (matches dc.html DOM order exactly) */}
         <div style={{
           display: "flex", alignItems: "center", gap: 12,
-          background: `radial-gradient(120% 160% at 100% 0%, rgba(88,196,72,0.22), rgba(18,22,15,0) 60%),${CARD}`,
+          background: `radial-gradient(120% 160% at 100% 0%, rgba(88,196,72,0.22), rgba(15,31,15,0) 60%),${CARD}`,
           border: "1px solid rgba(255,255,255,0.06)", borderRadius: 20, padding: "14px 14px 14px 8px", marginBottom: 14,
         }}>
           <div style={{ width: 46, height: 46, borderRadius: "50%", background: "#0a1004", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
@@ -96,12 +96,12 @@ export function ProgressClient({ checkIns, targetWeight, waterMl, todayCalories 
 
         {/* Stat grid — calories (real, top-right) / heart-rate (hardcoded, top-left) / water (real, bottom-right) / steps (hardcoded, bottom-left) */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 22 }}>
-          <div style={{ background: `radial-gradient(120% 120% at 100% 100%, rgba(88,196,72,0.16), rgba(18,22,15,0) 60%),${CARD}`, border: "1px solid rgba(255,255,255,0.06)", borderRadius: 20, padding: 15, height: 150, display: "flex", flexDirection: "column" }}>
+          <div style={{ background: `radial-gradient(120% 120% at 100% 100%, rgba(88,196,72,0.16), rgba(15,31,15,0) 60%),${CARD}`, border: "1px solid rgba(255,255,255,0.06)", borderRadius: 20, padding: 15, height: 150, display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 6 }}><Flame size={16} color="rgba(255,255,255,0.7)" /><span style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>קלוריות</span></div>
             <Waveform d="M0 30 L14 30 L22 16 L30 16 L38 26 L48 26 L56 12 L64 12 L72 28 L82 28 L90 10 L98 24 L120 24" />
             <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}><span style={{ fontSize: 26, fontWeight: 900, color: "#fff" }}>{todayCalories.toLocaleString()}</span><span style={{ fontSize: 13, color: "rgba(255,255,255,0.5)" }}>נאכלו</span></div>
           </div>
-          <div style={{ background: `radial-gradient(120% 120% at 0% 100%, rgba(88,196,72,0.16), rgba(18,22,15,0) 60%),${CARD}`, border: "1px solid rgba(255,255,255,0.06)", borderRadius: 20, padding: 15, height: 150, display: "flex", flexDirection: "column" }}>
+          <div style={{ background: `radial-gradient(120% 120% at 0% 100%, rgba(88,196,72,0.16), rgba(15,31,15,0) 60%),${CARD}`, border: "1px solid rgba(255,255,255,0.06)", borderRadius: 20, padding: 15, height: 150, display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 6 }}><Heart size={16} color="rgba(255,255,255,0.7)" /><span style={{ fontSize: 13, color: "rgba(255,255,255,0.7)" }}>דופק</span></div>
             <Waveform d="M0 22 L18 22 L24 22 L30 14 L36 28 L42 10 L48 30 L54 20 L72 20 L80 20 L86 8 L92 32 L100 18 L120 18" />
             <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}><span style={{ fontSize: 26, fontWeight: 900, color: "#fff" }}>{HARDCODED.heartRate}</span><span style={{ fontSize: 13, color: "rgba(255,255,255,0.5)" }}>bpm</span></div>
@@ -163,8 +163,8 @@ function WeightChart({ logs }: { logs: { date: string | Date; weight: number }[]
       <svg viewBox={`0 0 ${W} 120`} preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
         <defs>
           <linearGradient id="v2-wg" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="rgba(198,245,60,0.35)" />
-            <stop offset="1" stopColor="rgba(198,245,60,0)" />
+            <stop offset="0" stopColor="rgba(168,255,62,0.35)" />
+            <stop offset="1" stopColor="rgba(168,255,62,0)" />
           </linearGradient>
         </defs>
         <path d={area} fill="url(#v2-wg)" />

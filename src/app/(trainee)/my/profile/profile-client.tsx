@@ -226,7 +226,7 @@ export function ProfileClient({ user }: { user: any }) {
             width: 84, height: 84, borderRadius: "50%", background: "#0f1f0f", flexShrink: 0,
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 28, fontWeight: 900, color: GREEN,
-            border: `3px solid ${GREEN}`, boxShadow: "0 0 0 4px rgba(198,245,60,0.15)",
+            border: `3px solid ${GREEN}`, boxShadow: "0 0 0 4px rgba(168,255,62,0.15)",
           }}>
             {user?.name?.[0] ?? "מ"}
           </div>

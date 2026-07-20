@@ -164,8 +164,8 @@ export function TraineeDashboardClient({ user }: { user: any }) {
                   backgroundImage: `url(${getMuscleGymPhoto(session.exercises?.[0]?.exercise?.muscleGroup)})`,
                   backgroundSize: "cover", backgroundPosition: "center",
                 }}>
-                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(8,11,7,0.92) 8%, rgba(8,11,7,0.1) 55%)" }} />
-                  <div style={{ position: "absolute", top: 14, right: 14, background: "rgba(10,16,4,0.55)", backdropFilter: "blur(6px)", border: "1px solid rgba(198,245,60,0.4)", borderRadius: 999, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6 }}>
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(10,26,10,0.92) 8%, rgba(10,26,10,0.1) 55%)" }} />
+                  <div style={{ position: "absolute", top: 14, right: 14, background: "rgba(10,16,4,0.55)", backdropFilter: "blur(6px)", border: "1px solid rgba(168,255,62,0.4)", borderRadius: 999, padding: "6px 12px", display: "flex", alignItems: "center", gap: 6 }}>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={LIME} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
                     <span style={{ fontSize: 12, fontWeight: 700, color: LIME }}>{minutes} דק׳</span>
                   </div>
