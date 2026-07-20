@@ -157,7 +157,7 @@ export function TraineeDashboardClient({ user }: { user: any }) {
             const muscles = Array.from(new Set(session.exercises?.map((e: any) => e.exercise?.muscleGroup).filter(Boolean) ?? []));
             const minutes = Math.max(15, (session.exercises?.length ?? 0) * 5);
             return (
-              <Link key={session.id} href="/my/workout" style={{ textDecoration: "none", flexShrink: 0 }}>
+              <Link key={session.id} href="/my/workout/preview" style={{ textDecoration: "none", flexShrink: 0 }}>
                 <div style={{
                   position: "relative", width: 250, height: 290, borderRadius: 24, overflow: "hidden",
                   border: "1px solid rgba(255,255,255,0.06)",
