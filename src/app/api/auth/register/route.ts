@@ -35,6 +35,16 @@ export async function POST(req: NextRequest) {
     const passwordHash = await bcrypt.hash(password, 12);
     const role = invite.role === "COACH" ? "COACH" : "TRAINEE";
 
+    // Atomically claim the invite (used: false → true) so two concurrent requests
+    // with the same token can't both pass the earlier `!invite.used` check and race.
+    const claimed = await prisma.inviteToken.updateMany({
+      where: { id: invite.id, used: false },
+      data: { used: true },
+    });
+    if (claimed.count === 0) {
+      return NextResponse.json({ error: "קישור ההזמנה כבר נוצל" }, { status: 400 });
+    }
+
     const user = await prisma.user.create({
       data: {
         name,
@@ -44,8 +54,6 @@ export async function POST(req: NextRequest) {
         coachId: invite.coachId,
       },
     });
-
-    await prisma.inviteToken.update({ where: { id: invite.id }, data: { used: true } });
 
     if (role === "TRAINEE") {
       await prisma.traineeProfile.create({ data: { userId: user.id } });

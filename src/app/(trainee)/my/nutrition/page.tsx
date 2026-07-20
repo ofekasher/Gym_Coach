@@ -1,6 +1,7 @@
 ﻿// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { prisma, isDatabaseConfigured } from "@/lib/prisma";
 import { NutritionClient } from "./nutrition-client";
 import { DEMO_TRAINEES, isDemoId } from "@/lib/demo-data";
@@ -12,7 +13,8 @@ export default async function MyNutritionPage() {
   }
 
   const session = await auth();
-  const userId = session!.user.id;
+  if (!session?.user?.id) redirect("/login");
+  const userId = session.user.id;
 
   if (isDemoId(userId)) {
     const demoUser = DEMO_TRAINEES.find(t => t.id === userId) ?? DEMO_TRAINEES[0];
@@ -27,10 +29,9 @@ export default async function MyNutritionPage() {
       orderBy: { createdAt: "desc" },
     });
     return <NutritionClient nutritionPlan={plan} />;
-  } catch {
-    const demoUser = DEMO_TRAINEES.find(t => t.id === userId) ?? DEMO_TRAINEES[0];
-    const plan = demoUser.nutritionPlans[0] ?? null;
-    return <NutritionClient nutritionPlan={plan as any} />;
+  } catch (error) {
+    console.error("Failed to load nutrition plan", error);
+    return <NutritionClient nutritionPlan={null} />;
   }
 }
 

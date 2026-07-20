@@ -55,10 +55,16 @@ export default function LoginPage() {
           router.push("/dashboard");
         } else if (role === "ADMIN") {
           router.push("/admin");
-        } else {
+        } else if (role === "TRAINEE") {
           router.push("/my/dashboard");
+        } else {
+          // Session cookie hasn't propagated yet even after retries — don't guess
+          // a role and risk landing a coach on the trainee dashboard.
+          toast({ variant: "destructive", title: "שגיאה", description: "הכניסה הצליחה אך טעינת החשבון מתעכבת — רענן את הדף" });
         }
       }
+    } catch {
+      toast({ variant: "destructive", title: "שגיאה", description: "בעיית תקשורת, נסה שוב" });
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,7 @@
 ﻿// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { prisma, isDatabaseConfigured } from "@/lib/prisma";
 import { WorkoutLoggingClient } from "./workout-logging-client";
 import { DEMO_TRAINEES, isDemoId } from "@/lib/demo-data";
@@ -13,7 +14,8 @@ export default async function MyWorkoutPage() {
   }
 
   const session = await auth();
-  const userId = session!.user.id;
+  if (!session?.user?.id) redirect("/login");
+  const userId = session.user.id;
 
   if (isDemoId(userId)) {
     const demoUser = DEMO_TRAINEES.find(t => t.id === userId) ?? DEMO_TRAINEES[0];
@@ -52,10 +54,11 @@ export default async function MyWorkoutPage() {
     }
 
     return <WorkoutLoggingClient plan={plan} userId={userId} exerciseHistory={exerciseHistory} />;
-  } catch {
-    const demoUser = DEMO_TRAINEES.find(t => t.id === userId) ?? DEMO_TRAINEES[0];
-    const plan = demoUser.workoutPlans[0] ?? null;
-    return <WorkoutLoggingClient plan={plan as any} userId={userId} />;
+  } catch (error) {
+    // A real logged-in trainee must never silently see fabricated demo data —
+    // that would mask an actual DB outage. Show the real "no plan" empty state instead.
+    console.error("Failed to load workout plan", error);
+    return <WorkoutLoggingClient plan={null} userId={userId} />;
   }
 }
 

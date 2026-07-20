@@ -1,6 +1,7 @@
 ﻿// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { prisma, isDatabaseConfigured } from "@/lib/prisma";
 import { DashboardClient } from "./dashboard-client";
 import { subDays } from "date-fns";
@@ -21,7 +22,8 @@ export default async function DashboardPage() {
   }
 
   const session = await auth();
-  const coachId = session!.user.id;
+  if (!session?.user?.id) redirect("/login");
+  const coachId = session.user.id;
 
   try {
     const trainees = await prisma.user.findMany({

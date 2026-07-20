@@ -15,17 +15,23 @@ export async function POST(req: NextRequest) {
   const { email, role } = await req.json();
   if (!email) return NextResponse.json({ error: "אימייל נדרש" }, { status: 400 });
 
-  const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) return NextResponse.json({ error: "משתמש עם אימייל זה כבר קיים" }, { status: 400 });
+  let invite;
+  try {
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) return NextResponse.json({ error: "משתמש עם אימייל זה כבר קיים" }, { status: 400 });
 
-  const invite = await prisma.inviteToken.create({
-    data: {
-      email,
-      coachId: session.user.id,
-      role: role === "COACH" ? "COACH" : "TRAINEE",
-      expiresAt: addDays(new Date(), 7),
-    },
-  });
+    invite = await prisma.inviteToken.create({
+      data: {
+        email,
+        coachId: session.user.id,
+        role: role === "COACH" ? "COACH" : "TRAINEE",
+        expiresAt: addDays(new Date(), 7),
+      },
+    });
+  } catch (error) {
+    console.error("invite creation failed", error);
+    return NextResponse.json({ error: "יצירת ההזמנה נכשלה, נסה שוב" }, { status: 500 });
+  }
 
   const baseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
   const inviteUrl = `${baseUrl}/register?token=${invite.token}`;

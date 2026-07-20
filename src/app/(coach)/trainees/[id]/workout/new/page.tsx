@@ -2,7 +2,7 @@
 // @ts-nocheck
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { WorkoutBuilderClient } from "./workout-builder-client";
 import { DEMO_TRAINEES, DEMO_EXERCISES, isDemoId } from "@/lib/demo-data";
 
@@ -13,7 +13,8 @@ export default async function NewWorkoutPage({ params }: { params: { id: string 
   }
 
   const session = await auth();
-  const coachId = session!.user.id;
+  if (!session?.user?.id) redirect("/login");
+  const coachId = session.user.id;
 
   try {
     const trainee = await prisma.user.findFirst({

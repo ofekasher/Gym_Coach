@@ -11,52 +11,61 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { photos, ...checkInData } = body;
 
-  const checkIn = await prisma.weeklyCheckIn.create({
-    data: {
-      traineeId: session.user.id,
-      weight: checkInData.weight,
-      waist: checkInData.waist,
-      chest: checkInData.chest,
-      hip: checkInData.hip,
-      arm: checkInData.arm,
-      bodyFat: checkInData.bodyFat,
-      followedPlan: checkInData.followedPlan ?? true,
-      workoutsCompleted: checkInData.workoutsCompleted ?? 0,
-      traineeNotes: checkInData.traineeNotes,
-      photos: {
-        create: (photos ?? []).map((p: { angle: string; url: string }) => ({
-          url: p.url,
-          angle: p.angle as any,
-        })),
-      },
-    },
-  });
-
-  // Update profile current weight
-  if (checkInData.weight) {
-    await prisma.traineeProfile.updateMany({
-      where: { userId: session.user.id },
-      data: { currentWeight: checkInData.weight },
-    });
+  if (checkInData.weight !== undefined && checkInData.weight !== null && Number(checkInData.weight) <= 0) {
+    return NextResponse.json({ error: "משקל לא תקין" }, { status: 400 });
   }
 
-  await prisma.timelineEvent.create({
-    data: {
-      traineeId: session.user.id,
-      type: "CHECKIN_COMPLETED",
-      description: `צ׳ק-אין שבועי הושלם${checkInData.weight ? ` — ${checkInData.weight} ק״ג` : ""}`,
-    },
-  });
+  try {
+    const checkIn = await prisma.weeklyCheckIn.create({
+      data: {
+        traineeId: session.user.id,
+        weight: checkInData.weight,
+        waist: checkInData.waist,
+        chest: checkInData.chest,
+        hip: checkInData.hip,
+        arm: checkInData.arm,
+        bodyFat: checkInData.bodyFat,
+        followedPlan: checkInData.followedPlan ?? true,
+        workoutsCompleted: checkInData.workoutsCompleted ?? 0,
+        traineeNotes: checkInData.traineeNotes,
+        photos: {
+          create: (photos ?? []).map((p: { angle: string; url: string }) => ({
+            url: p.url,
+            angle: p.angle as any,
+          })),
+        },
+      },
+    });
 
-  if (photos?.length > 0) {
+    // Update profile current weight
+    if (checkInData.weight) {
+      await prisma.traineeProfile.updateMany({
+        where: { userId: session.user.id },
+        data: { currentWeight: checkInData.weight },
+      });
+    }
+
     await prisma.timelineEvent.create({
       data: {
         traineeId: session.user.id,
-        type: "PROGRESS_PHOTOS_UPLOADED",
-        description: `${photos.length} תמונות התקדמות הועלו`,
+        type: "CHECKIN_COMPLETED",
+        description: `צ׳ק-אין שבועי הושלם${checkInData.weight ? ` — ${checkInData.weight} ק״ג` : ""}`,
       },
     });
-  }
 
-  return NextResponse.json({ success: true, checkInId: checkIn.id });
+    if (photos?.length > 0) {
+      await prisma.timelineEvent.create({
+        data: {
+          traineeId: session.user.id,
+          type: "PROGRESS_PHOTOS_UPLOADED",
+          description: `${photos.length} תמונות התקדמות הועלו`,
+        },
+      });
+    }
+
+    return NextResponse.json({ success: true, checkInId: checkIn.id });
+  } catch (error) {
+    console.error("checkin failed", error);
+    return NextResponse.json({ error: "שמירת הצ'ק-אין נכשלה, נסה שוב" }, { status: 500 });
+  }
 }

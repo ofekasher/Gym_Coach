@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { startOfDay } from "date-fns";
+import { startOfDayIsrael } from "@/lib/date";
 
 export async function GET() {
   const session = await auth();
@@ -10,7 +10,7 @@ export async function GET() {
   }
 
   const logs = await prisma.nutritionLog.findMany({
-    where: { traineeId: session.user.id, date: { gte: startOfDay(new Date()) } },
+    where: { traineeId: session.user.id, date: { gte: startOfDayIsrael() } },
     orderBy: { createdAt: "desc" },
   });
 

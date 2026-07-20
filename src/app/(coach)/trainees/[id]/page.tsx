@@ -2,7 +2,7 @@
 // @ts-nocheck
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { TraineeDetailClient } from "./trainee-detail-client";
 import { DEMO_TRAINEES, isDemoId } from "@/lib/demo-data";
 
@@ -13,7 +13,8 @@ export default async function TraineeDetailPage({ params }: { params: { id: stri
   }
 
   const session = await auth();
-  const coachId = session!.user.id;
+  if (!session?.user?.id) redirect("/login");
+  const coachId = session.user.id;
 
   try {
     const trainee = await prisma.user.findFirst({

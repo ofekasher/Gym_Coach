@@ -1,6 +1,7 @@
 ﻿// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { prisma, isDatabaseConfigured } from "@/lib/prisma";
 import { TraineesClient } from "./trainees-client";
 import { DEMO_TRAINEES, isDemoId } from "@/lib/demo-data";
@@ -11,7 +12,8 @@ export default async function TraineesPage() {
   }
 
   const session = await auth();
-  const coachId = session!.user.id;
+  if (!session?.user?.id) redirect("/login");
+  const coachId = session.user.id;
 
   if (isDemoId(coachId)) {
     return <TraineesClient trainees={DEMO_TRAINEES as any} />;

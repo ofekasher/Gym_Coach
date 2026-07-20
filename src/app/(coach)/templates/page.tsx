@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { prisma, isDatabaseConfigured } from "@/lib/prisma";
 import { TemplatesClient } from "./templates-client";
 
@@ -8,7 +9,8 @@ export default async function TemplatesPage() {
   }
 
   const session = await auth();
-  const coachId = session!.user.id;
+  if (!session?.user?.id) redirect("/login");
+  const coachId = session.user.id;
 
   const [templates, trainees] = await Promise.all([
     prisma.workoutPlanTemplate.findMany({ where: { coachId }, orderBy: { createdAt: "desc" } }),

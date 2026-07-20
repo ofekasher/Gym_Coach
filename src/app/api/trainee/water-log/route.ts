@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { startOfDay } from "date-fns";
+import { startOfDayIsrael } from "@/lib/date";
 
 export async function GET() {
   const session = await auth();
@@ -10,7 +10,7 @@ export async function GET() {
   }
 
   const logs = await prisma.waterLog.findMany({
-    where: { traineeId: session.user.id, date: { gte: startOfDay(new Date()) } },
+    where: { traineeId: session.user.id, date: { gte: startOfDayIsrael() } },
     orderBy: { createdAt: "asc" },
   });
 
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
   });
 
   const logs = await prisma.waterLog.findMany({
-    where: { traineeId: session.user.id, date: { gte: startOfDay(new Date()) } },
+    where: { traineeId: session.user.id, date: { gte: startOfDayIsrael() } },
   });
   const total = logs.reduce((sum: number, l: any) => sum + l.amount, 0);
 
@@ -48,7 +48,7 @@ export async function DELETE() {
   }
 
   const last = await prisma.waterLog.findFirst({
-    where: { traineeId: session.user.id, date: { gte: startOfDay(new Date()) } },
+    where: { traineeId: session.user.id, date: { gte: startOfDayIsrael() } },
     orderBy: { createdAt: "desc" },
   });
 
@@ -57,7 +57,7 @@ export async function DELETE() {
   }
 
   const logs = await prisma.waterLog.findMany({
-    where: { traineeId: session.user.id, date: { gte: startOfDay(new Date()) } },
+    where: { traineeId: session.user.id, date: { gte: startOfDayIsrael() } },
   });
   const total = logs.reduce((sum: number, l: any) => sum + l.amount, 0);
 

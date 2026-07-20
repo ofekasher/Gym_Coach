@@ -1,6 +1,7 @@
 ﻿// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import { prisma, isDatabaseConfigured } from "@/lib/prisma";
 import { ScheduleClient } from "./schedule-client";
 import { DEMO_TRAINEES, isDemoId } from "@/lib/demo-data";
@@ -12,7 +13,8 @@ export default async function SchedulePage() {
   }
 
   const session = await auth();
-  const coachId = session!.user.id;
+  if (!session?.user?.id) redirect("/login");
+  const coachId = session.user.id;
 
   if (isDemoId(coachId)) {
     const trainees = DEMO_TRAINEES.map(t => ({ id: t.id, name: t.name, email: t.email }));
