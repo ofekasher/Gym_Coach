@@ -7,13 +7,13 @@ import { getMuscleGymPhoto } from "@/lib/gym-photos";
 // The design's video-hero + scrubber has no real video content behind it (no per-session video
 // exists), so the scrubber is kept as a static visual and the fake "5.0 rating"/timestamp were
 // replaced with real derived data (exercise count, real muscle-group tags) instead of invented numbers.
-const LIME = "#C6F53C";
+const LIME = "#a8ff3e";
 const GRADIENT = "linear-gradient(105deg,#D2F84B 0%,#6FD668 52%,#35C877 100%)";
 
 export function WorkoutPreviewClient({ session, coachName }: { session: any; coachName: string }) {
   if (!session) {
     return (
-      <div dir="rtl" style={{ minHeight: "100vh", background: "#080b07", display: "flex", alignItems: "center", justifyContent: "center", padding: 32, color: "#fff" }}>
+      <div dir="rtl" style={{ minHeight: "100vh", background: "#0a1a0a", display: "flex", alignItems: "center", justifyContent: "center", padding: 32, color: "#fff" }}>
         <div style={{ textAlign: "center" }}>
           <Dumbbell size={40} style={{ marginBottom: 16, color: "rgba(255,255,255,0.3)" }} />
           <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>אין תוכנית אימון פעילה</div>
@@ -29,13 +29,13 @@ export function WorkoutPreviewClient({ session, coachName }: { session: any; coa
   const heroImg = exercises[0]?.exercise?.imageUrl || getMuscleGymPhoto(exercises[0]?.exercise?.muscleGroup);
 
   return (
-    <div dir="rtl" style={{ position: "relative", minHeight: "100vh", background: "#080b07", color: "#fff" }}>
+    <div dir="rtl" style={{ position: "relative", minHeight: "100vh", background: "#0a1a0a", color: "#fff" }}>
       <div style={{ maxWidth: 480, margin: "0 auto" }}>
 
         {/* Hero */}
         <div style={{ position: "relative", height: 380 }}>
           <div style={{ position: "absolute", inset: 0, backgroundImage: `url(${heroImg})`, backgroundSize: "cover", backgroundPosition: "center" }} />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #080b07 4%, rgba(8,11,7,0.15) 40%, rgba(8,11,7,0.35) 100%)" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #0a1a0a 4%, rgba(8,11,7,0.15) 40%, rgba(8,11,7,0.35) 100%)" }} />
           <div style={{ position: "absolute", top: 56, right: 18, left: 18, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <Link href="/my/dashboard" style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(10,16,4,0.5)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <ChevronLeft size={18} color="#fff" />
@@ -91,7 +91,7 @@ export function WorkoutPreviewClient({ session, coachName }: { session: any; coa
 
           <div style={{ fontSize: 17, fontWeight: 800, marginBottom: 12 }}>פרטי המאמן</div>
           <Link href="/my/chat" style={{ textDecoration: "none" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, background: "#12160f", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 18, padding: 12, marginBottom: 22 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12, background: "#0f1f0f", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 18, padding: 12, marginBottom: 22 }}>
               <div style={{ width: 48, height: 48, borderRadius: 14, background: "rgba(198,245,60,0.14)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: 18, fontWeight: 900, color: LIME }}>
                 {coachName.charAt(0)}
               </div>
@@ -106,7 +106,7 @@ export function WorkoutPreviewClient({ session, coachName }: { session: any; coa
           </Link>
         </div>
 
-        <div style={{ padding: "10px 20px 0", background: "#080b07" }}>
+        <div style={{ padding: "10px 20px 0", background: "#0a1a0a" }}>
           <Link href="/my/workout" style={{ textDecoration: "none" }}>
             <div style={{ height: 60, borderRadius: 999, background: GRADIENT, display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
               <span style={{ fontSize: 17, fontWeight: 900, color: "#0a1004" }}>התחל אימון</span>

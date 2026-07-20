@@ -57,7 +57,7 @@ export function OnboardingClient() {
     router.push("/my/dashboard");
   };
 
-  const C = { background: "#12160f", borderRadius: 20, border: "1px solid rgba(255,255,255,0.06)" };
+  const C = { background: "#0f1f0f", borderRadius: 20, border: "1px solid rgba(255,255,255,0.06)" };
 
   return (
     <div style={{ minHeight: "100vh", background: "#0E0E10", display: "flex", flexDirection: "column" }} dir="rtl">
@@ -116,7 +116,7 @@ export function OnboardingClient() {
                     goals: selected ? f.goals.filter(x => x !== g.id) : [...f.goals, g.id]
                   }));
                 }} style={{
-                  background: selected ? "rgba(124,58,237,0.15)" : "#12160f",
+                  background: selected ? "rgba(124,58,237,0.15)" : "#0f1f0f",
                   border: `1px solid ${selected ? "#2563EB" : "rgba(255,255,255,0.07)"}`,
                   borderRadius: 16,
                   padding: "14px 16px",
@@ -146,7 +146,7 @@ export function OnboardingClient() {
               const selected = form.experience === e.id;
               return (
                 <button key={e.id} onClick={() => setForm(f => ({ ...f, experience: e.id }))} style={{
-                  background: selected ? "rgba(124,58,237,0.15)" : "#12160f",
+                  background: selected ? "rgba(124,58,237,0.15)" : "#0f1f0f",
                   border: `1px solid ${selected ? "#2563EB" : "rgba(255,255,255,0.07)"}`,
                   borderRadius: 16,
                   padding: "18px 20px",
@@ -179,7 +179,7 @@ export function OnboardingClient() {
                 {[{ id: "male", label: "זכר" }, { id: "female", label: "נקבה" }].map(g => (
                   <button key={g.id} onClick={() => setForm(f => ({ ...f, gender: g.id as any }))} style={{
                     flex: 1, padding: "12px", borderRadius: 12, cursor: "pointer",
-                    background: form.gender === g.id ? "rgba(124,58,237,0.15)" : "#12160f",
+                    background: form.gender === g.id ? "rgba(124,58,237,0.15)" : "#0f1f0f",
                     border: `1px solid ${form.gender === g.id ? "#2563EB" : "rgba(255,255,255,0.07)"}`,
                     color: form.gender === g.id ? "#fff" : "rgba(255,255,255,0.5)",
                     fontWeight: form.gender === g.id ? 700 : 500,
@@ -206,7 +206,7 @@ export function OnboardingClient() {
                   placeholder={placeholder}
                   style={{
                     width: "100%",
-                    background: "#12160f",
+                    background: "#0f1f0f",
                     border: "1px solid rgba(255,255,255,0.08)",
                     borderRadius: 14,
                     height: 50,
@@ -230,7 +230,7 @@ export function OnboardingClient() {
               {[2, 3, 4, 5, 6].map(d => (
                 <button key={d} onClick={() => setForm(f => ({ ...f, daysPerWeek: d }))} style={{
                   width: 64, height: 64, borderRadius: 18, cursor: "pointer",
-                  background: form.daysPerWeek === d ? "linear-gradient(135deg,#2563EB,#93C5FD)" : "#12160f",
+                  background: form.daysPerWeek === d ? "linear-gradient(135deg,#2563EB,#93C5FD)" : "#0f1f0f",
                   border: `1px solid ${form.daysPerWeek === d ? "#2563EB" : "rgba(255,255,255,0.08)"}`,
                   color: "#fff", fontSize: 22, fontWeight: 800,
                   boxShadow: form.daysPerWeek === d ? "0 4px 20px rgba(124,58,237,0.4)" : "none",
@@ -262,7 +262,7 @@ export function OnboardingClient() {
                 { label: "גובה", value: form.height ? `${form.height} ס״מ` : "לא צוין" },
                 { label: "משקל", value: form.weight ? `${form.weight} ק״ג` : "לא צוין" },
               ].map(({ label, value }) => (
-                <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "10px 16px", background: "#12160f", borderRadius: 12 }}>
+                <div key={label} style={{ display: "flex", justifyContent: "space-between", padding: "10px 16px", background: "#0f1f0f", borderRadius: 12 }}>
                   <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 13 }}>{label}</span>
                   <span style={{ color: "#fff", fontWeight: 700, fontSize: 13 }}>{value}</span>
                 </div>

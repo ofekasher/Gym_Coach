@@ -4,18 +4,18 @@ import Link from "next/link";
 // Real asset used: public/videos/login-background.mp4 (the actual gym video already used on
 // the login screen) instead of the design's original assets/lior-onboarding.png — that file
 // couldn't be pulled from Claude Design in full resolution (256KB read cap truncated it).
-const LIME = "#C6F53C";
+const LIME = "#a8ff3e";
 const GRADIENT = "linear-gradient(105deg,#D2F84B 0%,#6FD668 55%,#35C877 100%)";
 
 export default function WelcomePage() {
   return (
-    <div dir="rtl" style={{ position: "relative", minHeight: "100vh", background: "#080b07", color: "#fff", overflow: "hidden" }}>
+    <div dir="rtl" style={{ position: "relative", minHeight: "100vh", background: "#0a1a0a", color: "#fff", overflow: "hidden" }}>
       <video
         src="/videos/login-background.mp4"
         muted autoPlay loop playsInline
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
       />
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #080b07 6%, rgba(8,11,7,0.5) 42%, rgba(8,11,7,0.15) 100%)" }} />
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #0a1a0a 6%, rgba(8,11,7,0.5) 42%, rgba(8,11,7,0.15) 100%)" }} />
 
       <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "0 26px 46px" }}>
         <div style={{ display: "flex", gap: 7, marginBottom: 26 }}>

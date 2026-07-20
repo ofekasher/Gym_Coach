@@ -5,9 +5,9 @@ import { useState, useEffect } from "react";
 import { getMuscleGymPhoto } from "@/lib/gym-photos";
 
 // Lior Fit v2 design tokens — from "Lior Fit v2.dc.html" (claude.ai/design), copied exactly
-const LIME = "#C6F53C";
-const BG_DARK = "#080b07";
-const CARD = "#12160f";
+const LIME = "#a8ff3e";
+const BG_DARK = "#0a1a0a";
+const CARD = "#0f1f0f";
 const GRADIENT_CTA = "linear-gradient(105deg,#D2F84B 0%,#6FD668 55%,#35C877 100%)";
 const MARK_COLOR: Record<string, string> = { red: "#ff5a5a", check: LIME, yellow: "#FFC93D" };
 

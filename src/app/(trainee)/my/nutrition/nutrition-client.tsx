@@ -5,7 +5,7 @@ import { Camera } from "lucide-react";
 import { AnimatedNumber } from "@/components/shared/AnimatedNumber";
 import { useToast } from "@/hooks/use-toast";
 
-const GREEN = "#C6F53C";
+const GREEN = "#a8ff3e";
 const WATER_ACCENT = "#3b9eff";
 const OPTION_LABELS = ["אופציה א", "אופציה ב", "אופציה ג", "אופציה ד"];
 
@@ -349,14 +349,14 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
   };
 
   return (
-    <div style={{ background: "#080b07", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
+    <div style={{ background: "#0a1a0a", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px 0" }}>
 
         {/* Page title — was missing entirely; matches Lior Fit.dc.html exactly */}
         <div style={{ fontSize: 26, fontWeight: 900, letterSpacing: "-0.02em", marginBottom: 20, color: "#fff" }}>תזונה</div>
 
         {/* Section 1 — macro donut card */}
-        <div style={{ background: "#12160f", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 24, padding: "24px 20px", marginBottom: 20 }}>
+        <div style={{ background: "#0f1f0f", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 24, padding: "24px 20px", marginBottom: 20 }}>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
             <div style={{ position: "relative", width: 170, height: 170 }}>
               <svg width="170" height="170" viewBox="0 0 170 170" style={{ transform: "rotate(-90deg)" }}>
@@ -421,7 +421,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
         </button>
 
         {/* Water tracker card — WATER_ACCENT #3b9eff, local stepper (50ml jumps, 50-500 range) */}
-        <div style={{ background: "#12160f", borderRadius: 20, padding: 18, marginBottom: 24 }}>
+        <div style={{ background: "#0f1f0f", borderRadius: 20, padding: 18, marginBottom: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
             <span style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>💧 שתיית מים</span>
             <span style={{ fontSize: 14 }}>
@@ -506,7 +506,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                       style={{
                         width: "100%", textAlign: "right", cursor: loading ? "default" : "pointer",
                         borderRadius: 16, padding: "14px 16px",
-                        background: checked ? "rgba(198,245,60,0.08)" : "#12160f",
+                        background: checked ? "rgba(198,245,60,0.08)" : "#0f1f0f",
                         border: checked ? `1.5px solid ${GREEN}` : "1px solid rgba(255,255,255,0.07)",
                       }}
                     >
@@ -590,7 +590,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
               initial={{ y: "100%" }}
               animate={{ y: modalClosing ? "100%" : 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-sm bg-[#12160f] rounded-t-3xl z-[101] max-h-[85vh] overflow-y-auto"
+              className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-sm bg-[#0f1f0f] rounded-t-3xl z-[101] max-h-[85vh] overflow-y-auto"
               style={{ padding: 20 }}
             >
               <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-4" />

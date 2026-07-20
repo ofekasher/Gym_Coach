@@ -6,8 +6,8 @@ import { ChevronLeft, MoreVertical, Dumbbell, Flame, Heart, Footprints, Droplet,
 
 // Lior Fit v2 — Progress screen, copied exactly from "Lior Fit v2.dc.html" (verified directly against
 // the Claude Design project — this is the only Progress screen that actually exists there).
-const LIME = "#C6F53C";
-const CARD = "#12160f";
+const LIME = "#a8ff3e";
+const CARD = "#0f1f0f";
 const GRADIENT = "linear-gradient(105deg,#D2F84B 0%,#6FD668 52%,#35C877 100%)";
 const MONTHS_HE = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
 const WEEK_LABELS = ["א", "ב", "ג", "ד", "ה", "ו", "ש"];

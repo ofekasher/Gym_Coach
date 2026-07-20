@@ -22,7 +22,7 @@ function SwapModal({ exerciseName, muscleGroup, onSwap, onClose }: {
       display: "flex", alignItems: "flex-end", justifyContent: "center",
     }} onClick={onClose}>
       <div style={{
-        background: "#12160f", borderRadius: "24px 24px 0 0",
+        background: "#0f1f0f", borderRadius: "24px 24px 0 0",
         width: "100%", maxWidth: 480, padding: "20px 16px 40px",
         border: "1px solid rgba(255,255,255,0.08)",
       }} onClick={e => e.stopPropagation()}>
@@ -71,8 +71,8 @@ function SwapModal({ exerciseName, muscleGroup, onSwap, onClose }: {
 }
 
 const BG = "transparent";
-const GREEN = "#C6F53C";
-const CARD = { background: "#12160f", borderRadius: 28, border: "1px solid rgba(255,255,255,0.06)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" };
+const GREEN = "#a8ff3e";
+const CARD = { background: "#0f1f0f", borderRadius: 28, border: "1px solid rgba(255,255,255,0.06)", boxShadow: "0 8px 24px rgba(0,0,0,0.35)" };
 
 const EXERCISE_INFO_FALLBACK: Record<string, { description: string; tip: string }> = {
   default: { description: "בצע את התרגיל בטכניקה נכונה ובקצב מבוקר.", tip: "שמור על גב ישר לאורך כל התנועה" },
@@ -93,7 +93,7 @@ function InfoModal({ ex, displayName, onClose }: { ex: any; displayName: string;
       display: "flex", alignItems: "flex-end", justifyContent: "center",
     }} onClick={onClose}>
       <div style={{
-        background: "#12160f", borderRadius: "24px 24px 0 0",
+        background: "#0f1f0f", borderRadius: "24px 24px 0 0",
         width: "100%", maxWidth: 480, padding: "20px 16px 40px",
         border: "1px solid rgba(255,255,255,0.08)",
       }} onClick={(e) => e.stopPropagation()} dir="rtl">
@@ -234,7 +234,7 @@ function ExerciseSheet({
         animate={{ y: 0 }}
         transition={{ type: "spring", damping: 28, stiffness: 260 }}
         style={{
-          position: "relative", background: "#12160f", borderTopLeftRadius: 28, borderTopRightRadius: 28,
+          position: "relative", background: "#0f1f0f", borderTopLeftRadius: 28, borderTopRightRadius: 28,
           maxHeight: "90%", overflowY: "auto", padding: "10px 20px 30px",
         }}
       >
@@ -542,7 +542,7 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
     const heavySets = Object.values(setLogs).flat().filter((s) => s.done && s.effort === "כבד").length;
     return (
       <div style={{ background: BG, minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 32 }} dir="rtl">
-        <div style={{ background: "#12160f", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 24, padding: 32, textAlign: "center", maxWidth: 300, width: "100%" }}>
+        <div style={{ background: "#0f1f0f", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 24, padding: 32, textAlign: "center", maxWidth: 300, width: "100%" }}>
           <Trophy size={48} color={GREEN} style={{ marginBottom: 12 }} />
           <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>כל הכבוד!</div>
           <div style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", marginBottom: 20 }}>סיימת את האימון</div>
@@ -589,7 +589,7 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
             backgroundImage: `url(${getMuscleGymPhoto(exercises[0]?.exercise?.muscleGroup)})`,
             backgroundSize: "cover", backgroundPosition: "center",
           }} />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #080b07 2%, rgba(8,8,16,0.4) 45%, rgba(8,8,16,0.2) 100%)" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #0a1a0a 2%, rgba(8,8,16,0.4) 45%, rgba(8,8,16,0.2) 100%)" }} />
           <div style={{ position: "absolute", top: 60, right: 20, left: 20, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <span style={{ fontSize: 13, color: "rgba(255,255,255,0.8)", fontWeight: 600, textShadow: "0 2px 8px rgba(0,0,0,0.7)" }}>{session?.dayLabel ?? ""}</span>
             <div style={{ display: "flex", gap: 5 }}>
@@ -654,7 +654,7 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
 
             return (
               <div key={ex.id} style={{
-                background: "#12160f", borderRadius: 20, padding: 14,
+                background: "#0f1f0f", borderRadius: 20, padding: 14,
                 borderLeft: `4px solid ${isDone ? GREEN : "transparent"}`,
                 transition: "border-color .15s",
               }}>

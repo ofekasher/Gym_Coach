@@ -8,8 +8,8 @@ import { AnimatedNumber } from "@/components/shared/AnimatedNumber";
 import { GYM_PHOTOS } from "@/lib/gym-photos";
 import { useToast } from "@/hooks/use-toast";
 
-const GREEN = "#C6F53C";
-const CARD = "bg-[#12160f] rounded-2xl mx-4 p-4 mt-4";
+const GREEN = "#a8ff3e";
+const CARD = "bg-[#0f1f0f] rounded-2xl mx-4 p-4 mt-4";
 
 const GOAL_OPTIONS = ["הרזיה", "מסה", "כוח", "שיפור כושר"];
 const EQUIPMENT_OPTIONS = ["חדר כושר", "בית", "גומיות", "משקולות בלבד"];
@@ -210,20 +210,20 @@ export function ProfileClient({ user }: { user: any }) {
   ] as const;
 
   return (
-    <div style={{ background: "#080b07", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
+    <div style={{ background: "#0a1a0a", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
       {/* Section 1 — photo hero with avatar (lime ring), name, email overlaid at the bottom, matches Lior Fit.dc.html exactly */}
       <div style={{ position: "relative", height: 196, overflow: "hidden" }}>
         <div style={{
           position: "absolute", inset: 0,
           backgroundImage: `url(${GYM_PHOTOS.dumbbellCurl})`, backgroundSize: "cover", backgroundPosition: "center",
         }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #080b07 4%, rgba(8,8,16,0.55) 60%, rgba(8,8,16,0.35) 100%)" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #0a1a0a 4%, rgba(8,8,16,0.55) 60%, rgba(8,8,16,0.35) 100%)" }} />
         <div style={{ position: "absolute", top: 16, right: 16 }}>
           <BackHeader title="" />
         </div>
         <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, display: "flex", flexDirection: "column", alignItems: "center", paddingBottom: 14 }}>
           <div style={{
-            width: 84, height: 84, borderRadius: "50%", background: "#12160f", flexShrink: 0,
+            width: 84, height: 84, borderRadius: "50%", background: "#0f1f0f", flexShrink: 0,
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 28, fontWeight: 900, color: GREEN,
             border: `3px solid ${GREEN}`, boxShadow: "0 0 0 4px rgba(198,245,60,0.15)",
@@ -236,7 +236,7 @@ export function ProfileClient({ user }: { user: any }) {
       </div>
 
       {/* Section 2 — training stats row, exact order + emoji from Lior Fit.dc.html: רצף / אימונים / שיא אישי / שבועות */}
-      <div style={{ background: "#12160f", borderRadius: 20, margin: "18px 20px 0", padding: "18px 10px", display: "flex" }}>
+      <div style={{ background: "#0f1f0f", borderRadius: 20, margin: "18px 20px 0", padding: "18px 10px", display: "flex" }}>
         {[
           { emoji: "🔥", label: "רצף", value: streak, suffix: "" },
           { emoji: "💪", label: "אימונים", value: completedCount, suffix: "" },
@@ -257,7 +257,7 @@ export function ProfileClient({ user }: { user: any }) {
       </div>
 
       {/* Section 3 — weekly activity */}
-      <div style={{ background: "#12160f", borderRadius: 20, margin: "20px 20px 0", padding: 18 }}>
+      <div style={{ background: "#0f1f0f", borderRadius: 20, margin: "20px 20px 0", padding: 18 }}>
         <div style={{ fontSize: 15, fontWeight: 800, color: "#fff", marginBottom: 16 }}>פעילות השבוע</div>
         <div style={{ display: "flex", gap: 6, justifyContent: "space-between" }}>
           {activityDays.map((d, i) => (
@@ -276,7 +276,7 @@ export function ProfileClient({ user }: { user: any }) {
       <Link href="/my/progress" style={{ textDecoration: "none" }}>
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "center",
-          background: "#12160f", borderRadius: 20, margin: "20px 20px 0", padding: "16px 18px",
+          background: "#0f1f0f", borderRadius: 20, margin: "20px 20px 0", padding: "16px 18px",
         }}>
           <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>ההתקדמות שלי</span>
           <span style={{ fontSize: 16, color: GREEN }}>←</span>
@@ -284,7 +284,7 @@ export function ProfileClient({ user }: { user: any }) {
       </Link>
 
       {/* Section 4 — settings, matches design list order (התראות/יחידות מידה/המנוי שלי/פרטיות ואבטחה/עזרה ותמיכה) */}
-      <div style={{ background: "#12160f", borderRadius: 20, margin: "20px 20px 0", overflow: "hidden" }}>
+      <div style={{ background: "#0f1f0f", borderRadius: 20, margin: "20px 20px 0", overflow: "hidden" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
           <span style={{ fontSize: 15, color: "#fff", display: "flex", alignItems: "center", gap: 8 }}><Bell size={16} color={GREEN} /> התראות</span>
           <ToggleSwitch on={notifications} onChange={toggleNotifications} />
