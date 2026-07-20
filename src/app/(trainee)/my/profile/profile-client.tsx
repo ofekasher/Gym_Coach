@@ -6,6 +6,7 @@ import { BackHeader } from "@/components/shared/back-header";
 import { Bell, LogOut, Ruler, CreditCard, ShieldCheck, HelpCircle, ChevronLeft } from "lucide-react";
 import { AnimatedNumber } from "@/components/shared/AnimatedNumber";
 import { GYM_PHOTOS } from "@/lib/gym-photos";
+import { useToast } from "@/hooks/use-toast";
 
 const GREEN = "#a8ff3e";
 const CARD = "bg-[#1c1c2e] rounded-2xl mx-4 p-4 mt-4";
@@ -65,6 +66,7 @@ function ToggleSwitch({ on, onChange }: { on: boolean; onChange: (v: boolean) =>
 }
 
 export function ProfileClient({ user }: { user: any }) {
+  const { toast } = useToast();
   const profile = user?.traineeProfile ?? null;
 
   const [editingStats, setEditingStats] = useState(false);
@@ -106,7 +108,7 @@ export function ProfileClient({ user }: { user: any }) {
   const saveStats = async () => {
     setSavingStats(true);
     try {
-      await fetch("/api/trainee/profile", {
+      const res = await fetch("/api/trainee/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -116,27 +118,31 @@ export function ProfileClient({ user }: { user: any }) {
           bodyFat: stats.bodyFat === "" ? null : Number(stats.bodyFat),
         }),
       });
+      if (!res.ok) throw new Error("save failed");
+      setEditingStats(false);
     } catch (err) {
       console.error("Failed to save stats", err);
+      toast({ variant: "destructive", title: "שמירת הנתונים נכשלה", description: "בדוק את החיבור ונסה שוב" });
     } finally {
       setSavingStats(false);
-      setEditingStats(false);
     }
   };
 
   const savePrefs = async () => {
     setSavingPrefs(true);
     try {
-      await fetch("/api/trainee/profile", {
+      const res = await fetch("/api/trainee/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ goal, equipment, limitations }),
       });
+      if (!res.ok) throw new Error("save failed");
+      setEditingPrefs(false);
     } catch (err) {
       console.error("Failed to save preferences", err);
+      toast({ variant: "destructive", title: "שמירת ההעדפות נכשלה", description: "בדוק את החיבור ונסה שוב" });
     } finally {
       setSavingPrefs(false);
-      setEditingPrefs(false);
     }
   };
 
@@ -147,13 +153,16 @@ export function ProfileClient({ user }: { user: any }) {
   const toggleNotifications = async (val: boolean) => {
     setNotifications(val);
     try {
-      await fetch("/api/trainee/profile", {
+      const res = await fetch("/api/trainee/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ notifications: val }),
       });
+      if (!res.ok) throw new Error("save failed");
     } catch (err) {
       console.error("Failed to update notifications", err);
+      setNotifications(!val);
+      toast({ variant: "destructive", title: "עדכון ההתראות נכשל" });
     }
   };
 

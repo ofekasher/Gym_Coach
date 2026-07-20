@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Camera } from "lucide-react";
 import { AnimatedNumber } from "@/components/shared/AnimatedNumber";
+import { useToast } from "@/hooks/use-toast";
 
 const GREEN = "#a8ff3e";
 const WATER_ACCENT = "#3b9eff";
@@ -34,6 +35,7 @@ const DEFAULT_MEALS = [
 const BASE_CALORIES = 1840, BASE_PROTEIN = 153, BASE_CARBS = 200, BASE_FAT = 62;
 
 export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: any }) {
+  const { toast } = useToast();
   const [checkedItems, setCheckedItems] = useState<Record<string, boolean>>({});
   const [actualGrams, setActualGrams] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState<Record<string, boolean>>({});
@@ -119,7 +121,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
     const grams = actualGrams[key] ?? food.quantity ?? 0;
     const ratio = food.quantity ? grams / food.quantity : 1;
     try {
-      await fetch("/api/trainee/nutrition-log", {
+      const res = await fetch("/api/trainee/nutrition-log", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -134,8 +136,11 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
           source: "plan",
         }),
       });
+      if (!res.ok) throw new Error("log failed");
     } catch (err) {
       console.error("Failed to log food", err);
+      setCheckedItems((prev) => ({ ...prev, [key]: false }));
+      toast({ variant: "destructive", title: "רישום הארוחה נכשל", description: "בדוק את החיבור ונסה שוב" });
     } finally {
       setIsLoading((prev) => ({ ...prev, [key]: false }));
     }
@@ -274,7 +279,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
       const data = await res.json();
 
       if (data.error) {
-        alert(data.error);
+        toast({ variant: "destructive", title: data.error });
         return;
       }
 
@@ -289,7 +294,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
       setActiveTab("manual");
     } catch (err) {
       console.error("Photo analysis failed", err);
-      alert("שגיאה בניתוח התמונה");
+      toast({ variant: "destructive", title: "שגיאה בניתוח התמונה", description: "אפשר להזין את הפרטים ידנית" });
     } finally {
       setAnalyzing(false);
     }
@@ -336,6 +341,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
       });
     } catch (err) {
       console.error("Failed to log manual food", err);
+      toast({ variant: "destructive", title: "השמירה בשרת נכשלה", description: "הפריט נשמר במסך זה בלבד — נסה לרענן ולהוסיף שוב" });
     } finally {
       setSavingManual(false);
       resetModal();

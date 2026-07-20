@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Plus, Apple, Edit2, Save, X, Loader2, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/components/shared/confirm-dialog";
 
 const PREF_LABELS: Record<string, string> = {
   kosher: "כשר", vegetarian: "צמחוני", vegan: "טבעוני",
@@ -55,7 +56,7 @@ function FoodItemRow({ item, onUpdate, onDelete, isDemo }: { item: any; onUpdate
               {saving ? <Loader2 style={{ width: 13, height: 13 }} className="animate-spin" /> : <Save style={{ width: 13, height: 13 }} />} שמור
             </button>
             <button onClick={() => setEditing(false)} style={S.btnGhost}><X style={{ width: 13, height: 13 }} /></button>
-            <button onClick={() => onDelete(item.id)} style={{ ...S.btnGhost, color: "#F87171", marginRight: "auto" }}><Trash2 style={{ width: 13, height: 13 }} /></button>
+            <button aria-label={`הסר פריט: ${item.name}`} onClick={() => onDelete(item.id)} style={{ ...S.btnGhost, color: "#F87171", marginRight: "auto" }}><Trash2 style={{ width: 13, height: 13 }} /></button>
           </div>
         </div>
       ) : (
@@ -79,6 +80,7 @@ function FoodItemRow({ item, onUpdate, onDelete, isDemo }: { item: any; onUpdate
 
 export function NutritionTab({ trainee }: { trainee: any }) {
   const { toast } = useToast();
+  const confirm = useConfirm();
   const isDemo = trainee.id.startsWith("demo-");
   const [plan, setPlan] = useState(() => {
     try {
@@ -140,7 +142,9 @@ export function NutritionTab({ trainee }: { trainee: any }) {
     toast({ title: "✓ פריט עודכן" });
   };
 
-  const deleteFood = async (mealId: string, foodId: string) => {
+  const deleteFood = async (mealId: string, foodId: string, foodName: string) => {
+    const ok = await confirm({ title: `להסיר את "${foodName}"?`, confirmLabel: "הסר", danger: true });
+    if (!ok) return;
     if (isDemo) {
       setPlan((prev: any) => {
         const updated = {
@@ -165,6 +169,8 @@ export function NutritionTab({ trainee }: { trainee: any }) {
         )
       }));
       toast({ title: "פריט הוסר" });
+    } else {
+      toast({ variant: "destructive", title: "הסרת הפריט נכשלה" });
     }
   };
 
@@ -249,7 +255,7 @@ export function NutritionTab({ trainee }: { trainee: any }) {
                 {meal.foodItems.map((item: any) => (
                   <FoodItemRow key={item.id} item={item} isDemo={isDemo}
                     onUpdate={(id, data) => updateFood(meal.id, id, data)}
-                    onDelete={(id) => deleteFood(meal.id, id)}
+                    onDelete={(id) => deleteFood(meal.id, id, item.name)}
                   />
                 ))}
                 {meal.foodItems.length === 0 && <p style={{ color: "#52525B", fontSize: 13, textAlign: "center", padding: "12px 0" }}>אין פריטים</p>}

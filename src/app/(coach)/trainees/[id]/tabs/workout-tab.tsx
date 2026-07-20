@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Plus, Dumbbell, Edit2, Save, X, Loader2, Trash2, ChevronDown, ChevronUp, FileDown, MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/components/shared/confirm-dialog";
 
 const TEMPLATE_LABELS: Record<string, string> = {
   FBW: "Full Body Workout", UPPER_LOWER: "Upper / Lower",
@@ -89,7 +90,7 @@ function ExerciseRow({ se, traineeId, onUpdate, onDelete }: {
               {saving ? <Loader2 style={{ width: 13, height: 13 }} className="animate-spin" /> : <Save style={{ width: 13, height: 13 }} />} שמור
             </button>
             <button onClick={() => setEditing(false)} style={S.btnGhost}><X style={{ width: 13, height: 13 }} /> ביטול</button>
-            <button onClick={() => onDelete(se.id)} style={{ ...S.btnGhost, color: "#F87171", marginRight: "auto" }}>
+            <button aria-label={`הסר תרגיל: ${se.exercise.name}`} onClick={() => onDelete(se.id)} style={{ ...S.btnGhost, color: "#F87171", marginRight: "auto" }}>
               <Trash2 style={{ width: 13, height: 13 }} />
             </button>
           </div>
@@ -180,6 +181,7 @@ ${(plan.sessions ?? []).map((s: any) => `
 
 export function WorkoutTab({ trainee }: { trainee: any }) {
   const { toast } = useToast();
+  const confirm = useConfirm();
   const [plan, setPlan] = useState(() => {
     // Check localStorage for a demo plan saved by the workout builder
     try {
@@ -220,7 +222,9 @@ export function WorkoutTab({ trainee }: { trainee: any }) {
     toast({ title: "✓ עודכן בהצלחה" });
   };
 
-  const deleteExercise = async (sessionId: string, exId: string) => {
+  const deleteExercise = async (sessionId: string, exId: string, exName: string) => {
+    const ok = await confirm({ title: `להסיר את "${exName}"?`, confirmLabel: "הסר", danger: true });
+    if (!ok) return;
     if (isDemo) {
       setPlan((prev: any) => {
         const updated = {
@@ -246,6 +250,8 @@ export function WorkoutTab({ trainee }: { trainee: any }) {
         )
       }));
       toast({ title: "תרגיל הוסר" });
+    } else {
+      toast({ variant: "destructive", title: "הסרת התרגיל נכשלה" });
     }
   };
 
@@ -305,7 +311,7 @@ export function WorkoutTab({ trainee }: { trainee: any }) {
                 {session.exercises.map((se: any) => (
                   <ExerciseRow key={se.id} se={se} traineeId={trainee.id}
                     onUpdate={(id, data) => updateExercise(session.id, id, data)}
-                    onDelete={(id) => deleteExercise(session.id, id)}
+                    onDelete={(id) => deleteExercise(session.id, id, se.exercise.name)}
                   />
                 ))}
                 {session.exercises.length === 0 && <p style={{ color: "#52525B", fontSize: 13, padding: "12px 0", textAlign: "center" }}>אין תרגילים בסשן</p>}

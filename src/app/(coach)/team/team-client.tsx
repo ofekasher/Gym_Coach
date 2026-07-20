@@ -95,7 +95,7 @@ export function TeamClient({ coaches: initial }: { coaches: Coach[] }) {
           <div className="h-full overflow-y-auto p-8" style={{ width: 460, maxWidth: "92vw", background: "#0f0f0f", borderLeft: "1px solid #222" }} onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-2">
               <h2 className="text-2xl font-black text-white">הוספת מאמן</h2>
-              <button onClick={close} className="w-[38px] h-[38px] rounded-[11px] flex items-center justify-center" style={{ background: "#1c1c1c", border: "1px solid #2a2a2a" }}>
+              <button aria-label="סגור" onClick={close} className="w-[38px] h-[38px] rounded-[11px] flex items-center justify-center" style={{ background: "#1c1c1c", border: "1px solid #2a2a2a" }}>
                 <X size={17} style={{ color: "#fff" }} />
               </button>
             </div>

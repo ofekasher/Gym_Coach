@@ -2,6 +2,7 @@
 import { useState, useMemo } from "react";
 import { ChevronRight, ChevronLeft, Plus, X, Clock, User, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/components/shared/confirm-dialog";
 
 const DAYS_HE = ["א׳", "ב׳", "ג׳", "ד׳", "ה׳", "ו׳", "ש׳"];
 const DAYS_LONG = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
@@ -26,6 +27,7 @@ const S = {
 
 export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId: string }) {
   const { toast } = useToast();
+  const confirm = useConfirm();
   const today = new Date();
   const [year, setYear] = useState(today.getFullYear());
   const [month, setMonth] = useState(today.getMonth());
@@ -85,7 +87,9 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
     setSaving(false);
   };
 
-  const removeAppt = (id: string) => {
+  const removeAppt = async (id: string, traineeName: string) => {
+    const ok = await confirm({ title: `לבטל את האימון עם ${traineeName}?`, confirmLabel: "בטל אימון", danger: true });
+    if (!ok) return;
     const updated = appointments.filter(a => a.id !== id);
     setAppointments(updated);
     saveSchedule(updated);
@@ -169,7 +173,7 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
           )}
           {dayAppts.sort((a, b) => a.time.localeCompare(b.time)).map(appt => (
             <div key={appt.id} style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(24px)", border: `1px solid rgba(255,255,255,0.08)`, borderRadius: 14, padding: "12px 14px", borderRight: `3px solid ${appt.color}`, position: "relative" }}>
-              <button onClick={() => removeAppt(appt.id)} style={{ position: "absolute", top: 8, left: 8, background: "none", border: "none", cursor: "pointer" }}>
+              <button aria-label={`בטל אימון עם ${appt.traineeName}`} onClick={() => removeAppt(appt.id, appt.traineeName)} style={{ position: "absolute", top: 8, left: 8, background: "none", border: "none", cursor: "pointer" }}>
                 <X style={{ width: 14, height: 14, color: "rgba(255,255,255,0.4)" }} />
               </button>
               <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
@@ -194,7 +198,7 @@ export function ScheduleClient({ trainees, coachId }: { trainees: any[]; coachId
           <div style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(24px)", border: "1px solid rgba(182,255,74,0.15)", borderRadius: 16, padding: "16px" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
               <h3 style={{ color: "#fff", fontWeight: 800, fontSize: 14, margin: 0 }}>אימון חדש</h3>
-              <button onClick={() => setShowForm(false)} style={{ background: "none", border: "none", cursor: "pointer" }}>
+              <button aria-label="סגור" onClick={() => setShowForm(false)} style={{ background: "none", border: "none", cursor: "pointer" }}>
                 <X style={{ width: 16, height: 16, color: "rgba(255,255,255,0.3)" }} />
               </button>
             </div>

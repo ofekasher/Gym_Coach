@@ -2,6 +2,7 @@
 import { useState, useMemo } from "react";
 import { Search, Plus, Trash2, Loader2, ChevronDown, Dumbbell, Zap, Filter, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/components/shared/confirm-dialog";
 import { ExerciseGifCard } from "@/components/shared/ExerciseGifCard";
 
 const MUSCLE_GROUPS = ["חזה", "גב", "רגליים", "כתפיים", "זרועות", "בטן", "גוף מלא", "ישבן", "גב תחתון"];
@@ -15,6 +16,7 @@ const DIFF_COLOR: Record<string, string> = {
 
 export function ExercisesClient({ exercises: initial, coachId }: { exercises: any[]; coachId: string }) {
   const { toast } = useToast();
+  const confirm = useConfirm();
   const [exercises, setExercises] = useState(initial);
   const [search, setSearch] = useState("");
   const [muscleFilter, setMuscleFilter] = useState("הכל");
@@ -63,9 +65,20 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
     } finally { setSaving(false); }
   };
 
-  const deleteExercise = async (id: string) => {
-    const res = await fetch(`/api/exercises/${id}`, { method: "DELETE" });
-    if (res.ok) { setExercises(exercises.filter(ex => ex.id !== id)); toast({ title: "תרגיל נמחק" }); }
+  const deleteExercise = async (id: string, name: string) => {
+    const ok = await confirm({
+      title: `למחוק את "${name}"?`,
+      description: "התרגיל יימחק לצמיתות ולא ניתן יהיה לשחזר אותו.",
+      confirmLabel: "מחק", danger: true,
+    });
+    if (!ok) return;
+    try {
+      const res = await fetch(`/api/exercises/${id}`, { method: "DELETE" });
+      if (res.ok) { setExercises(exercises.filter(ex => ex.id !== id)); toast({ title: "תרגיל נמחק" }); }
+      else toast({ variant: "destructive", title: "מחיקת התרגיל נכשלה" });
+    } catch {
+      toast({ variant: "destructive", title: "שגיאת רשת — נסה שוב" });
+    }
   };
 
   const INPUT_S = {
@@ -172,7 +185,7 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
             placeholder="חיפוש תרגיל לפי שם..."
           />
           {search && (
-            <button onClick={() => setSearch("")} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#52525B", display: "flex" }}>
+            <button aria-label="נקה חיפוש" onClick={() => setSearch("")} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "#52525B", display: "flex" }}>
               <X style={{ width: 14, height: 14 }} />
             </button>
           )}
@@ -304,7 +317,7 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
                     </div>
 
                     {ex.isCustom && ex.coachId === coachId && (
-                      <button onClick={() => deleteExercise(ex.id)} style={{
+                      <button aria-label={`מחק תרגיל: ${ex.name}`} onClick={() => deleteExercise(ex.id, ex.name)} style={{
                         marginTop: 8,
                         background: "rgba(239,68,68,0.08)",
                         border: "1px solid rgba(239,68,68,0.15)",

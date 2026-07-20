@@ -405,6 +405,7 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
   const [infoFor, setInfoFor] = useState<{ ex: any; displayName: string } | null>(null);
   const [finishingWorkout, setFinishingWorkout] = useState(false);
   const [saveToast, setSaveToast] = useState(false);
+  const [saveFailed, setSaveFailed] = useState(false);
   const [sheetForId, setSheetForId] = useState<string | null>(null);
   const [prByEx, setPrByEx] = useState<Record<string, number>>({});
 
@@ -481,6 +482,7 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
         };
       });
 
+    let dbSaveFailed = false;
     try {
       const res = await fetch("/api/workout/log", {
         method: "POST",
@@ -492,9 +494,10 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
           exerciseLogs,
         }),
       });
-      if (!res.ok) console.error("Failed to save workout to DB");
+      if (!res.ok) { console.error("Failed to save workout to DB"); dbSaveFailed = true; }
     } catch (err) {
       console.error("Workout save error:", err);
+      dbSaveFailed = true;
     }
 
     // Keep localStorage as a fallback/local history cache
@@ -515,8 +518,9 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
     } catch {}
 
     setFinishingWorkout(false);
+    setSaveFailed(dbSaveFailed);
     setSaveToast(true);
-    setTimeout(() => setSaveToast(false), 2000);
+    setTimeout(() => setSaveToast(false), dbSaveFailed ? 4000 : 2000);
     setWorkoutDone(true);
 
     confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: [GREEN, "#ffffff", "#6366f1"], scalar: 1.2 });
@@ -564,10 +568,10 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
         {saveToast && (
           <div style={{
             position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)",
-            background: GREEN, color: "#0a0a0a", fontWeight: 800, fontSize: 14,
-            padding: "10px 20px", borderRadius: 999, zIndex: 100,
+            background: saveFailed ? "#f59e0b" : GREEN, color: "#0a0a0a", fontWeight: 800, fontSize: 14,
+            padding: "10px 20px", borderRadius: 999, zIndex: 100, textAlign: "center",
           }}>
-            האימון נשמר! 💪
+            {saveFailed ? "האימון נשמר מקומית — נסנכרן כשיהיה חיבור ⚠️" : "האימון נשמר! 💪"}
           </div>
         )}
       </div>
@@ -797,10 +801,10 @@ export function WorkoutLoggingClient({ plan, userId, exerciseHistory = {} }: { p
         {saveToast && (
           <div style={{
             position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)",
-            background: GREEN, color: "#0a0a0a", fontWeight: 800, fontSize: 14,
-            padding: "10px 20px", borderRadius: 999, zIndex: 100,
+            background: saveFailed ? "#f59e0b" : GREEN, color: "#0a0a0a", fontWeight: 800, fontSize: 14,
+            padding: "10px 20px", borderRadius: 999, zIndex: 100, textAlign: "center",
           }}>
-            האימון נשמר! 💪
+            {saveFailed ? "האימון נשמר מקומית — נסנכרן כשיהיה חיבור ⚠️" : "האימון נשמר! 💪"}
           </div>
         )}
       </div>

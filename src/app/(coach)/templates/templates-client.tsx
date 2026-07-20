@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Plus, Trash2, Dumbbell, Send, Loader2, Check } from "lucide-react";
 import { getMuscleGymPhoto } from "@/lib/gym-photos";
 import { useToast } from "@/hooks/use-toast";
+import { useConfirm } from "@/components/shared/confirm-dialog";
 
 const GREEN = "#b6ff4a";
 
@@ -30,18 +31,29 @@ interface Trainee {
 
 export function TemplatesClient({ templates: initial, trainees, coachId }: { templates: Template[]; trainees: Trainee[]; coachId: string }) {
   const { toast } = useToast();
+  const confirmDialog = useConfirm();
   const [templates, setTemplates] = useState(initial);
   const [assignFor, setAssignFor] = useState<Template | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [sending, setSending] = useState(false);
 
-  const remove = async (id: string) => {
-    if (!confirm("למחוק את התבנית?")) return;
-    setTemplates((prev) => prev.filter((t) => t.id !== id));
+  const remove = async (id: string, name: string) => {
+    const ok = await confirmDialog({
+      title: `למחוק את "${name}"?`,
+      description: "התבנית תימחק לצמיתות — מתאמנים שכבר קיבלו אותה לא יושפעו.",
+      confirmLabel: "מחק", danger: true,
+    });
+    if (!ok) return;
     try {
-      await fetch(`/api/templates/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/templates/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setTemplates((prev) => prev.filter((t) => t.id !== id));
+        toast({ title: "התבנית נמחקה" });
+      } else {
+        toast({ variant: "destructive", title: "מחיקת התבנית נכשלה" });
+      }
     } catch {
-      toast({ variant: "destructive", title: "שגיאה במחיקה" });
+      toast({ variant: "destructive", title: "שגיאת רשת — נסה שוב" });
     }
   };
 
@@ -122,7 +134,7 @@ export function TemplatesClient({ templates: initial, trainees, coachId }: { tem
               <div className="p-[18px]">
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="text-[17px] font-extrabold text-white">{t.name}</h3>
-                  <button onClick={() => remove(t.id)} className="flex-shrink-0" style={{ color: "#ff5c5c" }}>
+                  <button aria-label={`מחק תבנית: ${t.name}`} onClick={() => remove(t.id, t.name)} className="flex-shrink-0" style={{ color: "#ff5c5c" }}>
                     <Trash2 size={15} />
                   </button>
                 </div>

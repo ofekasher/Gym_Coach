@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { BackHeader } from "@/components/shared/back-header";
 import { Flame, Dumbbell, Zap, PersonStanding } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const GREEN = "#a8ff3e";
 
@@ -24,6 +25,7 @@ function bodyFatCategory(pct: number): string {
 }
 
 export default function GoalPage() {
+  const { toast } = useToast();
   const [goalType, setGoalType] = useState<GoalType>("הרזיה");
   const [currentWeight, setCurrentWeight] = useState(79);
   const [targetWeight, setTargetWeight] = useState(73);
@@ -73,7 +75,7 @@ export default function GoalPage() {
   const save = async () => {
     setSaving(true);
     try {
-      await fetch("/api/trainee/profile", {
+      const res = await fetch("/api/trainee/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -89,10 +91,12 @@ export default function GoalPage() {
           motivation,
         }),
       });
+      if (!res.ok) throw new Error("save failed");
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (err) {
       console.error("Failed to save goals", err);
+      toast({ variant: "destructive", title: "שמירת היעד נכשלה", description: "בדוק את החיבור ונסה שוב" });
     } finally {
       setSaving(false);
     }

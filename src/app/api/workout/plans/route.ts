@@ -20,7 +20,6 @@ const sessionSchema = z.object({
 
 const schema = z.object({
   traineeId: z.string(),
-  coachId: z.string(),
   name: z.string(),
   template: z.string(),
   sessions: z.array(sessionSchema),
@@ -34,6 +33,16 @@ export async function POST(req: NextRequest) {
 
   const body = schema.parse(await req.json());
 
+  // Only allow assigning plans to trainees that actually belong to this coach —
+  // never trust a client-supplied coachId or an unverified traineeId.
+  const trainee = await prisma.user.findFirst({
+    where: { id: body.traineeId, coachId: session.user.id, role: "TRAINEE" },
+    select: { id: true },
+  });
+  if (!trainee) {
+    return NextResponse.json({ error: "Trainee not found" }, { status: 404 });
+  }
+
   // Deactivate old plans
   await prisma.workoutPlan.updateMany({
     where: { traineeId: body.traineeId, isActive: true },
@@ -43,7 +52,7 @@ export async function POST(req: NextRequest) {
   const plan = await prisma.workoutPlan.create({
     data: {
       traineeId: body.traineeId,
-      coachId: body.coachId,
+      coachId: session.user.id,
       name: body.name,
       template: body.template as any,
       isActive: true,

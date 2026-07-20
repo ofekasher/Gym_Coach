@@ -39,8 +39,13 @@ export default function AdminPage() {
 
   const deleteUser = async (id: string, name: string) => {
     if (!confirm(`למחוק את ${name}? הפעולה בלתי הפיכה.`)) return;
-    await fetch("/api/admin/users", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId: id, action: "delete" }) });
-    fetchUsers();
+    try {
+      const res = await fetch("/api/admin/users", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userId: id, action: "delete" }) });
+      if (!res.ok) { alert(`מחיקת ${name} נכשלה`); return; }
+      fetchUsers();
+    } catch {
+      alert("שגיאת רשת — נסה שוב");
+    }
   };
 
   const closeAddModal = () => {
@@ -194,7 +199,7 @@ export default function AdminPage() {
                     {user.role === "TRAINEE" && <span style={{ color: "#71717A", fontSize: 12 }}>{user._count.workoutLogs} אימונים</span>}
                   </td>
                   <td style={{ padding: "12px 16px", textAlign: "left" }}>
-                    <button onClick={() => deleteUser(user.id, user.name ?? user.email)}
+                    <button aria-label={`מחק משתמש: ${user.name ?? user.email}`} onClick={() => deleteUser(user.id, user.name ?? user.email)}
                       style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.15)", color: "#F87171", borderRadius: 8, padding: "6px 10px", cursor: "pointer" }}>
                       <Trash2 style={{ width: 14, height: 14 }} />
                     </button>
@@ -218,7 +223,7 @@ export default function AdminPage() {
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
               <div style={{ fontWeight: 800, fontSize: 18 }}>הוסף מתאמן</div>
-              <button onClick={closeAddModal} style={{ background: "transparent", border: "none", color: "#71717A", cursor: "pointer" }}>
+              <button aria-label="סגור" onClick={closeAddModal} style={{ background: "transparent", border: "none", color: "#71717A", cursor: "pointer" }}>
                 <X style={{ width: 18, height: 18 }} />
               </button>
             </div>
