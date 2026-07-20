@@ -136,6 +136,7 @@ model User {
   receivedMessages Message[]       @relation("ReceivedMessages")
   subscription    TraineeSubscription?
   coachSettings   CoachSettings?
+  weeklyBroadcast WeeklyBroadcast?
   nutritionLogs   NutritionLog[]
   waterLogs       WaterLog[]
   planTemplates   WorkoutPlanTemplate[]
@@ -202,6 +203,23 @@ model CoachSettings {
   notifyInactive Boolean @default(true)
   notifyPayment  Boolean @default(true)
   coach          User    @relation(fields: [coachId], references: [id], onDelete: Cascade)
+}
+
+// A recurring weekly push notification a coach broadcasts to all of their trainees
+// (e.g. "every Thursday at 18:00: remind everyone to log their weekly check-in").
+// lastSentDate (Israel-local YYYY-MM-DD) guards against the hourly cron double-sending
+// within the same day.
+model WeeklyBroadcast {
+  id           String   @id @default(cuid())
+  coachId      String   @unique
+  enabled      Boolean  @default(false)
+  dayOfWeek    Int      @default(4) // 0=Sunday .. 6=Saturday
+  hour         Int      @default(18) // 0-23, Israel local time
+  message      String   @db.Text
+  lastSentDate String?
+  updatedAt    DateTime @updatedAt
+
+  coach User @relation(fields: [coachId], references: [id], onDelete: Cascade)
 }
 
 model InviteToken {

@@ -1,7 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, User, Bell, CreditCard, Building2, Save, Eye, EyeOff } from "lucide-react";
+import { Loader2, User, Bell, CreditCard, Building2, Save, Eye, EyeOff, Megaphone } from "lucide-react";
+
+const DAYS_HE = ["ראשון", "שני", "שלישי", "רביעי", "חמישי", "שישי", "שבת"];
 
 const CARD = { background: "#141414", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 20 };
 const SECTION = "mb-8";
@@ -29,6 +31,8 @@ export default function CoachSettingsPage() {
     notifyWorkout: true, notifyCheckin: true, notifyInactive: true, notifyPayment: true,
     currentPassword: "", newPassword: "", confirmPassword: "",
   });
+  const [broadcast, setBroadcast] = useState({ enabled: false, dayOfWeek: 4, hour: 18, message: "" });
+  const [savingBroadcast, setSavingBroadcast] = useState(false);
 
   useEffect(() => {
     fetch("/api/settings").then(r => r.json()).then(({ settings, coach }) => {
@@ -49,9 +53,29 @@ export default function CoachSettingsPage() {
       }));
       setLoading(false);
     });
+    fetch("/api/coach/broadcast").then(r => r.json()).then(({ broadcast: b }) => {
+      if (b) setBroadcast({ enabled: b.enabled, dayOfWeek: b.dayOfWeek, hour: b.hour, message: b.message });
+    });
   }, []);
 
   const set = (k: string, v: any) => setForm(f => ({ ...f, [k]: v }));
+  const setBroadcastField = (k: string, v: any) => setBroadcast(b => ({ ...b, [k]: v }));
+
+  const saveBroadcast = async () => {
+    setSavingBroadcast(true);
+    try {
+      const res = await fetch("/api/coach/broadcast", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(broadcast),
+      });
+      const data = await res.json();
+      if (res.ok) toast({ title: "נשמר ✓", description: "התזכורת השבועית עודכנה" });
+      else toast({ variant: "destructive", title: "שגיאה", description: data.error ?? "שמירה נכשלה" });
+    } finally {
+      setSavingBroadcast(false);
+    }
+  };
 
   const save = async () => {
     if (form.newPassword && form.newPassword !== form.confirmPassword) {
@@ -226,6 +250,49 @@ export default function CoachSettingsPage() {
               <Toggle value={(form as any)[item.key]} onChange={v => set(item.key, v)} />
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Weekly broadcast to trainees */}
+      <div className={SECTION}>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Megaphone className="w-4 h-4" style={{ color: "#b6ff4a" }} />
+            <span style={{ color: "#fff", fontWeight: 700, fontSize: 15 }}>תזכורת שבועית למתאמנים</span>
+          </div>
+          <Toggle value={broadcast.enabled} onChange={v => setBroadcastField("enabled", v)} />
+        </div>
+        <div style={{ ...CARD, padding: 20 }}>
+          <p style={{ color: "#71717A", fontSize: 12, marginBottom: 16, lineHeight: 1.6 }}>
+            הודעת Push שנשלחת אוטומטית לכל המתאמנים שלך, בכל שבוע, ביום ובשעה שתבחר.
+          </p>
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div>
+              <label style={LABEL}>יום בשבוע</label>
+              <select style={{ ...INPUT_S, cursor: "pointer" }} value={broadcast.dayOfWeek} onChange={e => setBroadcastField("dayOfWeek", Number(e.target.value))}>
+                {DAYS_HE.map((d, i) => <option key={i} value={i}>יום {d}</option>)}
+              </select>
+            </div>
+            <div>
+              <label style={LABEL}>שעה (שעון ישראל)</label>
+              <select style={{ ...INPUT_S, cursor: "pointer" }} value={broadcast.hour} onChange={e => setBroadcastField("hour", Number(e.target.value))}>
+                {Array.from({ length: 24 }, (_, h) => <option key={h} value={h}>{String(h).padStart(2, "0")}:00</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="mb-4">
+            <label style={LABEL}>נוסח ההודעה</label>
+            <textarea
+              style={{ ...INPUT_S, height: 80, padding: "12px 14px", resize: "vertical" }}
+              value={broadcast.message} onChange={e => setBroadcastField("message", e.target.value)}
+              placeholder="למשל: היום יום שקילה — אל תשכחו להיכנס ולעדכן!"
+            />
+          </div>
+          <button onClick={saveBroadcast} disabled={savingBroadcast}
+            style={{ background: "#b6ff4a", color: "#111", border: "none", borderRadius: 999, padding: "10px 20px", fontWeight: 800, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
+            {savingBroadcast ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            שמור תזכורת
+          </button>
         </div>
       </div>
     </div>
