@@ -6,6 +6,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   const session = await auth();
   if (!session || session.user.role !== "COACH") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const owned = await prisma.foodItem.findFirst({
+    where: { id: params.id, meal: { nutritionPlan: { trainee: { coachId: session.user.id } } } },
+    select: { id: true },
+  });
+  if (!owned) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
   const data = await req.json();
   const item = await prisma.foodItem.update({
     where: { id: params.id },
@@ -25,6 +31,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
   const session = await auth();
   if (!session || session.user.role !== "COACH") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const owned = await prisma.foodItem.findFirst({
+    where: { id: params.id, meal: { nutritionPlan: { trainee: { coachId: session.user.id } } } },
+    select: { id: true },
+  });
+  if (!owned) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   await prisma.foodItem.delete({ where: { id: params.id } });
   return NextResponse.json({ ok: true });

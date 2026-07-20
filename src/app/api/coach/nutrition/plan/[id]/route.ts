@@ -6,6 +6,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   const session = await auth();
   if (!session || session.user.role !== "COACH") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const owned = await prisma.nutritionPlan.findFirst({
+    where: { id: params.id, trainee: { coachId: session.user.id } },
+    select: { id: true },
+  });
+  if (!owned) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
   const data = await req.json();
   const plan = await prisma.nutritionPlan.update({
     where: { id: params.id },

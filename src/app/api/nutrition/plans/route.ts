@@ -11,6 +11,12 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { traineeId, calories, protein, carbs, fat, preferences, notes, meals } = body;
 
+  const trainee = await prisma.user.findFirst({
+    where: { id: traineeId, coachId: session.user.id, role: "TRAINEE" },
+    select: { id: true },
+  });
+  if (!trainee) return NextResponse.json({ error: "Trainee not found" }, { status: 404 });
+
   // Deactivate old plans
   await prisma.nutritionPlan.updateMany({
     where: { traineeId, isActive: true },
