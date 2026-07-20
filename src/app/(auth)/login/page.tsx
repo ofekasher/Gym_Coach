@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -65,28 +65,16 @@ export default function LoginPage() {
   };
 
   const GREEN = "#a8ff3e";
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.playbackRate = 0.5;
-    const onLoaded = () => { v.playbackRate = 0.5; };
-    v.addEventListener("loadedmetadata", onLoaded);
-    return () => v.removeEventListener("loadedmetadata", onLoaded);
-  }, []);
 
   return (
     <div className="min-h-screen relative overflow-hidden flex flex-col" style={{ background: "#05050a" }} dir="rtl">
-      {/* Full-bleed hero background video — real asset from the design handoff, 0.5x playback per spec */}
-      <video
-        ref={videoRef}
-        src="/videos/login-background.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
+      {/* Full-bleed hero background — real Studio Lior Ziv photo, same asset as /welcome */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/images/lior-onboarding.png"
+        alt=""
         className="absolute inset-0 w-full h-full object-cover"
+        style={{ objectPosition: "center 30%" }}
       />
       <div className="absolute inset-0" style={{
         background: "linear-gradient(to top, rgba(4,4,10,0.92) 0%, rgba(4,4,10,0.45) 45%, rgba(4,4,10,0.55) 100%)",
