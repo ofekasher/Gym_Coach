@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { Trophy, TrendingUp, TrendingDown, Dumbbell, Scale, Camera, Plus, Lock, Zap, Flame, Target, type LucideIcon } from "lucide-react";
 
-const CARD = { background: "#1A1A1F", borderRadius: 20, border: "1px solid rgba(255,255,255,0.05)" };
+const CARD = { background: "#12160f", borderRadius: 20, border: "1px solid rgba(255,255,255,0.05)" };
 
 // Demo exercise history data
 const DEMO_EXERCISE_HISTORY = [

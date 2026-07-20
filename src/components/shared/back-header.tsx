@@ -10,7 +10,7 @@ export function BackHeader({ title, subtitle }: { title: string; subtitle?: stri
         aria-label="חזרה"
         style={{
           width: 40, height: 40, borderRadius: 14, flexShrink: 0,
-          background: "#1A1A1F", border: "1px solid rgba(255,255,255,0.07)",
+          background: "#12160f", border: "1px solid rgba(255,255,255,0.07)",
           display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer",
         }}
       >

@@ -5,7 +5,7 @@ import { BackHeader } from "@/components/shared/back-header";
 import { Flame, Dumbbell, Zap, PersonStanding } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const GREEN = "#a8ff3e";
+const GREEN = "#C6F53C";
 
 const GOAL_TYPES = [
   { key: "הרזיה", icon: Flame, sub: "ירידה במשקל" },
@@ -103,7 +103,7 @@ export default function GoalPage() {
   };
 
   return (
-    <div style={{ background: "#12121f", minHeight: "100vh" }} className="pb-20" dir="rtl">
+    <div style={{ background: "#080b07", minHeight: "100vh" }} className="pb-20" dir="rtl">
       <BackHeader title="יעד" />
       <div className="max-w-sm mx-auto">
         {/* Section 1 — goal type selector */}
@@ -117,8 +117,8 @@ export default function GoalPage() {
                 onClick={() => setGoalType(g.key)}
                 className={
                   selected
-                    ? "bg-[#1c1c2e] border-2 border-[#a8ff3e] rounded-2xl p-4 flex flex-col items-center gap-2"
-                    : "bg-[#1c1c2e] border border-white/10 rounded-2xl p-4 flex flex-col items-center gap-2"
+                    ? "bg-[#12160f] border-2 border-[#C6F53C] rounded-2xl p-4 flex flex-col items-center gap-2"
+                    : "bg-[#12160f] border border-white/10 rounded-2xl p-4 flex flex-col items-center gap-2"
                 }
               >
                 <g.icon size={32} className="text-white" />
@@ -130,7 +130,7 @@ export default function GoalPage() {
         </div>
 
         {/* Section 2 — quantitative goals */}
-        <div className="bg-[#1c1c2e] rounded-2xl mx-4 mt-6 p-4">
+        <div className="bg-[#12160f] rounded-2xl mx-4 mt-6 p-4">
           <div className="text-white font-bold text-lg mb-4">יעדים כמותיים</div>
 
           <div className="flex gap-3 mb-2">
@@ -141,7 +141,7 @@ export default function GoalPage() {
                   type="number"
                   value={currentWeight}
                   onChange={(e) => setCurrentWeight(Number(e.target.value))}
-                  className="bg-[#12121f] border border-white/10 rounded-xl px-3 py-2 text-white w-full"
+                  className="bg-[#080b07] border border-white/10 rounded-xl px-3 py-2 text-white w-full"
                 />
                 <span className="text-gray-400 text-xs">ק"ג</span>
               </div>
@@ -153,7 +153,7 @@ export default function GoalPage() {
                   type="number"
                   value={targetWeight}
                   onChange={(e) => setTargetWeight(Number(e.target.value))}
-                  className="bg-[#12121f] border border-white/10 rounded-xl px-3 py-2 text-white w-full"
+                  className="bg-[#080b07] border border-white/10 rounded-xl px-3 py-2 text-white w-full"
                 />
                 <span className="text-gray-400 text-xs">ק"ג</span>
               </div>
@@ -171,7 +171,7 @@ export default function GoalPage() {
             max={40}
             value={targetBodyFat}
             onChange={(e) => setTargetBodyFat(Number(e.target.value))}
-            className="bg-[#12121f] border border-white/10 rounded-xl px-4 py-3 text-white w-full"
+            className="bg-[#080b07] border border-white/10 rounded-xl px-4 py-3 text-white w-full"
           />
           <div className="text-gray-400 text-xs mt-2">{bodyFatCategory(targetBodyFat)}</div>
 
@@ -182,7 +182,7 @@ export default function GoalPage() {
             type="date"
             value={targetDate}
             onChange={(e) => setTargetDate(e.target.value)}
-            className="bg-[#12121f] border border-white/10 rounded-xl px-4 py-3 text-white w-full"
+            className="bg-[#080b07] border border-white/10 rounded-xl px-4 py-3 text-white w-full"
           />
           {weeksLeft != null && (
             <div className="text-gray-400 text-xs mt-2">
@@ -192,7 +192,7 @@ export default function GoalPage() {
         </div>
 
         {/* Section 3 — weekly targets */}
-        <div className="bg-[#1c1c2e] rounded-2xl mx-4 mt-4 p-4">
+        <div className="bg-[#12160f] rounded-2xl mx-4 mt-4 p-4">
           <div className="text-white font-bold text-lg mb-4">יעדים שבועיים</div>
 
           <div className="mb-5">
@@ -203,7 +203,7 @@ export default function GoalPage() {
               max={7}
               value={weeklyWorkouts}
               onChange={(e) => setWeeklyWorkouts(Number(e.target.value))}
-              className="w-full accent-[#a8ff3e] h-2"
+              className="w-full accent-[#C6F53C] h-2"
             />
             <div className="font-bold mt-1" style={{ color: GREEN }}>{weeklyWorkouts} אימונים בשבוע</div>
           </div>
@@ -217,7 +217,7 @@ export default function GoalPage() {
               step={50}
               value={dailyCalories}
               onChange={(e) => setDailyCalories(Number(e.target.value))}
-              className="w-full accent-[#a8ff3e] h-2"
+              className="w-full accent-[#C6F53C] h-2"
             />
             <div className="font-bold mt-1" style={{ color: GREEN }}>{dailyCalories.toLocaleString()} קלוריות ביום</div>
           </div>
@@ -231,20 +231,20 @@ export default function GoalPage() {
               step={500}
               value={dailySteps}
               onChange={(e) => setDailySteps(Number(e.target.value))}
-              className="w-full accent-[#a8ff3e] h-2"
+              className="w-full accent-[#C6F53C] h-2"
             />
             <div className="font-bold mt-1" style={{ color: GREEN }}>{dailySteps.toLocaleString()} צעדים ביום</div>
           </div>
         </div>
 
         {/* Section 4 — motivation */}
-        <div className="bg-[#1c1c2e] rounded-2xl mx-4 mt-4 p-4 mb-4">
+        <div className="bg-[#12160f] rounded-2xl mx-4 mt-4 p-4 mb-4">
           <div className="text-white font-bold text-lg mb-4">למה אתה עושה את זה?</div>
           <textarea
             value={motivation}
             onChange={(e) => setMotivation(e.target.value.slice(0, 200))}
             placeholder="כתוב את המוטיבציה שלך... (זה יישאר פרטי)"
-            className="bg-[#12121f] border border-white/10 rounded-xl p-4 text-white w-full h-24 resize-none"
+            className="bg-[#080b07] border border-white/10 rounded-xl p-4 text-white w-full h-24 resize-none"
           />
           <div className="text-gray-400 text-xs text-left mt-1">{motivation.length}/200</div>
         </div>
@@ -254,7 +254,7 @@ export default function GoalPage() {
       <button
         onClick={save}
         disabled={saving}
-        className="fixed bottom-20 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm bg-[#a8ff3e] text-black font-bold py-4 rounded-2xl text-lg"
+        className="fixed bottom-20 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm bg-[#C6F53C] text-black font-bold py-4 rounded-2xl text-lg"
       >
         {saving ? "שומר..." : "שמור יעדים"}
       </button>
@@ -266,7 +266,7 @@ export default function GoalPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="fixed bottom-36 left-1/2 -translate-x-1/2 bg-[#a8ff3e] text-black font-bold px-5 py-3 rounded-full text-sm"
+            className="fixed bottom-36 left-1/2 -translate-x-1/2 bg-[#C6F53C] text-black font-bold px-5 py-3 rounded-full text-sm"
           >
             היעדים נשמרו! 🎯
           </motion.div>

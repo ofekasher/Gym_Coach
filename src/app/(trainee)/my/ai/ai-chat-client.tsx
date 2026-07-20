@@ -14,7 +14,7 @@ const QUICK = [
 ];
 
 const BG      = "transparent";
-const CARD    = "#1A1A1F";
+const CARD    = "#12160f";
 const PURPLE  = "#3B82F6";
 const PDIM    = "rgba(59,130,246,0.15)";
 const BORDER  = "rgba(255,255,255,0.06)";

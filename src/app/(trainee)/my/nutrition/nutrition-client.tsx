@@ -5,7 +5,7 @@ import { Camera } from "lucide-react";
 import { AnimatedNumber } from "@/components/shared/AnimatedNumber";
 import { useToast } from "@/hooks/use-toast";
 
-const GREEN = "#a8ff3e";
+const GREEN = "#C6F53C";
 const WATER_ACCENT = "#3b9eff";
 const OPTION_LABELS = ["אופציה א", "אופציה ב", "אופציה ג", "אופציה ד"];
 
@@ -349,14 +349,14 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
   };
 
   return (
-    <div style={{ background: "#080810", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
+    <div style={{ background: "#080b07", minHeight: "100vh", paddingBottom: 100 }} dir="rtl">
       <div style={{ maxWidth: 480, margin: "0 auto", padding: "24px 16px 0" }}>
 
         {/* Page title — was missing entirely; matches Lior Fit.dc.html exactly */}
         <div style={{ fontSize: 26, fontWeight: 900, letterSpacing: "-0.02em", marginBottom: 20, color: "#fff" }}>תזונה</div>
 
         {/* Section 1 — macro donut card */}
-        <div style={{ background: "#1c1c2e", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 24, padding: "24px 20px", marginBottom: 20 }}>
+        <div style={{ background: "#12160f", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 24, padding: "24px 20px", marginBottom: 20 }}>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
             <div style={{ position: "relative", width: 170, height: 170 }}>
               <svg width="170" height="170" viewBox="0 0 170 170" style={{ transform: "rotate(-90deg)" }}>
@@ -411,7 +411,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
             background: "transparent", cursor: "pointer", textAlign: "right",
           }}
         >
-          <div style={{ width: 44, height: 44, borderRadius: 13, background: "rgba(168,255,62,0.13)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+          <div style={{ width: 44, height: 44, borderRadius: 13, background: "rgba(198,245,60,0.13)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <Camera size={22} color={GREEN} />
           </div>
           <div style={{ flex: 1 }}>
@@ -421,7 +421,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
         </button>
 
         {/* Water tracker card — WATER_ACCENT #3b9eff, local stepper (50ml jumps, 50-500 range) */}
-        <div style={{ background: "#1c1c2e", borderRadius: 20, padding: 18, marginBottom: 24 }}>
+        <div style={{ background: "#12160f", borderRadius: 20, padding: 18, marginBottom: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
             <span style={{ fontSize: 15, fontWeight: 800, color: "#fff" }}>💧 שתיית מים</span>
             <span style={{ fontSize: 14 }}>
@@ -506,7 +506,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                       style={{
                         width: "100%", textAlign: "right", cursor: loading ? "default" : "pointer",
                         borderRadius: 16, padding: "14px 16px",
-                        background: checked ? "rgba(168,255,62,0.08)" : "#1c1c2e",
+                        background: checked ? "rgba(198,245,60,0.08)" : "#12160f",
                         border: checked ? `1.5px solid ${GREEN}` : "1px solid rgba(255,255,255,0.07)",
                       }}
                     >
@@ -528,7 +528,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                           {loading ? (
                             <div style={{ width: 9, height: 9, borderRadius: "50%", border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff" }} />
                           ) : checked ? (
-                            <svg width="11" height="11" fill="none" stroke="#0a0a0a" strokeWidth="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                            <svg width="11" height="11" fill="none" stroke="#0a1004" strokeWidth="3" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
                           ) : null}
                         </div>
                       </div>
@@ -547,7 +547,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                     )}
                   </div>
                   <label style={{
-                    flex: 1, border: "1.5px dashed rgba(168,255,62,0.4)", borderRadius: 14, cursor: "pointer",
+                    flex: 1, border: "1.5px dashed rgba(198,245,60,0.4)", borderRadius: 14, cursor: "pointer",
                     display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 5, color: GREEN,
                   }}>
                     <Camera size={18} />
@@ -590,7 +590,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
               initial={{ y: "100%" }}
               animate={{ y: modalClosing ? "100%" : 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-sm bg-[#1c1c2e] rounded-t-3xl z-[101] max-h-[85vh] overflow-y-auto"
+              className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-sm bg-[#12160f] rounded-t-3xl z-[101] max-h-[85vh] overflow-y-auto"
               style={{ padding: 20 }}
             >
               <div className="w-10 h-1 bg-white/20 rounded-full mx-auto mt-3 mb-4" />
@@ -612,7 +612,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                   style={{
                     padding: "6px 16px", borderRadius: 99, fontSize: 13, fontWeight: 700, border: "none", cursor: "pointer",
                     background: activeTab === tab.key ? GREEN : "rgba(255,255,255,0.1)",
-                    color: activeTab === tab.key ? "#0a0a0a" : "#9ca3af",
+                    color: activeTab === tab.key ? "#0a1004" : "#9ca3af",
                   }}
                 >
                   {tab.label}
@@ -719,7 +719,7 @@ export function NutritionClient({ nutritionPlan: propPlan }: { nutritionPlan: an
                   disabled={savingManual || !manualForm.foodName || !manualForm.calories}
                   style={{
                     width: "100%", padding: "12px 0", borderRadius: 12, border: "none", cursor: "pointer",
-                    background: GREEN, color: "#0a0a0a", fontSize: 15, fontWeight: 800, marginTop: 4,
+                    background: GREEN, color: "#0a1004", fontSize: 15, fontWeight: 800, marginTop: 4,
                   }}
                 >
                   {savingManual ? "שומר..." : "הוסף"}

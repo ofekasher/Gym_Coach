@@ -90,7 +90,7 @@ export function ExerciseGifCard({ exerciseName }: Props) {
     <div>
       <button
         onClick={handleOpen}
-        className="text-[#a8ff3e] text-xs underline"
+        className="text-[#C6F53C] text-xs underline"
       >
         {opened ? "✕ סגור" : "▶ פרטי תרגיל"}
       </button>
@@ -102,7 +102,7 @@ export function ExerciseGifCard({ exerciseName }: Props) {
           {data && !loading && hasInfo && (
             <div className="flex flex-wrap gap-2 mb-3">
               {data.target && (
-                <span className="bg-[#a8ff3e]/10 text-[#a8ff3e] text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="bg-[#C6F53C]/10 text-[#C6F53C] text-xs px-2 py-0.5 rounded-full flex items-center gap-1">
                   <Dumbbell className="w-3 h-3" /> שריר ראשי: {muscleTranslations[data.target] ?? data.target}
                 </span>
               )}
