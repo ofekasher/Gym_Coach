@@ -11,9 +11,6 @@ const NAV = [
   { href: "/my/dashboard", label: "בית" },
   { href: "/my/nutrition", label: "ארוחות" },
 ];
-const NAV_END = [
-  { href: "/my/progress", label: "התקדמות" },
-];
 
 export function TraineeBottomNav() {
   const pathname = usePathname();
@@ -57,14 +54,6 @@ export function TraineeBottomNav() {
             boxShadow: "0 8px 24px rgba(120,220,90,0.35)",
           }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a1004" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2" /><path d="M3 12h18" /></svg>
-          </div>
-        </Link>
-
-        {/* התקדמות */}
-        <Link href={NAV_END[0].href} style={{ textDecoration: "none" }}>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5, color: isActive(NAV_END[0].href) ? LIME : "rgba(255,255,255,0.45)" }}>
-            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
-            <span style={{ fontSize: 11, fontWeight: isActive(NAV_END[0].href) ? 700 : 400 }}>{NAV_END[0].label}</span>
           </div>
         </Link>
 

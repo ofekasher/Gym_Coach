@@ -272,6 +272,17 @@ export function ProfileClient({ user }: { user: any }) {
         </div>
       </div>
 
+      {/* Progress screen link — accessed only from here, not the bottom nav */}
+      <Link href="/my/progress" style={{ textDecoration: "none" }}>
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          background: "#12160f", borderRadius: 20, margin: "20px 20px 0", padding: "16px 18px",
+        }}>
+          <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>ההתקדמות שלי</span>
+          <span style={{ fontSize: 16, color: GREEN }}>←</span>
+        </div>
+      </Link>
+
       {/* Section 4 — settings, matches design list order (התראות/יחידות מידה/המנוי שלי/פרטיות ואבטחה/עזרה ותמיכה) */}
       <div style={{ background: "#12160f", borderRadius: 20, margin: "20px 20px 0", overflow: "hidden" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 14px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
