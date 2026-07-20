@@ -5,9 +5,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { isDatabaseConfigured } from "@/lib/prisma";
 
 export default async function TraineeLayout({ children }: { children: React.ReactNode }) {
+  // Lior Fit v2: radial green mesh over #080b07, matching Lior Fit v2.dc.html exactly
   const bgStyle: React.CSSProperties = {
     background:
-      "radial-gradient(ellipse 900px 500px at 50% -10%, rgba(59,130,246,0.16), transparent 60%), radial-gradient(ellipse 600px 400px at 90% 30%, rgba(139,92,246,0.08), transparent 60%), #0A0E14",
+      "radial-gradient(120% 90% at 70% 0%, rgba(88,196,72,0.32) 0%, rgba(8,11,7,0) 62%), #080b07",
   };
 
   if (!isDatabaseConfigured) {
