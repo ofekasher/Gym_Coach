@@ -6,6 +6,7 @@ import { Users, TrendingUp, Bell, CheckCircle2, AlertTriangle, CalendarDays, Zap
 import { formatDistanceToNow, subDays } from "date-fns";
 import { he } from "date-fns/locale";
 import { getMuscleGymPhoto } from "@/lib/gym-photos";
+import { badgeForProgress, BADGE_CONFIG, type BadgeTier } from "@/lib/trainee-badge";
 
 interface TraineeWithData {
   id: string;
@@ -14,7 +15,13 @@ interface TraineeWithData {
   checkIns: { date: Date; weight: number | null }[];
   workoutLogs: { date: Date; status: string }[];
   workoutPlans: { id: string; isActive: boolean; name?: string; template?: string }[];
-  traineeProfile: { currentWeight: number | null; goals: string[] } | null;
+  traineeProfile: {
+    currentWeight: number | null; goals: string[]; height?: number | null;
+    dateOfBirth?: Date | null; weeklyWorkouts?: number | null; dailyCalories?: number | null;
+  } | null;
+  nutritionPlans?: { calories: number; protein: number; carbs: number; fat: number }[];
+  nutritionLogs?: { calories: number; protein: number | null; carbs: number | null; fat: number | null }[];
+  waterLogs?: { amount: number }[];
 }
 
 interface Alert {
@@ -42,21 +49,6 @@ const TEMPLATE_LABELS: Record<string, string> = {
   PPL: "Push/Pull/Legs",
   AB: "A/B",
   CUSTOM: "מותאם אישית",
-};
-
-function getTraineeStatus(t: TraineeWithData): "green" | "yellow" | "red" {
-  const weekAgo = subDays(new Date(), 7);
-  const hasCheckIn = t.checkIns.some((c) => c.date >= weekAgo);
-  const hasWorkout = t.workoutLogs.length > 0;
-  if (hasCheckIn && hasWorkout) return "green";
-  if (hasCheckIn || hasWorkout) return "yellow";
-  return "red";
-}
-
-const statusConfig = {
-  green: { label: "פעיל", bg: "bg-green-500/20", text: "text-green-400" },
-  yellow: { label: "בינוני", bg: "bg-purple-500/20", text: "text-purple-400" },
-  red: { label: "דורש מעקב", bg: "bg-red-500/20", text: "text-red-400" },
 };
 
 const alertTypeLabels: Record<string, string> = {
@@ -90,8 +82,35 @@ function Ring({ pct, color }: { pct: number; color: string }) {
   );
 }
 
+function ageFromDob(dob?: Date | null): number | null {
+  if (!dob) return null;
+  const d = new Date(dob);
+  const diff = Date.now() - d.getTime();
+  return Math.floor(diff / (365.25 * 24 * 3600 * 1000));
+}
+
+function MetricGauge({ value, target, unit, label, color }: { value: number; target: number; unit: string; label: string; color: string }) {
+  const pct = target > 0 ? Math.min(100, Math.round((value / target) * 100)) : 0;
+  const r = 24, c = 2 * Math.PI * r;
+  return (
+    <div className="flex flex-col items-center gap-1.5">
+      <div className="relative w-14 h-14">
+        <svg width="56" height="56" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r={r} fill="none" stroke="#242424" strokeWidth="6" />
+          <circle cx="28" cy="28" r={r} fill="none" stroke={color} strokeWidth="6" strokeLinecap="round"
+            strokeDasharray={c} strokeDashoffset={c - (pct / 100) * c} transform="rotate(-90 28 28)" />
+        </svg>
+        <span className="absolute inset-0 flex flex-col items-center justify-center text-[11px] font-black text-white">{value}</span>
+      </div>
+      <div className="text-[11px] font-bold" style={{ color: "#888" }}>{label} <span style={{ color: "#666" }}>/{target}{unit}</span></div>
+    </div>
+  );
+}
+
 export function DashboardClient({ trainees, alerts, stats }: Props) {
-  const [filter, setFilter] = useState<"ALL" | "green" | "red">("ALL");
+  const [filter, setFilter] = useState<"ALL" | BadgeTier>("ALL");
+  const [selectedId, setSelectedId] = useState<string | null>(trainees[0]?.id ?? null);
+  const selected = trainees.find(t => t.id === selectedId) ?? trainees[0] ?? null;
 
   const activePct = stats.total > 0 ? Math.round((stats.activeThisWeek / stats.total) * 100) : 0;
   const checkedInPct = stats.total > 0 ? Math.round((stats.checkedInThisWeek / stats.total) * 100) : 0;
@@ -104,7 +123,7 @@ export function DashboardClient({ trainees, alerts, stats }: Props) {
 
   const filteredTrainees = trainees.filter((t) => {
     if (filter === "ALL") return true;
-    return getTraineeStatus(t) === filter;
+    return badgeForProgress(progressForTrainee(t)) === filter;
   });
 
   // Programs carousel — real distinct workout-plan templates currently in use across trainees
@@ -126,9 +145,9 @@ export function DashboardClient({ trainees, alerts, stats }: Props) {
     .slice(0, 5);
 
   return (
-    <div className="flex gap-6" dir="rtl">
-      {/* Main content */}
-      <div className="flex-1 min-w-0 space-y-5 relative">
+    <div className="flex gap-6 lg:h-[calc(100vh-152px)] lg:overflow-hidden" dir="rtl">
+      {/* Main content — fixed hero/metrics/programs/filters, only the trainee grid scrolls internally */}
+      <div className="flex-1 min-w-0 flex flex-col gap-5 relative lg:h-full lg:overflow-hidden">
         {/* Hero — matches Lior Fit Dashboard Design's dashboard hero */}
         <motion.div
           initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
@@ -205,7 +224,9 @@ export function DashboardClient({ trainees, alerts, stats }: Props) {
           )}
         </div>
 
-        {/* Title + filters */}
+        {/* Title + filters + trainee grid — this section scrolls internally so the hero/metrics/
+            programs above stay fixed and the dashboard fits one screen (per design spec). */}
+        <div className="flex-1 min-h-0 lg:overflow-y-auto flex flex-col gap-5">
         <div className="flex items-center justify-between pt-1">
           <h2 className="text-lg font-extrabold text-white flex items-center gap-2.5">
             <span className="w-[5px] h-5 rounded-[3px]" style={{ background: GREEN }} />
@@ -214,15 +235,19 @@ export function DashboardClient({ trainees, alerts, stats }: Props) {
           <div className="flex gap-2">
             {([
               { key: "ALL", label: "הכל" },
-              { key: "green", label: "פעיל" },
-              { key: "red", label: "דורש מעקב" },
+              { key: "gold", label: "זהב" },
+              { key: "silver", label: "כסף" },
+              { key: "bronze", label: "ברונזה" },
+              { key: "trial", label: "ניסיון" },
             ] as const).map((f) => (
               <button
                 key={f.key}
                 onClick={() => setFilter(f.key)}
                 className="rounded-full px-3 py-1 text-sm border transition-colors"
                 style={filter === f.key
-                  ? { background: "rgba(182,255,74,0.1)", borderColor: "rgba(182,255,74,0.3)", color: GREEN }
+                  ? (f.key === "ALL"
+                    ? { background: "rgba(182,255,74,0.1)", borderColor: "rgba(182,255,74,0.3)", color: GREEN }
+                    : { background: BADGE_CONFIG[f.key].bg, borderColor: "transparent", color: BADGE_CONFIG[f.key].color })
                   : { background: "rgba(255,255,255,0.05)", borderColor: "rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.6)" }}
               >
                 {f.label}
@@ -244,10 +269,9 @@ export function DashboardClient({ trainees, alerts, stats }: Props) {
         ) : (
           <div className="grid md:grid-cols-2 gap-4">
             {filteredTrainees.map((t, i) => {
-              const status = getTraineeStatus(t);
-              const cfg = statusConfig[status];
-              const lastCheckIn = t.checkIns[0];
               const progress = progressForTrainee(t);
+              const cfg = BADGE_CONFIG[badgeForProgress(progress)];
+              const lastCheckIn = t.checkIns[0];
 
               return (
                 <motion.div
@@ -265,7 +289,7 @@ export function DashboardClient({ trainees, alerts, stats }: Props) {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="font-semibold text-sm text-white">{t.name}</p>
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${cfg.bg} ${cfg.text}`}>{cfg.label}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: cfg.bg, color: cfg.color }}>{cfg.label}</span>
                       </div>
                       {t.email && <p className="text-xs truncate" style={{ color: "rgba(255,255,255,0.3)" }}>{t.email}</p>}
                     </div>
@@ -301,10 +325,129 @@ export function DashboardClient({ trainees, alerts, stats }: Props) {
             })}
           </div>
         )}
+        </div>
       </div>
 
-      {/* Right aside — today list + alerts + quick actions */}
-      <div className="w-[280px] flex-shrink-0 space-y-5 relative hidden lg:block">
+      {/* Right aside — selected-trainee live metrics + today list + alerts + quick actions */}
+      <div className="w-[280px] flex-shrink-0 space-y-5 relative hidden lg:block lg:h-full lg:overflow-y-auto">
+        {selected && (
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-[13px] font-extrabold flex items-center gap-1.5" style={{ color: "#e8e8e8" }}>
+                המדדים של {selected.name}
+              </h3>
+              <Link href={`/trainees/${selected.id}`} className="text-[11px] font-bold" style={{ color: GREEN }}>פרופיל ←</Link>
+            </div>
+
+            {/* Trainee selector chips */}
+            <div className="flex gap-2 overflow-x-auto pb-1 mb-3.5">
+              {trainees.map((t, i) => (
+                <button
+                  key={t.id}
+                  onClick={() => setSelectedId(t.id)}
+                  className="w-10 h-10 rounded-full flex items-center justify-center font-black text-sm flex-shrink-0"
+                  style={{
+                    background: avatarColors[i % avatarColors.length], color: "#0a0a0a",
+                    boxShadow: t.id === selected.id ? `0 0 0 2px #0a0a0a, 0 0 0 4px ${GREEN}` : "none",
+                  }}
+                >
+                  {t.name?.[0] ?? "?"}
+                </button>
+              ))}
+            </div>
+
+            {/* Body stats */}
+            <div className="grid grid-cols-3 gap-2 mb-3.5">
+              <div className={`${glassCard} p-2.5 text-center`}>
+                <div className="text-[10px] mb-1" style={{ color: "#888" }}>משקל</div>
+                <div className="font-black text-sm" style={{ color: GREEN }}>{selected.traineeProfile?.currentWeight ?? "—"}</div>
+              </div>
+              <div className={`${glassCard} p-2.5 text-center`}>
+                <div className="text-[10px] mb-1" style={{ color: "#888" }}>גובה</div>
+                <div className="font-black text-sm" style={{ color: GREEN }}>{selected.traineeProfile?.height ?? "—"}</div>
+              </div>
+              <div className={`${glassCard} p-2.5 text-center`}>
+                <div className="text-[10px] mb-1" style={{ color: "#888" }}>גיל</div>
+                <div className="font-black text-sm" style={{ color: GREEN }}>{ageFromDob(selected.traineeProfile?.dateOfBirth) ?? "—"}</div>
+              </div>
+            </div>
+
+            {/* Calorie ring + macros — real data, empty state if no active nutrition plan */}
+            {(() => {
+              const plan = selected.nutritionPlans?.[0];
+              if (!plan) {
+                return (
+                  <div className={`${glassCard} p-4 text-center mb-3.5`}>
+                    <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>אין תוכנית תזונה פעילה</p>
+                  </div>
+                );
+              }
+              const logs = selected.nutritionLogs ?? [];
+              const consumed = logs.reduce((s, l) => s + (l.calories ?? 0), 0);
+              const protein = logs.reduce((s, l) => s + (l.protein ?? 0), 0);
+              const carbs = logs.reduce((s, l) => s + (l.carbs ?? 0), 0);
+              const fat = logs.reduce((s, l) => s + (l.fat ?? 0), 0);
+              const remaining = Math.max(0, plan.calories - consumed);
+              const pct = plan.calories > 0 ? Math.min(100, Math.round((consumed / plan.calories) * 100)) : 0;
+              const macros = [
+                { label: "חלבון", cur: Math.round(protein), tgt: Math.round(plan.protein), color: GREEN },
+                { label: "פחמימות", cur: Math.round(carbs), tgt: Math.round(plan.carbs), color: "#3B82F6" },
+                { label: "שומן", cur: Math.round(fat), tgt: Math.round(plan.fat), color: "#f5d442" },
+              ];
+              const ringR = 30, ringC = 2 * Math.PI * ringR;
+              return (
+                <div className={`${glassCard} p-3.5 mb-3.5`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="text-[11px] font-bold" style={{ color: "#888" }}>נצרך<br /><span className="text-white font-black text-sm">{Math.round(consumed)}</span></div>
+                    <div className="relative w-[72px] h-[72px]">
+                      <svg width="72" height="72" viewBox="0 0 72 72">
+                        <circle cx="36" cy="36" r={ringR} fill="none" stroke="#242424" strokeWidth="7" />
+                        <circle cx="36" cy="36" r={ringR} fill="none" stroke={GREEN} strokeWidth="7" strokeLinecap="round"
+                          strokeDasharray={ringC} strokeDashoffset={ringC - (pct / 100) * ringC} transform="rotate(-90 36 36)" />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="font-black text-[15px] text-white">{plan.calories}</span>
+                        <span className="text-[9px]" style={{ color: "#888" }}>קק״ל</span>
+                      </div>
+                    </div>
+                    <div className="text-[11px] font-bold text-left" style={{ color: "#888" }}>נותר<br /><span className="text-white font-black text-sm">{Math.round(remaining)}</span></div>
+                  </div>
+                  <div className="space-y-1.5">
+                    {macros.map(m => (
+                      <div key={m.label}>
+                        <div className="flex justify-between text-[10.5px] mb-0.5" style={{ color: "#888" }}>
+                          <span>{m.label}</span>
+                          <span>{m.cur}/{m.tgt} ג׳</span>
+                        </div>
+                        <div className="h-[4px] rounded-full bg-[#242424] overflow-hidden">
+                          <div className="h-full rounded-full" style={{ width: `${m.tgt > 0 ? Math.min(100, (m.cur / m.tgt) * 100) : 0}%`, background: m.color }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* Two gauges — real substitutes for the design's sleep gauge (this app doesn't track sleep):
+                water intake (real WaterLog data) and this-week's workout count vs the trainee's weekly target. */}
+            <div className="grid grid-cols-2 gap-3 mb-1">
+              <div className={`${glassCard} p-3 flex flex-col items-center`}>
+                <MetricGauge
+                  value={Math.round((selected.waterLogs ?? []).reduce((s, w) => s + w.amount, 0) / 1000 * 10) / 10}
+                  target={2.5} unit="ל׳" label="מים" color="#3B82F6"
+                />
+              </div>
+              <div className={`${glassCard} p-3 flex flex-col items-center`}>
+                <MetricGauge
+                  value={selected.workoutLogs.length}
+                  target={selected.traineeProfile?.weeklyWorkouts ?? 3} unit="" label="אימונים" color={GREEN}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+
         <div>
           <h3 className="text-[13px] font-extrabold mb-3 flex items-center gap-1.5" style={{ color: "#e8e8e8" }}>
             <CalendarDays size={14} style={{ color: GREEN }} /> התוכנית להיום
@@ -318,8 +461,8 @@ export function DashboardClient({ trainees, alerts, stats }: Props) {
               {todayList.map((t, i) => {
                 const progress = progressForTrainee(t);
                 return (
-                  <Link key={t.id} href={`/trainees/${t.id}`}>
-                    <div className="flex items-center gap-3 bg-[#111] border border-[#1a1a1a] rounded-[14px] p-2.5 hover:border-[#333] transition-colors">
+                  <button key={t.id} onClick={() => setSelectedId(t.id)} className="text-right w-full">
+                    <div className="flex items-center gap-3 bg-[#111] border rounded-[14px] p-2.5 hover:border-[#333] transition-colors" style={{ borderColor: t.id === selectedId ? GREEN : "#1a1a1a" }}>
                       <div
                         className="w-[46px] h-[46px] rounded-[11px] flex items-center justify-center font-black text-lg flex-shrink-0"
                         style={{ background: avatarColors[i % avatarColors.length], color: "#0a0a0a" }}
@@ -336,7 +479,7 @@ export function DashboardClient({ trainees, alerts, stats }: Props) {
                         </div>
                       </div>
                     </div>
-                  </Link>
+                  </button>
                 );
               })}
             </div>

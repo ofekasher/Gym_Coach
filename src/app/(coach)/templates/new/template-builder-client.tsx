@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, Search, Loader2 } from "lucide-react";
+import { Plus, Trash2, Search, Loader2, ChevronUp, ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const GREEN = "#b6ff4a";
@@ -54,6 +54,18 @@ export function TemplateBuilderClient() {
 
   const removeExercise = (dayIdx: number, exIdx: number) =>
     setDays((d) => d.map((day, idx) => (idx === dayIdx ? { ...day, exercises: day.exercises.filter((_, j) => j !== exIdx) } : day)));
+
+  const moveExercise = (dayIdx: number, exIdx: number, direction: -1 | 1) =>
+    setDays((d) =>
+      d.map((day, idx) => {
+        if (idx !== dayIdx) return day;
+        const target = exIdx + direction;
+        if (target < 0 || target >= day.exercises.length) return day;
+        const exercises = [...day.exercises];
+        [exercises[exIdx], exercises[target]] = [exercises[target], exercises[exIdx]];
+        return { ...day, exercises };
+      })
+    );
 
   const updateExercise = (dayIdx: number, exIdx: number, field: "sets" | "reps", val: string) =>
     setDays((d) =>
@@ -136,6 +148,14 @@ export function TemplateBuilderClient() {
             <div className="flex flex-col gap-2 mb-2">
               {day.exercises.map((ex, exIdx) => (
                 <div key={exIdx} className="bg-[#0d0d0d] border border-[#222] rounded-[10px] p-2.5 flex items-center gap-2">
+                  <div className="flex flex-col flex-shrink-0" style={{ color: "#666" }}>
+                    <button onClick={() => moveExercise(dayIdx, exIdx, -1)} disabled={exIdx === 0} className="disabled:opacity-25" aria-label="הזז למעלה">
+                      <ChevronUp size={14} />
+                    </button>
+                    <button onClick={() => moveExercise(dayIdx, exIdx, 1)} disabled={exIdx === day.exercises.length - 1} className="disabled:opacity-25" aria-label="הזז למטה">
+                      <ChevronDown size={14} />
+                    </button>
+                  </div>
                   <span className="flex-1 min-w-0 text-[13px] font-bold text-white truncate">{ex.name}</span>
                   <input
                     type="number"

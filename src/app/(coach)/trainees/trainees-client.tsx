@@ -3,7 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Search, ChevronLeft } from "lucide-react";
-import { subDays } from "date-fns";
+import { badgeForProgress, BADGE_CONFIG, type BadgeTier } from "@/lib/trainee-badge";
 
 interface Trainee {
   id: string;
@@ -28,44 +28,29 @@ const GOAL_LABELS: Record<string, string> = {
 const GREEN = "#b6ff4a";
 const avatarColors = [GREEN, "#8B5CF6", "#3B82F6", "#F59E0B", "#F87171"];
 
-type StatusKey = "green" | "yellow" | "red";
-const STATUS_CONFIG: Record<StatusKey, { label: string; color: string; bg: string }> = {
-  green: { label: "פעיל", color: "#b6ff4a", bg: "rgba(182,255,74,0.12)" },
-  yellow: { label: "בינוני", color: "#f5d442", bg: "rgba(245,212,66,0.12)" },
-  red: { label: "דורש מעקב", color: "#ff5c5c", bg: "rgba(255,92,92,0.12)" },
-};
-
-function getStatus(t: Trainee): StatusKey {
-  const weekAgo = subDays(new Date(), 7);
-  const hasCheckIn = t.checkIns.some((c) => c.date >= weekAgo);
-  const hasWorkout = (t.workoutLogs ?? []).length > 0;
-  if (hasCheckIn && hasWorkout) return "green";
-  if (hasCheckIn || hasWorkout) return "yellow";
-  return "red";
-}
-
 function progressFor(t: Trainee): number {
   return Math.min(100, (t.workoutLogs ?? []).length * 20);
 }
 
-const FILTERS: { key: "ALL" | StatusKey; label: string }[] = [
+const FILTERS: { key: "ALL" | BadgeTier; label: string }[] = [
   { key: "ALL", label: "הכל" },
-  { key: "green", label: "פעיל" },
-  { key: "yellow", label: "בינוני" },
-  { key: "red", label: "דורש מעקב" },
+  { key: "gold", label: "זהב" },
+  { key: "silver", label: "כסף" },
+  { key: "bronze", label: "ברונזה" },
+  { key: "trial", label: "ניסיון" },
 ];
 
 export function TraineesClient({ trainees }: { trainees: Trainee[] }) {
   const searchParams = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("q") ?? "");
-  const [statusFilter, setStatusFilter] = useState<"ALL" | StatusKey>("ALL");
+  const [badgeFilter, setBadgeFilter] = useState<"ALL" | BadgeTier>("ALL");
 
   const filtered = trainees.filter((t) => {
     const matchesSearch =
       t.name?.toLowerCase().includes(search.toLowerCase()) ||
       t.email.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter === "ALL" || getStatus(t) === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesBadge = badgeFilter === "ALL" || badgeForProgress(progressFor(t)) === badgeFilter;
+    return matchesSearch && matchesBadge;
   });
 
   return (
@@ -89,10 +74,12 @@ export function TraineesClient({ trainees }: { trainees: Trainee[] }) {
         {FILTERS.map((f) => (
           <button
             key={f.key}
-            onClick={() => setStatusFilter(f.key)}
+            onClick={() => setBadgeFilter(f.key)}
             className="rounded-full px-4 py-2 text-[13px] font-bold border transition-colors flex-shrink-0"
-            style={statusFilter === f.key
-              ? { background: STATUS_CONFIG[f.key === "ALL" ? "green" : f.key]?.bg ?? GREEN, borderColor: "transparent", color: f.key === "ALL" ? "#0a0a0a" : STATUS_CONFIG[f.key].color }
+            style={badgeFilter === f.key
+              ? (f.key === "ALL"
+                ? { background: GREEN, borderColor: "transparent", color: "#0a0a0a" }
+                : { background: BADGE_CONFIG[f.key].bg, borderColor: "transparent", color: BADGE_CONFIG[f.key].color })
               : { background: "#141414", borderColor: "#2a2a2a", color: "rgba(255,255,255,0.6)" }}
           >
             {f.label}
@@ -116,9 +103,8 @@ export function TraineesClient({ trainees }: { trainees: Trainee[] }) {
       ) : (
         <div className="flex flex-col gap-3">
           {filtered.map((t, i) => {
-            const status = getStatus(t);
-            const cfg = STATUS_CONFIG[status];
             const progress = progressFor(t);
+            const cfg = BADGE_CONFIG[badgeForProgress(progress)];
             return (
               <Link key={t.id} href={`/trainees/${t.id}`}>
                 <div className="flex items-center gap-4 bg-[#141414] border border-[#1e1e1e] rounded-2xl px-[18px] py-3.5 cursor-pointer hover:border-[#333] transition-colors">

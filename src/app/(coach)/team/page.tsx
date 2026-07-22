@@ -14,7 +14,7 @@ export default async function TeamPage() {
 
   const coaches = await prisma.user.findMany({
     where: { coachId, role: "COACH" as any },
-    select: { id: true, name: true, email: true, createdAt: true },
+    select: { id: true, name: true, email: true, createdAt: true, coachPermission: true },
     orderBy: { createdAt: "desc" },
   });
 

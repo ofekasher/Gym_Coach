@@ -137,6 +137,7 @@ model User {
   subscription    TraineeSubscription?
   coachSettings   CoachSettings?
   weeklyBroadcast WeeklyBroadcast?
+  coachPermission CoachPermission?
   nutritionLogs   NutritionLog[]
   waterLogs       WaterLog[]
   planTemplates   WorkoutPlanTemplate[]
@@ -218,6 +219,23 @@ model WeeklyBroadcast {
   message      String   @db.Text
   lastSentDate String?
   updatedAt    DateTime @updatedAt
+
+  coach User @relation(fields: [coachId], references: [id], onDelete: Cascade)
+}
+
+// Per-sub-coach permission flags the head coach (owner) toggles from /team.
+// The owner (coachId null on their own User row) always has full access — this
+// table only ever holds rows for sub-coaches (role COACH, coachId = owner's id).
+model CoachPermission {
+  id                  String  @id @default(cuid())
+  coachId             String  @unique
+  canManageTrainees   Boolean @default(true)
+  canCreatePlans      Boolean @default(true)
+  canManageExercises  Boolean @default(true)
+  canMessage          Boolean @default(true)
+  canManageSchedule   Boolean @default(true)
+  canManagePayments   Boolean @default(false)
+  updatedAt           DateTime @updatedAt
 
   coach User @relation(fields: [coachId], references: [id], onDelete: Cascade)
 }

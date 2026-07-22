@@ -1,6 +1,6 @@
 "use client";
 import { useState, useMemo } from "react";
-import { Search, Plus, Trash2, Loader2, ChevronDown, Dumbbell, Zap, Filter, X } from "lucide-react";
+import { Search, Plus, Trash2, Loader2, ChevronDown, Dumbbell, Zap, Filter, X, Video, ExternalLink } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useConfirm } from "@/components/shared/confirm-dialog";
 import { ExerciseGifCard } from "@/components/shared/ExerciseGifCard";
@@ -14,6 +14,28 @@ const DIFF_COLOR: Record<string, string> = {
   מתקדם: "#ef4444",
 };
 
+// Converts a pasted YouTube/Vimeo watch URL into its embeddable form. Returns null for
+// anything else (own-hosted video links are played directly via a <video> tag instead).
+function toEmbedUrl(url: string): string | null {
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes("youtube.com")) {
+      const id = u.searchParams.get("v");
+      return id ? `https://www.youtube.com/embed/${id}` : null;
+    }
+    if (u.hostname === "youtu.be") {
+      return `https://www.youtube.com/embed/${u.pathname.slice(1)}`;
+    }
+    if (u.hostname.includes("vimeo.com")) {
+      const id = u.pathname.split("/").filter(Boolean)[0];
+      return id ? `https://player.vimeo.com/video/${id}` : null;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export function ExercisesClient({ exercises: initial, coachId }: { exercises: any[]; coachId: string }) {
   const { toast } = useToast();
   const confirm = useConfirm();
@@ -26,6 +48,36 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
   const [saving, setSaving] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [form, setForm] = useState({ name: "", muscleGroup: "", equipment: "", difficulty: "בינוני", description: "" });
+  const [videoModal, setVideoModal] = useState<{ id: string; name: string; videoUrl: string } | null>(null);
+  const [videoInput, setVideoInput] = useState("");
+  const [savingVideo, setSavingVideo] = useState(false);
+
+  const openVideoModal = (ex: any) => {
+    setVideoModal({ id: ex.id, name: ex.name, videoUrl: ex.videoUrl ?? "" });
+    setVideoInput(ex.videoUrl ?? "");
+  };
+
+  const saveVideo = async () => {
+    if (!videoModal) return;
+    setSavingVideo(true);
+    try {
+      const res = await fetch(`/api/exercises/${videoModal.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ videoUrl: videoInput.trim() }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setExercises((prev) => prev.map((e) => (e.id === updated.id ? { ...e, videoUrl: updated.videoUrl } : e)));
+        setVideoModal({ ...videoModal, videoUrl: videoInput.trim() });
+        toast({ title: "✓ סרטון הדגמה נשמר" });
+      } else {
+        toast({ variant: "destructive", title: "שמירת הסרטון נכשלה" });
+      }
+    } finally {
+      setSavingVideo(false);
+    }
+  };
 
   // unique equipment list
   const equipmentList = useMemo(() => {
@@ -316,6 +368,17 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
                       <ExerciseGifCard exerciseName={ex.name} />
                     </div>
 
+                    <button
+                      onClick={() => openVideoModal(ex)}
+                      style={{
+                        width: "100%", background: "rgba(182,255,74,0.08)", border: "1px solid rgba(182,255,74,0.2)",
+                        borderRadius: 10, padding: "9px 12px", color: "#b6ff4a", fontSize: 12.5, fontWeight: 700,
+                        cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 6, marginBottom: 8,
+                      }}
+                    >
+                      <Video size={14} /> {ex.videoUrl ? "צפה בסרטון הדגמה" : "הוסף סרטון הדגמה"}
+                    </button>
+
                     {ex.isCustom && ex.coachId === coachId && (
                       <button aria-label={`מחק תרגיל: ${ex.name}`} onClick={() => deleteExercise(ex.id, ex.name)} style={{
                         marginTop: 8,
@@ -341,6 +404,58 @@ export function ExercisesClient({ exercises: initial, coachId }: { exercises: an
           </div>
         </div>
       ))}
+
+      {/* Demo-video modal — coach pastes a YouTube/Vimeo link, persisted per exercise.
+          Never scrapes/embeds MuscleWiki media (their terms forbid it) — only links out. */}
+      {videoModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setVideoModal(null)}>
+          <div style={{ background: "#141414", border: "1px solid #2a2a2a", borderRadius: 20, padding: 24, width: 480, maxWidth: "100%" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+              <h3 style={{ color: "#fff", fontSize: 17, fontWeight: 800 }}>סרטון הדגמה — {videoModal.name}</h3>
+              <button onClick={() => setVideoModal(null)} style={{ background: "#1c1c1c", border: "1px solid #2a2a2a", borderRadius: 10, width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                <X size={15} style={{ color: "#fff" }} />
+              </button>
+            </div>
+
+            {videoModal.videoUrl && (
+              <div style={{ marginBottom: 14, borderRadius: 12, overflow: "hidden", background: "#000", aspectRatio: "16/9" }}>
+                {toEmbedUrl(videoModal.videoUrl) ? (
+                  <iframe src={toEmbedUrl(videoModal.videoUrl)!} style={{ width: "100%", height: "100%", border: "none" }} allow="autoplay; encrypted-media" allowFullScreen />
+                ) : (
+                  <video src={videoModal.videoUrl} controls style={{ width: "100%", height: "100%" }} />
+                )}
+              </div>
+            )}
+
+            <label style={{ color: "#71717A", fontSize: 11, fontWeight: 700, display: "block", marginBottom: 6 }}>קישור לסרטון (YouTube / Vimeo / קישור ישיר)</label>
+            <input
+              value={videoInput}
+              onChange={(e) => setVideoInput(e.target.value)}
+              placeholder="https://youtube.com/watch?v=..."
+              dir="ltr"
+              style={{ ...INPUT_S, marginBottom: 12, textAlign: "left" }}
+            />
+            <div style={{ display: "flex", gap: 8, marginBottom: 14 }}>
+              <button onClick={saveVideo} disabled={savingVideo} style={{ background: "#b6ff4a", color: "#0a0a0a", border: "none", borderRadius: 999, padding: "10px 20px", fontWeight: 700, fontSize: 13.5, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
+                {savingVideo ? <Loader2 size={14} className="animate-spin" /> : null} שמור
+              </button>
+              {videoModal.videoUrl && (
+                <button onClick={() => { setVideoInput(""); }} style={{ background: "rgba(255,255,255,0.05)", color: "#fff", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 999, padding: "10px 20px", fontWeight: 600, fontSize: 13.5, cursor: "pointer" }}>
+                  הסר קישור
+                </button>
+              )}
+            </div>
+
+            <a
+              href={`https://musclewiki.com/search?q=${encodeURIComponent(videoModal.name)}`}
+              target="_blank" rel="noopener noreferrer"
+              style={{ display: "flex", alignItems: "center", gap: 6, color: "#888", fontSize: 12.5, textDecoration: "none" }}
+            >
+              <ExternalLink size={13} /> חפש הדגמה ב-MuscleWiki
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
