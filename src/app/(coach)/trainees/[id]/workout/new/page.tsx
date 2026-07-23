@@ -28,8 +28,13 @@ export default async function NewWorkoutPage({ params }: { params: { id: string 
       orderBy: [{ muscleGroup: "asc" }, { name: "asc" }],
     });
     return <WorkoutBuilderClient trainee={trainee} exercises={exercises} coachId={coachId} />;
-  } catch {
-    const demoTrainee = DEMO_TRAINEES.find(t => t.id === params.id) ?? DEMO_TRAINEES[0];
-    return <WorkoutBuilderClient trainee={{ id: demoTrainee.id, name: demoTrainee.name }} exercises={DEMO_EXERCISES as any} coachId={coachId} />;
+  } catch (error) {
+    console.error("Failed to load trainee/exercises for workout builder", error);
+    return (
+      <div dir="rtl" style={{ textAlign: "center", padding: "80px 20px", color: "#71717A" }}>
+        <p style={{ fontSize: 15, fontWeight: 700, color: "#F87171" }}>טעינת נתוני בונה האימון נכשלה</p>
+        <p style={{ fontSize: 13, marginTop: 6 }}>בדוק את החיבור ונסה לרענן את הדף</p>
+      </div>
+    );
   }
 }

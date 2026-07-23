@@ -29,9 +29,9 @@ export default async function CoachChatPage() {
       orderBy: { name: "asc" },
     });
     return <CoachChatClient myId={coachId} trainees={trainees} />;
-  } catch {
-    const trainees = DEMO_TRAINEES.map(t => ({ id: t.id, name: t.name, email: t.email }));
-    return <CoachChatClient myId={coachId} trainees={trainees} />;
+  } catch (error) {
+    console.error("Failed to load chat trainees", error);
+    return <CoachChatClient myId={coachId} trainees={[]} />;
   }
 }
 

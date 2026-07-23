@@ -25,8 +25,9 @@ export default async function ExercisesPage() {
       orderBy: [{ muscleGroup: "asc" }, { name: "asc" }],
     });
     return <ExercisesClient exercises={exercises} coachId={coachId} />;
-  } catch {
-    return <ExercisesClient exercises={DEMO_EXERCISES as any} coachId={coachId} />;
+  } catch (error) {
+    console.error("Failed to load exercise library", error);
+    return <ExercisesClient exercises={[]} coachId={coachId} />;
   }
 }
 

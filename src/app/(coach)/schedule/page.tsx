@@ -28,9 +28,9 @@ export default async function SchedulePage() {
       orderBy: { name: "asc" },
     });
     return <ScheduleClient trainees={trainees} coachId={coachId} />;
-  } catch {
-    const trainees = DEMO_TRAINEES.map(t => ({ id: t.id, name: t.name, email: t.email }));
-    return <ScheduleClient trainees={trainees} coachId={coachId} />;
+  } catch (error) {
+    console.error("Failed to load schedule trainees", error);
+    return <ScheduleClient trainees={[]} coachId={coachId} />;
   }
 }
 

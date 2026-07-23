@@ -51,12 +51,13 @@ export default async function TraineeChatPage() {
         </div>
       </div>
     );
-  } catch {
+  } catch (error) {
+    console.error("Failed to load trainee chat", error);
     return (
       <div dir="rtl">
         <BackHeader title="צ׳אט עם המאמן" />
-        <div style={{ height: "calc(100vh - 220px)", background: "#1C1C1E", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 28, overflow: "hidden" }}>
-          <ChatWindow myId={userId} otherId={DEMO_COACH.id} otherName={DEMO_COACH.name} />
+        <div style={{ padding: 32, textAlign: "center", color: "#F87171" }}>
+          <p>טעינת הצ׳אט נכשלה — בדוק את החיבור ונסה לרענן את הדף</p>
         </div>
       </div>
     );

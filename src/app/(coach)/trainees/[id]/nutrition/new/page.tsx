@@ -31,8 +31,13 @@ export default async function NewNutritionPage({ params }: { params: { id: strin
     });
     if (!trainee) notFound();
     return <NutritionBuilderClient trainee={trainee} />;
-  } catch {
-    const demoTrainee = DEMO_TRAINEES.find(t => t.id === params.id) ?? DEMO_TRAINEES[0];
-    return <NutritionBuilderClient trainee={demoTrainee as any} />;
+  } catch (error) {
+    console.error("Failed to load trainee for nutrition builder", error);
+    return (
+      <div dir="rtl" style={{ textAlign: "center", padding: "80px 20px", color: "#71717A" }}>
+        <p style={{ fontSize: 15, fontWeight: 700, color: "#F87171" }}>טעינת פרטי המתאמן נכשלה</p>
+        <p style={{ fontSize: 13, marginTop: 6 }}>בדוק את החיבור ונסה לרענן את הדף</p>
+      </div>
+    );
   }
 }

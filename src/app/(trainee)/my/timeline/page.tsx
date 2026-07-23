@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
+import { prisma, isDatabaseConfigured } from "@/lib/prisma";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
 import { Dumbbell, Apple, CheckCircle2, Camera, Trophy, MessageSquare, UserPlus } from "lucide-react";
@@ -24,22 +25,29 @@ const DEMO_TIMELINE_EVENTS = [
 ];
 
 export default async function MyTimelinePage() {
+  if (!isDatabaseConfigured) {
+    return renderTimeline(DEMO_TIMELINE_EVENTS);
+  }
+
+  const session = await auth();
+  if (!session?.user?.id) redirect("/login");
+
   let events: typeof DEMO_TIMELINE_EVENTS = [];
   try {
-    const session = await auth();
-    if (session?.user?.id) {
-      const dbEvents = await prisma.timelineEvent.findMany({
-        where: { traineeId: session.user.id },
-        orderBy: { date: "desc" },
-        take: 50,
-      });
-      events = dbEvents as any;
-    } else {
-      events = DEMO_TIMELINE_EVENTS;
-    }
-  } catch {
-    events = DEMO_TIMELINE_EVENTS;
+    const dbEvents = await prisma.timelineEvent.findMany({
+      where: { traineeId: session.user.id },
+      orderBy: { date: "desc" },
+      take: 50,
+    });
+    events = dbEvents as any;
+  } catch (error) {
+    console.error("Failed to load timeline", error);
   }
+
+  return renderTimeline(events);
+}
+
+function renderTimeline(events: typeof DEMO_TIMELINE_EVENTS) {
 
   return (
     <div className="space-y-4 animate-fade-in" dir="rtl">

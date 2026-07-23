@@ -30,8 +30,9 @@ export default async function TraineesPage() {
       orderBy: { createdAt: "desc" },
     });
     return <TraineesClient trainees={trainees} />;
-  } catch {
-    return <TraineesClient trainees={DEMO_TRAINEES as any} />;
+  } catch (error) {
+    console.error("Failed to load trainees", error);
+    return <TraineesClient trainees={[]} />;
   }
 }
 

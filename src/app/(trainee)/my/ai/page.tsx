@@ -39,14 +39,9 @@ export default async function AICoachPage() {
       streak: user?.workoutLogs?.length ?? 0,
     };
     return <AIChatClient userContext={userContext} />;
-  } catch {
-    const demoUser = DEMO_TRAINEES.find(t => t.id === userId) ?? DEMO_TRAINEES[0];
-    const userContext = {
-      name: demoUser.name?.split(" ")[0] ?? "מתאמן",
-      weight: demoUser.checkIns?.[0]?.weight ?? null,
-      planName: demoUser.workoutPlans?.[0]?.name ?? null,
-      streak: demoUser.workoutLogs?.length ?? 0,
-    };
+  } catch (error) {
+    console.error("Failed to load AI chat context", error);
+    const userContext = { name: session.user.name?.split(" ")[0] ?? "מתאמן", weight: null, planName: null, streak: 0 };
     return <AIChatClient userContext={userContext} />;
   }
 }

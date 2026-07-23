@@ -23,8 +23,9 @@ export async function GET() {
       orderBy: { name: "asc" },
     });
     return NextResponse.json({ trainees });
-  } catch {
-    return NextResponse.json({ trainees: DEMO_PAYMENT_TRAINEES });
+  } catch (error) {
+    console.error("Failed to load payments", error);
+    return NextResponse.json({ error: "טעינת נתוני התשלומים נכשלה" }, { status: 500 });
   }
 }
 
@@ -40,6 +41,9 @@ export async function POST(req: Request) {
 
     if (action === "create_subscription") {
       const { traineeId, plan, amount, notes } = body;
+      const trainee = await prisma.user.findFirst({ where: { id: traineeId, coachId: session.user.id, role: "TRAINEE" }, select: { id: true } });
+      if (!trainee) return NextResponse.json({ error: "Trainee not found" }, { status: 404 });
+
       const endDate = addMonths(plan === "MONTHLY" ? 1 : plan === "QUARTERLY" ? 3 : 12);
       const sub = await (prisma as any).traineeSubscription.upsert({
         where: { traineeId },
@@ -51,6 +55,12 @@ export async function POST(req: Request) {
 
     if (action === "record_payment") {
       const { subscriptionId, paymentAmount, method, paymentNotes } = body;
+      const owned = await (prisma as any).traineeSubscription.findFirst({
+        where: { id: subscriptionId, trainee: { coachId: session.user.id } },
+        select: { id: true },
+      });
+      if (!owned) return NextResponse.json({ error: "Subscription not found" }, { status: 404 });
+
       const payment = await (prisma as any).payment.create({
         data: { subscriptionId, amount: paymentAmount, method: method ?? "cash", notes: paymentNotes },
       });
@@ -58,8 +68,9 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ error: "Unknown action" }, { status: 400 });
-  } catch {
-    return NextResponse.json({ ok: true, demo: true });
+  } catch (error) {
+    console.error("Payments action failed", error);
+    return NextResponse.json({ error: "הפעולה נכשלה, נסה שוב" }, { status: 500 });
   }
 }
 

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { CreditCard, Plus, CheckCircle2, Clock, XCircle, Loader2, ChevronDown } from "lucide-react";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
+import { useToast } from "@/hooks/use-toast";
 
 const CARD = { background: "#141414", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 20 };
 const INPUT_S = { background: "#1c1c1c", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, height: 44, padding: "0 14px", color: "#fff", fontSize: 14, width: "100%", outline: "none", boxSizing: "border-box" as const };
@@ -16,44 +17,31 @@ const STATUS_STYLE: Record<string, any> = {
 };
 
 export default function PaymentsPage() {
+  const { toast } = useToast();
   const [trainees, setTrainees] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [modal, setModal] = useState<{ type: "sub" | "pay"; traineeId: string; subId?: string } | null>(null);
   const [form, setForm] = useState({ plan: "MONTHLY", amount: "", notes: "", method: "cash" });
   const [saving, setSaving] = useState(false);
 
-  const DEMO_KEY = "demo_payments";
-
-  const loadDemoData = () => {
-    try {
-      const stored = localStorage.getItem(DEMO_KEY);
-      if (stored) return JSON.parse(stored);
-    } catch {}
-    return [
-      { id: "demo-trainee-1", name: "אבי כהן", email: "avi@demo.com", subscription: null },
-      { id: "demo-trainee-2", name: "מיכל לוי", email: "michal@demo.com", subscription: null },
-      { id: "demo-trainee-3", name: "דנה שפירא", email: "dana@demo.com", subscription: null },
-    ];
-  };
-
   const load = async () => {
     setLoading(true);
+    setLoadError(false);
     try {
       const res = await fetch("/api/payments");
       if (res.ok) {
         const { trainees: t } = await res.json();
         setTrainees(t);
-        setLoading(false);
-        return;
+      } else {
+        setLoadError(true);
       }
-    } catch {}
-    setTrainees(loadDemoData());
-    setLoading(false);
-  };
-
-  const saveDemoData = (updated: any[]) => {
-    try { localStorage.setItem(DEMO_KEY, JSON.stringify(updated)); } catch {}
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -66,15 +54,17 @@ export default function PaymentsPage() {
     setSaving(true);
     try {
       const res = await fetch("/api/payments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "create_subscription", traineeId: modal.traineeId, plan: form.plan, amount: parseFloat(form.amount), notes: form.notes }) });
-      if (res.ok) { await load(); setModal(null); setSaving(false); return; }
-    } catch {}
-    // Demo fallback
-    const newSub = { id: `demo-sub-${Date.now()}`, plan: form.plan, amount: parseFloat(form.amount), status: "ACTIVE", startDate: new Date().toISOString(), notes: form.notes, payments: [{ id: `demo-pay-${Date.now()}`, amount: parseFloat(form.amount), method: "cash", date: new Date().toISOString() }] };
-    const updated = trainees.map(t => t.id === modal.traineeId ? { ...t, subscription: newSub } : t);
-    setTrainees(updated);
-    saveDemoData(updated);
-    setModal(null);
-    setSaving(false);
+      if (res.ok) {
+        await load();
+        setModal(null);
+      } else {
+        toast({ variant: "destructive", title: "שמירת המינוי נכשלה, נסה שוב" });
+      }
+    } catch {
+      toast({ variant: "destructive", title: "שגיאת רשת — נסה שוב" });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const recordPayment = async () => {
@@ -82,15 +72,17 @@ export default function PaymentsPage() {
     setSaving(true);
     try {
       const res = await fetch("/api/payments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "record_payment", subscriptionId: modal.subId, paymentAmount: parseFloat(form.amount), method: form.method, paymentNotes: form.notes }) });
-      if (res.ok) { await load(); setModal(null); setSaving(false); return; }
-    } catch {}
-    // Demo fallback
-    const newPay = { id: `demo-pay-${Date.now()}`, amount: parseFloat(form.amount), method: form.method, date: new Date().toISOString() };
-    const updated = trainees.map(t => t.subscription?.id === modal.subId ? { ...t, subscription: { ...t.subscription, payments: [...(t.subscription.payments ?? []), newPay] } } : t);
-    setTrainees(updated);
-    saveDemoData(updated);
-    setModal(null);
-    setSaving(false);
+      if (res.ok) {
+        await load();
+        setModal(null);
+      } else {
+        toast({ variant: "destructive", title: "רישום התשלום נכשל, נסה שוב" });
+      }
+    } catch {
+      toast({ variant: "destructive", title: "שגיאת רשת — נסה שוב" });
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -121,6 +113,12 @@ export default function PaymentsPage() {
       {/* List */}
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin" style={{ color: "#b6ff4a" }} /></div>
+      ) : loadError ? (
+        <div style={{ ...CARD, padding: 32, textAlign: "center" }}>
+          <p style={{ color: "#F87171", fontSize: 14, fontWeight: 700, marginBottom: 6 }}>טעינת נתוני התשלומים נכשלה</p>
+          <p style={{ color: "#71717A", fontSize: 13, marginBottom: 16 }}>בדוק את החיבור ונסה שוב</p>
+          <button onClick={load} style={{ background: "#b6ff4a", color: "#0a0a0a", border: "none", borderRadius: 999, padding: "10px 20px", fontWeight: 800, fontSize: 13, cursor: "pointer" }}>נסה שוב</button>
+        </div>
       ) : (
         <div className="space-y-3">
           {trainees.map(t => {

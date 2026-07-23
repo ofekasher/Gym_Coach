@@ -38,8 +38,13 @@ export default async function TraineeDetailPage({ params }: { params: { id: stri
     });
     if (!trainee) notFound();
     return <TraineeDetailClient trainee={trainee} />;
-  } catch {
-    const trainee = DEMO_TRAINEES.find(t => t.id === params.id) ?? DEMO_TRAINEES[0];
-    return <TraineeDetailClient trainee={trainee as any} />;
+  } catch (error) {
+    console.error("Failed to load trainee detail", error);
+    return (
+      <div dir="rtl" style={{ textAlign: "center", padding: "80px 20px", color: "#71717A" }}>
+        <p style={{ fontSize: 15, fontWeight: 700, color: "#F87171" }}>טעינת פרופיל המתאמן נכשלה</p>
+        <p style={{ fontSize: 13, marginTop: 6 }}>בדוק את החיבור ונסה לרענן את הדף</p>
+      </div>
+    );
   }
 }
