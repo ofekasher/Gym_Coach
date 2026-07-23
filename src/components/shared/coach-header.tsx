@@ -13,7 +13,7 @@ const TITLES: Record<string, { title: string; subtitle: string }> = {
   "/trainees": { title: "מתאמנים", subtitle: "כל המתאמנים שלך במקום אחד" },
   "/exercises": { title: "ספריית תרגילים", subtitle: "תרגילים לבניית תוכניות אימון" },
   "/templates": { title: "תבניות אימון", subtitle: "תבניות מוכנות ומותאמות אישית" },
-  "/schedule": { title: "לוח שנה", subtitle: "האימונים השבועיים שלך" },
+  "/schedule": { title: "לוח שבועי", subtitle: "סקירת האימונים לשבוע הקרוב" },
   "/chat": { title: "הודעות", subtitle: "שיחות עם המתאמנים שלך" },
   "/payments": { title: "תשלומים", subtitle: "מנויים וגבייה" },
   "/team": { title: "צוות מאמנים", subtitle: "ניהול הרשאות צוות" },
